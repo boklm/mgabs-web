@@ -147,7 +147,7 @@ function key2date($key) {
 }
 
 # Temporary until initial mirror is ready
-echo "<a href=\"src.mga.txt\">$nb_rpm_mga src.rpm</a> rebuilt for Mageia out of <a href=\"src.txt\">$nb_rpm</a>. <a href=\"src.mdv.txt\">List of Mandriva packages still present</a>.<br/>\n";
+echo "<a href=\"data/src.mga.txt\">$nb_rpm_mga src.rpm</a> rebuilt for Mageia out of <a href=\"data/src.txt\">$nb_rpm</a>. <a href=\"data/src.mdv.txt\">List of Mandriva packages still present</a>.<br/>\n";
 #########################################
 
 echo "<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan=\"2\">Status</th></tr>\n";
