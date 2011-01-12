@@ -12,16 +12,27 @@ error_reporting(E_ALL);
 
 $upload_dir = "/home/schedbot/uploads";
 $max_modified = 2;
-$title = "Mageia build system";
+$title = "Mageia build system status";
+$tz = new DateTimeZone("UTC");
+
+# Temporary until initial mirror is ready
+$nb_rpm = shell_exec('rpm -qp --qf "%{SOURCERPM}\n" /distrib/bootstrap/distrib/cauldron/i586/media/core/release/*.rpm | sort -u | tee src.txt | wc -l');
+$nb_rpm_mga = shell_exec('grep mga src.txt | tee src.mga.txt | wc -l');
+shell_exec('grep -v mga src.txt > src.mdv.txt');
+#########################################
 
 chdir($upload_dir);
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' \) ! -ctime $max_modified");
 
-preg_match_all("!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock)$!m", $all_files, $matches, PREG_SET_ORDER);
+$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) ! -ctime $max_modified");
+
+preg_match_all("!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)$!m", $all_files, $matches, PREG_SET_ORDER);
 
 $pkgs = array();
 foreach ($matches as $val) {
-    $key = $val[6];
+    if ($_GET["user"] && ($_GET["user"] != $val[7])) {
+		continue;
+    }
+    $key = $val[6] . $val[7];
     if (!is_array($pkgs[$key])) {
         $pkgs[$key] = array();
         $pkgs[$key]["status"]  = array();
@@ -35,8 +46,8 @@ foreach ($matches as $val) {
     }
 
     $status = $val[1];
-    $pkgs[$key]["status"][$status] = 1;
     $data = $val[10];
+    $pkgs[$key]["status"][$status] = $data;
     $ext = $val[11];
     if ($ext == ".src.rpm.info") {
         preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
@@ -46,8 +57,9 @@ foreach ($matches as $val) {
     } else if ($ext == ".youri") {
         $pkgs[$key]["status"]["youri"] = 1;
     } else if ($ext == ".lock") {
+	preg_match("/(.*)\..*\.(.*)\.\d+\.\d+/", "(\1@\2)", $data);
         // parse build bot from $data
-        $pkgs[$key]["status"]["build"] = 1;
+        $pkgs[$key]["status"]["build"] = $data;
     }
 }
 // sort by key in reverse order to have more recent pkgs first
@@ -58,27 +70,33 @@ krsort($pkgs);
 <head>
 <title><? echo $title ?></title>
 <style type="text/css">
-td.todo {
-  color: black;
+table { 
+    border-spacing: 0;
+    font-family: Helvetica; font-size: 80%;
+    border: 1px solid #ccc;
 }
-td.building {
-  color: fuchsia;
-}
-td.partial {
-  color: purple;
-}
-td.built {
-  color: blue;
-}
-td.youri {
-  color: olive
-}
-td.uploaded {
-  color: green;
-}
-td.failure, td.failure a, td.rejected, td.rejected a {
-  color: red;
-}
+table tr { padding: 0; margin: 0; }
+table th { padding: 0.2em 0.5em; margin: 0; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }
+table td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
+ 
+tr { background: transparent; }
+tr.uploaded { background: #ddffdd; }
+tr.failure, tr.rejected { background: #ffdddd; }
+tr.todo { background: white; }
+tr.building { background: #ffffdd; }
+tr.partial { background: blue; }
+tr.built { background: #00CCFF; }
+tr.youri { background: olive; }
+ 
+td.status-box { width: 1em; height: 1em; }
+tr.uploaded td.status-box { background: green; }
+tr.failure td.status-box, tr.rejected td.status-box { background: red; }
+tr.todo td.status-box { background: white; }
+tr.building td.status-box { background: yellow; }
+tr.partial td.status-box { background: blue; }
+tr.built td.status-box { background: #00CCFF; }
+tr.youri td.status-box { background: olive; }
+ 
 </style>
 </head>
 
@@ -107,26 +125,55 @@ function pkg_gettype($pkg) {
     return "unknown";
 }
 
+function plural($num) {
+    if ($num > 1)
+        return "s";
+}
+
+function key2date($key) {
+    global $tz;    
+    $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
+    $diff = time() - $date->getTimestamp();
+    if ($diff<60)
+       return $diff . " second" . plural($diff) . " ago";
+    $diff = round($diff/60);
+    if ($diff<60)
+       return $diff . " minute" . plural($diff) . " ago";
+    $diff = round($diff/60);
+    if ($diff<24)
+       return $diff . " hour" . plural($diff) . " ago";
+    $diff = round($diff/24);
+    return $diff . " day" . plural($diff) . " ago";
+}
+
+# Temporary until initial mirror is ready
+echo "<a href=\"src.mga.txt\">$nb_rpm_mga src.rpm</a> rebuilt for Mageia out of <a href=\"src.txt\">$nb_rpm</a>. <a href=\"src.mdv.txt\">List of Mandriva packages still present</a>.<br/>\n";
+#########################################
+
+echo "<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan=\"2\">Status</th></tr>\n";
 foreach ($pkgs as $key => $p) {
     $p["type"] = pkg_gettype(&$p);
-    echo "<tr>\n";
-    echo "<td>" . $p["user"] . "</td>\n";
+    echo "<tr class=" . $p["type"] . ">\n";
+    echo "<td>" . key2date($key) . "</td>\n";
+    echo "<td><a href='?user=" . $p["user"] . "'>" . $p["user"] . "</a></td>\n";
     echo "<td>" . $p["package"] . "</td>\n";
     echo "<td>" . $p["version"] . "</td>\n";
     echo "<td>" . $p["media"] . "/" . $p["section"] . "</td>\n";
+    echo "<td class='status-box' />\n";
     $typelink = "";
     if ($p["type"] == "failure") {
        $typelink = "/uploads/" . $p["type"] . "/" . $p["path"];
     } else if ($p["type"] == "rejected") {
        $typelink = "/uploads/" . $p["type"] . "/" . $p["path"] . ".youri";
     }
-    echo "<td class='" . $p["type"] . "'>";
+    echo "<td>";
     if ($typelink)
         echo "<a href='$typelink'>";
     echo $p["type"];
     if ($typelink)
         echo "</a>";
-    echo "</td>\n";;
+    }
+    echo "</td>\n";
     echo "</tr>\n";
 }
 ?>
