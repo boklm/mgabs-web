@@ -48,7 +48,7 @@ foreach ($matches as $val) {
 
     $status = $val[1];
     $data = $val[10];
-    $pkgs[$key]["status"][$status] = $data;
+    $pkgs[$key]["status"][$status] = 1;
     $ext = $val[11];
     if ($ext == ".src.rpm.info") {
         preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
@@ -58,9 +58,8 @@ foreach ($matches as $val) {
     } else if ($ext == ".youri") {
         $pkgs[$key]["status"]["youri"] = 1;
     } else if ($ext == ".lock") {
-	preg_match("/(.*)\..*\.(.*)\.\d+\.\d+/", "(\1@\2)", $data);
         // parse build bot from $data
-        $pkgs[$key]["status"]["build"] = $data;
+        $pkgs[$key]["status"]["build"] = 1;
     }
 }
 // sort by key in reverse order to have more recent pkgs first
