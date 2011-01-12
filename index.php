@@ -16,6 +16,7 @@ $title = "Mageia build system status";
 $tz = new DateTimeZone("UTC");
 
 # Temporary until initial mirror is ready
+chdir("data");
 $nb_rpm = shell_exec('rpm -qp --qf "%{SOURCERPM}\n" /distrib/bootstrap/distrib/cauldron/i586/media/core/release/*.rpm | sort -u | tee src.txt | wc -l');
 $nb_rpm_mga = shell_exec('grep mga src.txt | tee src.mga.txt | wc -l');
 shell_exec('grep -v mga src.txt > src.mdv.txt');
@@ -172,7 +173,6 @@ foreach ($pkgs as $key => $p) {
     echo $p["type"];
     if ($typelink)
         echo "</a>";
-    }
     echo "</td>\n";
     echo "</tr>\n";
 }
