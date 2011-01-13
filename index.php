@@ -143,7 +143,7 @@ function key2date($key) {
     .clear { clear: both; }
     table { 
         border-spacing: 0;
-        font-family: Helvetica; font-size: 80%;
+        font-family: Helvetica, Verdana, Arial, sans-serif; font-size: 80%;
         border: 1px solid #ccc;
         float: left;
     }
@@ -170,9 +170,9 @@ function key2date($key) {
     tr.youri td.status-box { background: olive; }
     
     #stats { float: right; }
-    #score {}
-    #score-box { width: 200px; height: 100px; background: #faa; }
-    #score-meter { width: 200px; background: #afa; }
+    #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
+    #score-box { width: 100px; height: 100px; background: #faa; }
+    #score-meter { width: 100px; background: #afa; }
     </style>
 </head>
 <body>
