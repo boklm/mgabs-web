@@ -256,10 +256,10 @@ foreach ($pkgs as $key => $p) {
 }
 echo $s, '</table>';
 
-$s = '<div id="stats"><table><tr><th>Status</th><th>Count</th><th>%</th></tr>';
+$s = '<div id="stats"><table><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
 foreach ($stats as $k => $v) {
-    $s .= sprintf('<tr><th>%s</th><td>%d</td><td>%d%%</td></tr>',
-        $k, $v, round($v/$total*100));
+    $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
+        $k, $k, $v, round($v/$total*100));
 }
 $s .= '</table></div>';
 $s .= '<div class="clear"></div>';
