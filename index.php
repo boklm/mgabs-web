@@ -21,6 +21,7 @@ if ($g_user) {
     $robots = 'no' . $robots;
 }
 $tz = new DateTimeZone('UTC');
+$date_gen = date('c');
 
 # Temporary until initial mirror is ready
 chdir("data");
@@ -169,6 +170,9 @@ function key2date($key) {
     tr.youri td.status-box { background: olive; }
     
     #stats { float: right; }
+    #score {}
+    #score-box { width: 200px; height: 100px; background: #faa; }
+    #score-meter { width: 200px; background: #afa; }
     </style>
 </head>
 <body>
@@ -189,9 +193,6 @@ echo sprintf(
 );
 
 #########################################
-echo '<table>',
-    '<caption>Packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
-    '<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan="2">Status</th></tr>';
 
 $s = '';
 $tmpl = <<<T
@@ -225,47 +226,67 @@ $badges = array(
     'built'    => ''
 );
 
-foreach ($pkgs as $key => $p) {
-    $p['type'] = pkg_gettype($p);
+if ($total > 0) {
+    foreach ($pkgs as $key => $p) {
+        $p['type'] = pkg_gettype($p);
 
-    $stats[$p['type']] += 1;
-    $s .= sprintf($tmpl,
-        $p['type'],
-        key2date($key),
-        $p['user'], $p['user'],
-        $p['package'],
-        $p['version'],
-        $p['media'], $p['section']
-    );
+        $stats[$p['type']] += 1;
+        $s .= sprintf($tmpl,
+            $p['type'],
+            key2date($key),
+            $p['user'], $p['user'],
+            $p['package'],
+            $p['version'],
+            $p['media'], $p['section']
+        );
     
-    $typelink = '';
-    if ($p['type'] == 'failure') {
-       $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
-    } elseif ($p['type'] == 'rejected') {
-       $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
+        $typelink = '';
+        if ($p['type'] == 'failure') {
+           $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
+        } elseif ($p['type'] == 'rejected') {
+           $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
+        }
+
+        $s .= '<td>';
+        $s .= ($typelink != '') ?
+            sprintf('<a href="%s">%s</a>', $typelink, $p['type']) :
+            $p['type'];
+
+        $s .= '</td>';
+        //$s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
+        $s .= '</tr>';
     }
+    // Table
+    echo '<table>',
+        '<caption>Packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
+        '<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan="2">Status</th></tr>',
+        $s,
+        '</table>';
 
-    $s .= '<td>';
-    $s .= ($typelink != '') ?
-        sprintf('<a href="%s">%s</a>', $typelink, $p['type']) :
-        $p['type'];
+    // Stats
+    $s = '<div id="stats">';
+    $score = round($stats['uploaded']/$total * 100);
+    $s .= sprintf('<div id="score"><h3>Score: %d/100</h3>
+        <div id="score-box"><div id="score-meter" style="height: %dpx;"></div></div></div>',
+        $score, $score);
 
-    $s .= '</td>';
-    $s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
-    $s .= '</tr>';
+    $s .= '<table><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
+    foreach ($stats as $k => $v) {
+        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
+            $k, $k, $v, round($v/$total*100));
+    }
+    $s .= '</table></div>';
+    echo $s;
 }
-echo $s, '</table>';
-
-$s = '<div id="stats"><table><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
-foreach ($stats as $k => $v) {
-    $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
-        $k, $k, $v, round($v/$total*100));
+else
+{
+    echo sprintf('<p>No package has been submitted in the past %d&nbsp;hours.</p>',
+        $max_modified * 24);
 }
-$s .= '</table></div>';
-$s .= '<div class="clear"></div>';
-
-echo $s;
 
 ?>
+    <div class="clear"></div>
+    <hr />
+    <p>Generated at <?php echo $date_gen; ?>.</p>
 </body>
 </html>
