@@ -84,7 +84,7 @@ tr.uploaded { background: #ddffdd; }
 tr.failure, tr.rejected { background: #ffdddd; }
 tr.todo { background: white; }
 tr.building { background: #ffffdd; }
-tr.partial { background: blue; }
+tr.partial { background: #aaaaff; }
 tr.built { background: #00CCFF; }
 tr.youri { background: olive; }
  
