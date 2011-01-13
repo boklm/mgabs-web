@@ -139,10 +139,12 @@ function key2date($key) {
     <title><?php echo $title ?></title>
     <meta name="robots" content="<?php echo $robots; ?>">
     <style type="text/css">
+    .clear { clear: both; }
     table { 
         border-spacing: 0;
         font-family: Helvetica; font-size: 80%;
         border: 1px solid #ccc;
+        float: left;
     }
     table tr { padding: 0; margin: 0; }
     table th { padding: 0.2em 0.5em; margin: 0; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }
@@ -198,7 +200,6 @@ $tmpl = <<<T
     <td>%s</td>
     <td>%s/%s</td>
     <td class="status-box"></td>
-    <td>%s</td>
 T;
 
 // count all packages statuses
@@ -232,8 +233,7 @@ foreach ($pkgs as $key => $p) {
         $p['user'], $p['user'],
         $p['package'],
         $p['version'],
-        $p['media'], $p['section'],
-        sprintf($badges[$p['type']], $p['user'])
+        $p['media'], $p['section']
     );
     
     $typelink = '';
@@ -248,7 +248,9 @@ foreach ($pkgs as $key => $p) {
         sprintf('<a href="%s">%s</a>', $typelink, $p['type']) :
         $p['type'];
 
-    $s .= '</td></tr>';
+    $s .= '</td>';
+    $s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
+    $s .= '</tr>';
 }
 echo $s, '</table>';
 
@@ -258,6 +260,7 @@ foreach ($stats as $k => $v) {
         $k, $v, round($v/$total*100));
 }
 $s .= '</table></div>';
+$s .= '<div class="clear"></div>';
 
 echo $s;
 
