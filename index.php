@@ -65,46 +65,42 @@ foreach ($matches as $val) {
 // sort by key in reverse order to have more recent pkgs first
 krsort($pkgs);
 ?>
-<html>
-
+<html lang="en">
 <head>
-<title><? echo $title ?></title>
+<title><?php echo $title ?></title>
 <style type="text/css">
-table { 
-    border-spacing: 0;
-    font-family: Helvetica; font-size: 80%;
-    border: 1px solid #ccc;
-}
-table tr { padding: 0; margin: 0; }
-table th { padding: 0.2em 0.5em; margin: 0; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }
-table td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
+    table { 
+        border-spacing: 0;
+        font-family: Helvetica; font-size: 80%;
+        border: 1px solid #ccc;
+    }
+    table tr { padding: 0; margin: 0; }
+    table th { padding: 0.2em 0.5em; margin: 0; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }
+    table td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
  
-tr { background: transparent; }
-tr.uploaded { background: #ddffdd; }
-tr.failure, tr.rejected { background: #ffdddd; }
-tr.todo { background: white; }
-tr.building { background: #ffffdd; }
-tr.partial { background: #aaaaff; }
-tr.built { background: #00CCFF; }
-tr.youri { background: olive; }
- 
-td.status-box { width: 1em; height: 1em; }
-tr.uploaded td.status-box { background: green; }
-tr.failure td.status-box, tr.rejected td.status-box { background: red; }
-tr.todo td.status-box { background: white; }
-tr.building td.status-box { background: yellow; }
-tr.partial td.status-box { background: blue; }
-tr.built td.status-box { background: #00CCFF; }
-tr.youri td.status-box { background: olive; }
- 
+    tr { background: transparent; }
+    tr.uploaded { background: #ddffdd; }
+    tr.failure, tr.rejected { background: #ffdddd; }
+    tr.todo { background: white; }
+    tr.building { background: #ffffdd; }
+    tr.partial { background: #aaaaff; }
+    tr.built { background: #00CCFF; }
+    tr.youri { background: olive; }
+
+    td.status-box { width: 1em; height: 1em; }
+    tr.uploaded td.status-box { background: green; }
+    tr.failure td.status-box, tr.rejected td.status-box { background: red; }
+    tr.todo td.status-box { background: white; }
+    tr.building td.status-box { background: yellow; }
+    tr.partial td.status-box { background: blue; }
+    tr.built td.status-box { background: #00CCFF; }
+    tr.youri td.status-box { background: olive; }
 </style>
 </head>
-
 <body>
-<h1><? echo $title ?></h1>
+    <h1><?php echo $title ?></h1>
 
-<table>
-<?
+<?php
 function pkg_gettype($pkg) {
     if (array_key_exists("rejected", $pkg["status"]))
         return "rejected";
@@ -147,12 +143,21 @@ function key2date($key) {
 }
 
 # Temporary until initial mirror is ready
-echo "<a href=\"data/src.mga.txt\">$nb_rpm_mga src.rpm</a> rebuilt for Mageia out of <a href=\"data/src.txt\">$nb_rpm</a>. <a href=\"data/src.mdv.txt\">List of Mandriva packages still present</a>.<br/>\n";
-#########################################
+echo sprintf(
+    '<p><a href="%s">%d src.rpm</a> rebuilt for Mageia out of <a href="%s">%d</a>
+    (<a href="%s">List of Mandriva packages still present</a>).</p>',
 
-echo "<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan=\"2\">Status</th></tr>\n";
+    'data/src.mga.txt', $nb_rpm_mga,
+    'data/src.txt', $nb_rpm,
+    'data/src.mdv.txt'
+);
+
+#########################################
+echo '<table>',
+    '<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan="2">Status</th></tr>';
+
 foreach ($pkgs as $key => $p) {
-    $p["type"] = pkg_gettype(&$p);
+    $p["type"] = pkg_gettype($p);
     echo "<tr class=" . $p["type"] . ">\n";
     echo "<td>" . key2date($key) . "</td>\n";
     echo "<td><a href='?user=" . $p["user"] . "'>" . $p["user"] . "</a></td>\n";
@@ -179,5 +184,4 @@ foreach ($pkgs as $key => $p) {
 </table>
 
 </body>
-
 </html>
