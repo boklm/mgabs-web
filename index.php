@@ -165,6 +165,8 @@ function key2date($key) {
     tr.partial td.status-box { background: blue; }
     tr.built td.status-box { background: #00ccff; }
     tr.youri td.status-box { background: olive; }
+    
+    #stats { float: right; }
     </style>
 </head>
 <body>
@@ -196,9 +198,20 @@ $tmpl = <<<T
     <td>%s/%s</td>
     <td class="status-box"></td>
 T;
+
+$stats = array(
+    'uploaded' => 0,
+    'failure'  => 0,
+    'todo'     => 0,
+    'building' => 0,
+    'partial'  => 0,
+    'built'    => 0,
+);
+$total = count($pkgs);
 foreach ($pkgs as $key => $p) {
     $p['type'] = pkg_gettype($p);
 
+    $stats[$p['type']] += 1;
     $s .= sprintf($tmpl,
         $p['type'],
         key2date($key),
@@ -222,9 +235,17 @@ foreach ($pkgs as $key => $p) {
 
     $s .= '</td></tr>';
 }
-echo $s;
-?>
-</table>
+echo $s, '</table>';
 
+$s = '<div id="stats"><table><tr><th>Status</th><th>Count</th><th>%</th></tr>';
+foreach ($stats as $k => $v) {
+    $s .= sprintf('<tr><th>%s</th><td>%d</td><td>%d%%</td></tr>',
+        $k, $v, round($v/$total*100));
+}
+$s .= '</table></div>';
+
+echo $s;
+
+?>
 </body>
 </html>
