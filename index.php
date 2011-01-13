@@ -10,9 +10,16 @@
 
 error_reporting(E_ALL);
 
+$g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
+
 $upload_dir = '/home/schedbot/uploads';
 $max_modified = 2;
 $title = '<a href="http://mageia.org/">Mageia</a> build system status';
+$robots = 'index,nofollow,nosnippet,noarchive';
+if ($g_user) {
+    $title .= ' for ' . $g_user . "'s packages";
+    $robots = 'no' . $robots;
+}
 $tz = new DateTimeZone('UTC');
 
 # Temporary until initial mirror is ready
@@ -125,10 +132,13 @@ function key2date($key) {
     return $diff . " day" . plural($diff) . " ago";
 }
 ?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<title><?php echo $title ?></title>
-<style type="text/css">
+    <meta charset="utf-8">
+    <title><?php echo $title ?></title>
+    <meta name="robots" content="<?php echo $robots; ?>">
+    <style type="text/css">
     table { 
         border-spacing: 0;
         font-family: Helvetica; font-size: 80%;
@@ -155,7 +165,7 @@ function key2date($key) {
     tr.partial td.status-box { background: blue; }
     tr.built td.status-box { background: #00ccff; }
     tr.youri td.status-box { background: olive; }
-</style>
+    </style>
 </head>
 <body>
     <h1><?php echo $title ?></h1>
