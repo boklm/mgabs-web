@@ -79,13 +79,13 @@ krsort($pkgs);
     table td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
  
     tr { background: transparent; }
-    tr.uploaded { background: #ddffdd; }
-    tr.failure, tr.rejected { background: #ffdddd; }
+    tr.uploaded { background: #bbffbb; }
+    tr.failure, tr.rejected { background: #ffbbbb; }
     tr.todo { background: white; }
-    tr.building { background: #ffffdd; }
-    tr.partial { background: #aaaaff; }
-    tr.built { background: #00CCFF; }
-    tr.youri { background: olive; }
+    tr.building { background: #ffff99; }
+    tr.partial { background: #bbbbff; }
+    tr.built { background: #cceeff; }
+    tr.youri { background: #aacc66; }
 
     td.status-box { width: 1em; height: 1em; }
     tr.uploaded td.status-box { background: green; }
@@ -93,7 +93,7 @@ krsort($pkgs);
     tr.todo td.status-box { background: white; }
     tr.building td.status-box { background: yellow; }
     tr.partial td.status-box { background: blue; }
-    tr.built td.status-box { background: #00CCFF; }
+    tr.built td.status-box { background: #00ccff; }
     tr.youri td.status-box { background: olive; }
 </style>
 </head>
