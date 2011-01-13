@@ -186,6 +186,7 @@ echo sprintf(
 
 #########################################
 echo '<table>',
+    '<caption>Packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
     '<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan="2">Status</th></tr>';
 
 $s = '';
