@@ -197,8 +197,10 @@ $tmpl = <<<T
     <td>%s</td>
     <td>%s/%s</td>
     <td class="status-box"></td>
+    <td>%s</td>
 T;
 
+// count all packages statuses
 $stats = array(
     'uploaded' => 0,
     'failure'  => 0,
@@ -208,6 +210,17 @@ $stats = array(
     'built'    => 0,
 );
 $total = count($pkgs);
+
+// feedback labels
+$badges = array(
+    'uploaded' => 'Congrats %s! \o/',
+    'failure'  => 'Booooo! /o\\',
+    'todo'     => '',
+    'building' => '',
+    'partial'  => '',
+    'built'    => ''
+);
+
 foreach ($pkgs as $key => $p) {
     $p['type'] = pkg_gettype($p);
 
@@ -218,7 +231,8 @@ foreach ($pkgs as $key => $p) {
         $p['user'], $p['user'],
         $p['package'],
         $p['version'],
-        $p['media'], $p['section']
+        $p['media'], $p['section'],
+        sprintf($badges[$p['type']], $p['user'])
     );
     
     $typelink = '';
