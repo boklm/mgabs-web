@@ -10,10 +10,10 @@
 
 error_reporting(E_ALL);
 
-$upload_dir = "/home/schedbot/uploads";
+$upload_dir = '/home/schedbot/uploads';
 $max_modified = 2;
-$title = "Mageia build system status";
-$tz = new DateTimeZone("UTC");
+$title = '<a href="http://mageia.org/">Mageia</a> build system status';
+$tz = new DateTimeZone('UTC');
 
 # Temporary until initial mirror is ready
 chdir("data");
@@ -30,40 +30,100 @@ preg_match_all("!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(
 
 $pkgs = array();
 foreach ($matches as $val) {
-    if ($_GET["user"] && ($_GET["user"] != $val[7])) {
-		continue;
+
+    if ($_GET['user'] && ($_GET['user'] != $val[7])) {
+        continue;
     }
     $key = $val[6] . $val[7];
     if (!is_array($pkgs[$key])) {
-        $pkgs[$key] = array();
-        $pkgs[$key]["status"]  = array();
-	$pkgs[$key]["path"]    = $val[2];
-	$pkgs[$key]["version"] = $val[3];
-        $pkgs[$key]["media"]   = $val[4];
-        $pkgs[$key]["section"] = $val[5];
-        $pkgs[$key]["user"]    = $val[7];
-        $pkgs[$key]["host"]    = $val[8];
-        $pkgs[$key]["job"]     = $val[9];
+
+        $pkgs[$key] = array(
+            'status'  => array(),
+            'path'    => $val[2],
+            'version' => $val[3],
+            'media'   => $val[4],
+            'section' => $val[5],
+            'user'    => $val[7],
+            'host'    => $val[8],
+            'job'     => $val[9]
+        );
     }
 
     $status = $val[1];
     $data = $val[10];
-    $pkgs[$key]["status"][$status] = 1;
+    $pkgs[$key]['status'][$status] = 1;
     $ext = $val[11];
-    if ($ext == ".src.rpm.info") {
+    if ($ext == '.src.rpm.info') {
         preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
-        $pkgs[$key]["package"] = $name[1];
-    } else if ($ext == ".src") {
-        $pkgs[$key]["status"]["src"] = 1;
-    } else if ($ext == ".youri") {
-        $pkgs[$key]["status"]["youri"] = 1;
-    } else if ($ext == ".lock") {
+        $pkgs[$key]['package'] = $name[1];
+    } else if ($ext == '.src') {
+        $pkgs[$key]['status']['src'] = 1;
+    } else if ($ext == '.youri') {
+        $pkgs[$key]['status']['youri'] = 1;
+    } else if ($ext == '.lock') {
         // parse build bot from $data
-        $pkgs[$key]["status"]["build"] = 1;
+        $pkgs[$key]['status']['build'] = 1;
     }
 }
 // sort by key in reverse order to have more recent pkgs first
 krsort($pkgs);
+
+/**
+ * @param array $pkg
+ *
+ * @return string
+*/
+function pkg_gettype($pkg) {
+    if (array_key_exists("rejected", $pkg["status"]))
+        return "rejected";
+    if (array_key_exists("youri", $pkg["status"])) {
+        if (array_key_exists("src", $pkg["status"]))
+            return "youri";
+        else
+            return "uploaded";
+    }
+    if (array_key_exists("failure", $pkg["status"]))
+        return "failure";
+    if (array_key_exists("done", $pkg["status"]))
+        return "partial";
+    if (array_key_exists("build", $pkg["status"]))
+        return "building";
+    if (array_key_exists("todo", $pkg["status"]))
+        return "todo";
+    return "unknown";
+}
+
+/**
+ * @param integer $num
+ *
+ * @return string
+*/
+function plural($num) {
+    if ($num > 1)
+        return "s";
+}
+
+/**
+ * @param string $key
+ *
+ * @return string
+*/
+function key2date($key) {
+    global $tz;    
+    $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
+    $diff = time() - $date->getTimestamp();
+    if ($diff<60)
+       return $diff . " second" . plural($diff) . " ago";
+    $diff = round($diff/60);
+    if ($diff<60)
+       return $diff . " minute" . plural($diff) . " ago";
+    $diff = round($diff/60);
+    if ($diff<24)
+       return $diff . " hour" . plural($diff) . " ago";
+    $diff = round($diff/24);
+
+    return $diff . " day" . plural($diff) . " ago";
+}
 ?>
 <html lang="en">
 <head>
@@ -101,51 +161,11 @@ krsort($pkgs);
     <h1><?php echo $title ?></h1>
 
 <?php
-function pkg_gettype($pkg) {
-    if (array_key_exists("rejected", $pkg["status"]))
-        return "rejected";
-    if (array_key_exists("youri",    $pkg["status"])) {
-        if (array_key_exists("src",    $pkg["status"]))
-	    return "youri";
-	else
-	    return "uploaded";
-    }
-    if (array_key_exists("failure",  $pkg["status"]))
-        return "failure";
-    if (array_key_exists("done",     $pkg["status"]))
-        return "partial";
-    if (array_key_exists("build",    $pkg["status"]))
-        return "building";
-    if (array_key_exists("todo",     $pkg["status"]))
-        return "todo";
-    return "unknown";
-}
-
-function plural($num) {
-    if ($num > 1)
-        return "s";
-}
-
-function key2date($key) {
-    global $tz;    
-    $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
-    $diff = time() - $date->getTimestamp();
-    if ($diff<60)
-       return $diff . " second" . plural($diff) . " ago";
-    $diff = round($diff/60);
-    if ($diff<60)
-       return $diff . " minute" . plural($diff) . " ago";
-    $diff = round($diff/60);
-    if ($diff<24)
-       return $diff . " hour" . plural($diff) . " ago";
-    $diff = round($diff/24);
-    return $diff . " day" . plural($diff) . " ago";
-}
 
 # Temporary until initial mirror is ready
 echo sprintf(
     '<p><a href="%s">%d src.rpm</a> rebuilt for Mageia out of <a href="%s">%d</a>
-    (<a href="%s">List of Mandriva packages still present</a>).</p>',
+    (<a href="%s">list of Mandriva packages still present</a>).</p>',
 
     'data/src.mga.txt', $nb_rpm_mga,
     'data/src.txt', $nb_rpm,
@@ -156,30 +176,43 @@ echo sprintf(
 echo '<table>',
     '<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan="2">Status</th></tr>';
 
+$s = '';
+$tmpl = <<<T
+<tr class="%s">
+    <td>%s</td>
+    <td><a href="?user=%s">%s</a></td>
+    <td>%s</td>
+    <td>%s</td>
+    <td>%s/%s</td>
+    <td class="status-box"></td>
+T;
 foreach ($pkgs as $key => $p) {
-    $p["type"] = pkg_gettype($p);
-    echo "<tr class=" . $p["type"] . ">\n";
-    echo "<td>" . key2date($key) . "</td>\n";
-    echo "<td><a href='?user=" . $p["user"] . "'>" . $p["user"] . "</a></td>\n";
-    echo "<td>" . $p["package"] . "</td>\n";
-    echo "<td>" . $p["version"] . "</td>\n";
-    echo "<td>" . $p["media"] . "/" . $p["section"] . "</td>\n";
-    echo "<td class='status-box' />\n";
-    $typelink = "";
-    if ($p["type"] == "failure") {
-       $typelink = "/uploads/" . $p["type"] . "/" . $p["path"];
-    } else if ($p["type"] == "rejected") {
-       $typelink = "/uploads/" . $p["type"] . "/" . $p["path"] . ".youri";
+    $p['type'] = pkg_gettype($p);
+
+    $s .= sprintf($tmpl,
+        $p['type'],
+        key2date($key),
+        $p['user'], $p['user'],
+        $p['package'],
+        $p['version'],
+        $p['media'], $p['section']
+    );
+    
+    $typelink = '';
+    if ($p['type'] == 'failure') {
+       $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
+    } elseif ($p['type'] == 'rejected') {
+       $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
     }
-    echo "<td>";
-    if ($typelink)
-        echo "<a href='$typelink'>";
-    echo $p["type"];
-    if ($typelink)
-        echo "</a>";
-    echo "</td>\n";
-    echo "</tr>\n";
+
+    $s .= '<td>';
+    $s .= ($typelink != '') ?
+        sprintf('<a href="%s">%s</a>', $typelink, $p['type']) :
+        $p['type'];
+
+    $s .= '</td></tr>';
 }
+echo $s;
 ?>
 </table>
 
