@@ -175,6 +175,8 @@ function key2date($key) {
     <h1><?php echo $title ?></h1>
 
 <?php
+if (!is_null($g_user))
+    echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
 
 # Temporary until initial mirror is ready
 echo sprintf(
