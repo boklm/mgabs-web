@@ -136,7 +136,7 @@ function key2date($key) {
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title><?php echo $title ?></title>
+    <title><?php echo strip_tags($title); ?></title>
     <meta name="robots" content="<?php echo $robots; ?>">
     <style type="text/css">
     .clear { clear: both; }
