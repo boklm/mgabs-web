@@ -1,12 +1,26 @@
 <?php
-
-/* Copyright (C) 2011 Oliver Blin                                         *\
-/**************************************************************************\
-* This program is free software; you can redistribute it and/or modify it  *
-* under the terms of the GNU General Public License aspublished by the     *
-* Free Software Foundation; either version 2 of the License, or (at your   *
-* option) any later version.                                               *
-\**************************************************************************/
+/**
+ * Mageia build-system quick status report script.
+ *
+ * @copyright Copyright (C) 2011 Oliver Blin
+ *
+ * @author Pascal Terjan
+ * @author Romain d'Alverny
+ *
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU GPL v2
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License aspublished by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ *
+ * Shows submitted packages in the past $max_modified 24 hours and their
+ * status (built & uploaded, failed build, rejected, etc.).
+ *
+ * This was written anew in Jan. 2011 because existing Mandriva build-system
+ * web report code was not clearly licensed at this very time.
+*/
 
 error_reporting(E_ALL);
 
