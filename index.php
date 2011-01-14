@@ -2,7 +2,7 @@
 /**
  * Mageia build-system quick status report script.
  *
- * @copyright Copyright (C) 2011 Oliver Blin
+ * @copyright Copyright (C) 2011 Olivier Blin
  *
  * @author Pascal Terjan
  * @author Romain d'Alverny
