@@ -296,7 +296,7 @@ if ($total > 0) {
 
         $s .= '</td><td>';
         if ($p['type'] == 'uploaded')
-            $s .= duration_to_diff($p['buildtime']['diff']);
+            $s .= key2date(null, $p['buildtime']['diff']);
         $s .= '</td>';
         //$s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
         $s .= '</tr>';
