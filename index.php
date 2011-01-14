@@ -230,6 +230,9 @@ $stats = array(
 );
 $total = count($pkgs);
 
+// count users' packages
+$users = array();
+
 // feedback labels
 $badges = array(
     'uploaded' => 'Congrats %s! \o/',
@@ -245,6 +248,12 @@ if ($total > 0) {
         $p['type'] = pkg_gettype($p);
 
         $stats[$p['type']] += 1;
+
+        if (!array_key_exists($p['user'], $users))
+            $users[$p['user']] = 1;
+        else
+            $users[$p['user']] += 1;
+
         $s .= sprintf($tmpl,
             $p['type'],
             key2date($key),
@@ -289,7 +298,17 @@ if ($total > 0) {
         $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
             $k, $k, $v, round($v/$total*100));
     }
-    $s .= '</table></div>';
+
+    $s .= '</table><br />';
+
+    $s .= '<table><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
+    foreach ($users as $k => $v)
+        $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
+            $k, $k, $v);
+
+    $s .= '</table>';
+    $s .= '</div>';
+
     echo $s;
 }
 else
