@@ -46,9 +46,12 @@ shell_exec('grep -v mga src.txt > src.mdv.txt');
 
 chdir($upload_dir);
 
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) -ctime -$max_modified");
-
-preg_match_all("!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)$!m", $all_files, $matches, PREG_SET_ORDER);
+$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) ! -ctime $max_modified -printf \"%p\t%T@\"");
+$re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)\s+(\d+\.\d+)$!m";
+$r = preg_match_all($re,
+    $all_files,
+    $matches,
+    PREG_SET_ORDER);
 
 $pkgs = array();
 foreach ($matches as $val) {
@@ -85,6 +88,10 @@ foreach ($matches as $val) {
     } else if ($ext == '.lock') {
         // parse build bot from $data
         $pkgs[$key]['status']['build'] = 1;
+    } else if ($ext == '.done') {
+        $pkgs[$key]['buildtime']['start'] = strtotime($val[6]);
+        $pkgs[$key]['buildtime']['end'] = round($val[12]);
+        $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
     }
 }
 // sort by key in reverse order to have more recent pkgs first
@@ -126,26 +133,38 @@ function plural($num) {
 }
 
 /**
- * @param string $key
+ * Return human-readable time difference:
+ * - against $key (YmdHis expected format)
+ * - using only $diff (takes precedence over $key if provided)
+ *
+ * @param string $key past date to diff against from now
+ * @param integer $diff time difference in seconds
  *
  * @return string
 */
-function key2date($key) {
-    global $tz;    
-    $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
-    $diff = time() - $date->getTimestamp();
+function key2date($key, $diff = null) {
+    global $tz;
+
+    if (is_null($diff) || $diff <= 0) {
+        $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
+        if ($date <= 0)
+            return null;
+
+        $diff = time() - $date->getTimestamp();
+    }
     if ($diff<60)
-       return $diff . " second" . plural($diff) . " ago";
+       return $diff . " second" . plural($diff);
     $diff = round($diff/60);
     if ($diff<60)
-       return $diff . " minute" . plural($diff) . " ago";
+       return $diff . " minute" . plural($diff);
     $diff = round($diff/60);
     if ($diff<24)
-       return $diff . " hour" . plural($diff) . " ago";
+       return $diff . " hour" . plural($diff);
     $diff = round($diff/24);
 
-    return $diff . " day" . plural($diff) . " ago";
+    return $diff . " day" . plural($diff);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -256,7 +275,7 @@ if ($total > 0) {
 
         $s .= sprintf($tmpl,
             $p['type'],
-            key2date($key),
+            key2date($key) . ' ago',
             $p['user'], $p['user'],
             $p['package'],
             $p['version'],
@@ -275,6 +294,9 @@ if ($total > 0) {
             sprintf('<a href="%s">%s</a>', $typelink, $p['type']) :
             $p['type'];
 
+        $s .= '</td><td>';
+        if ($p['type'] == 'uploaded')
+            $s .= duration_to_diff($p['buildtime']['diff']);
         $s .= '</td>';
         //$s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
         $s .= '</tr>';
