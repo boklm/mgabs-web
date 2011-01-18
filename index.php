@@ -149,7 +149,7 @@ function key2timestamp($key) {
     return $date->getTimestamp();
 }
 
-function timediff($key, $end) {
+function timediff($start, $end) {
 /**
  * Return human-readable time difference
  *
