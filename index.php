@@ -313,8 +313,10 @@ if ($total > 0) {
     }
     // Table
     echo '<table>',
-        '<caption>Packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
-        '<tr><th>Submitted</th><th>User</th><th>Package</th><th>Target</th><th>Media</th><th colspan="2">Status</th></tr>',
+        '<caption>', $total, ' packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
+        '<tr><th>Submitted</th><th>User</th>
+            <th>Package</th><th>Target</th><th>Media</th>
+            <th colspan="2">Status</th><th>Build time</th></tr>',
         $s,
         '</table>';
 
@@ -331,7 +333,7 @@ if ($total > 0) {
             $k, $k, $v, round($v/$total*100));
     }
 
-    $s .= '</table><br />';
+    $s .= '</table><br /><br />';
 
     $s .= '<table><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
     foreach ($users as $k => $v)
