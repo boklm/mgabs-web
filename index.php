@@ -46,7 +46,7 @@ shell_exec('grep -v mga src.txt > src.mdv.txt');
 
 chdir($upload_dir);
 
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) ! -ctime $max_modified -printf \"%p\t%T@\"");
+$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) ! -ctime $max_modified -printf \"%p\t%T@\\n\"");
 $re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)\s+(\d+\.\d+)$!m";
 $r = preg_match_all($re,
     $all_files,
@@ -89,7 +89,7 @@ foreach ($matches as $val) {
         // parse build bot from $data
         $pkgs[$key]['status']['build'] = 1;
     } else if ($ext == '.done') {
-        $pkgs[$key]['buildtime']['start'] = strtotime($val[6]);
+        $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
         $pkgs[$key]['buildtime']['end'] = round($val[12]);
         $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
     }
@@ -133,6 +133,24 @@ function plural($num) {
 }
 
 /**
+ * Return timestamp from package key
+ * @param string $key package submission key
+ *
+ * @return integer
+*/
+
+function key2timestamp($key) {
+    global $tz;
+
+    $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
+    if ($date <= 0)
+        return null;
+
+    return $date->getTimestamp();
+}
+
+function key2date($key, $diff = null) {
+/**
  * Return human-readable time difference:
  * - against $key (YmdHis expected format)
  * - using only $diff (takes precedence over $key if provided)
@@ -142,15 +160,14 @@ function plural($num) {
  *
  * @return string
 */
-function key2date($key, $diff = null) {
     global $tz;
 
     if (is_null($diff) || $diff <= 0) {
-        $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
-        if ($date <= 0)
+        $t = key2timestamp($key);
+        if (is_null($t))
             return null;
 
-        $diff = time() - $date->getTimestamp();
+        $diff = time() - $t;
     }
     if ($diff<60)
        return $diff . " second" . plural($diff);
