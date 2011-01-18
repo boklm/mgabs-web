@@ -149,26 +149,19 @@ function key2timestamp($key) {
     return $date->getTimestamp();
 }
 
-function key2date($key, $diff = null) {
+function timediff($key, $end) {
 /**
- * Return human-readable time difference:
- * - against $key (YmdHis expected format)
- * - using only $diff (takes precedence over $key if provided)
+ * Return human-readable time difference
  *
- * @param string $key past date to diff against from now
- * @param integer $diff time difference in seconds
+ * @param integer $start timestamp
+ * @param integer $end timestamp, defaults to now
  *
  * @return string
 */
-    global $tz;
-
-    if (is_null($diff) || $diff <= 0) {
-        $t = key2timestamp($key);
-        if (is_null($t))
-            return null;
-
-        $diff = time() - $t;
+    if (is_null($end)) {
+	$end = time();
     }
+    $diff = $end - $start;
     if ($diff<60)
        return $diff . " second" . plural($diff);
     $diff = round($diff/60);
@@ -292,7 +285,7 @@ if ($total > 0) {
 
         $s .= sprintf($tmpl,
             $p['type'],
-            key2date($key) . ' ago',
+            timediff(key2timestamp($key)) . ' ago',
             $p['user'], $p['user'],
             $p['package'],
             $p['version'],
@@ -313,7 +306,7 @@ if ($total > 0) {
 
         $s .= '</td><td>';
         if ($p['type'] == 'uploaded')
-            $s .= key2date(null, $p['buildtime']['diff']);
+            $s .= timediff($p['buildtime']['start'], $p['buildtime']['end']);
         $s .= '</td>';
         //$s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
         $s .= '</tr>';
