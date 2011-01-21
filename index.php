@@ -24,79 +24,6 @@
 
 error_reporting(E_ALL);
 
-$g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
-
-$upload_dir = '/home/schedbot/uploads';
-$max_modified = 2;
-$title = '<a href="http://mageia.org/">Mageia</a> build system status';
-$robots = 'index,nofollow,nosnippet,noarchive';
-if ($g_user) {
-    $title .= ' for ' . $g_user . "'s packages";
-    $robots = 'no' . $robots;
-}
-$tz = new DateTimeZone('UTC');
-$date_gen = date('c');
-
-# Temporary until initial mirror is ready
-chdir("data");
-$nb_rpm = shell_exec('rpm -qp --qf "%{SOURCERPM}\n" /distrib/bootstrap/distrib/cauldron/i586/media/core/release/*.rpm | sort -u | tee src.txt | wc -l');
-$nb_rpm_mga = shell_exec('grep mga src.txt | tee src.mga.txt | wc -l');
-shell_exec('grep -v mga src.txt > src.mdv.txt');
-#########################################
-
-chdir($upload_dir);
-
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
-$re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)\s+(\d+\.\d+)$!m";
-$r = preg_match_all($re,
-    $all_files,
-    $matches,
-    PREG_SET_ORDER);
-
-$pkgs = array();
-foreach ($matches as $val) {
-
-    if ($_GET['user'] && ($_GET['user'] != $val[7])) {
-        continue;
-    }
-    $key = $val[6] . $val[7];
-    if (!is_array($pkgs[$key])) {
-
-        $pkgs[$key] = array(
-            'status'  => array(),
-            'path'    => $val[2],
-            'version' => $val[3],
-            'media'   => $val[4],
-            'section' => $val[5],
-            'user'    => $val[7],
-            'host'    => $val[8],
-            'job'     => $val[9]
-        );
-    }
-
-    $status = $val[1];
-    $data = $val[10];
-    $pkgs[$key]['status'][$status] = 1;
-    $ext = $val[11];
-    if ($ext == '.src.rpm.info') {
-        preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
-        $pkgs[$key]['package'] = $name[1];
-    } else if ($ext == '.src') {
-        $pkgs[$key]['status']['src'] = 1;
-    } else if ($ext == '.youri') {
-        $pkgs[$key]['status']['youri'] = 1;
-    } else if ($ext == '.lock') {
-        // parse build bot from $data
-        $pkgs[$key]['status']['build'] = 1;
-    } else if ($ext == '.done') {
-        $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
-        $pkgs[$key]['buildtime']['end'] = round($val[12]);
-        $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
-    }
-}
-// sort by key in reverse order to have more recent pkgs first
-krsort($pkgs);
-
 /**
  * @param array $pkg
  *
@@ -175,6 +102,125 @@ function timediff($start, $end) {
     return $diff . " day" . plural($diff);
 }
 
+$g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
+
+$upload_dir = '/home/schedbot/uploads';
+$max_modified = 2;
+$title = '<a href="http://mageia.org/">Mageia</a> build system status';
+$robots = 'index,nofollow,nosnippet,noarchive';
+if ($g_user) {
+    $title .= ' for ' . $g_user . "'s packages";
+    $robots = 'no' . $robots;
+}
+$tz = new DateTimeZone('UTC');
+$date_gen = date('c');
+
+# Temporary until initial mirror is ready
+chdir("data");
+$nb_rpm = shell_exec('rpm -qp --qf "%{SOURCERPM}\n" /distrib/bootstrap/distrib/cauldron/i586/media/core/release/*.rpm | sort -u | tee src.txt | wc -l');
+$nb_rpm_mga = shell_exec('grep mga src.txt | tee src.mga.txt | wc -l');
+shell_exec('grep -v mga src.txt > src.mdv.txt');
+#########################################
+
+chdir($upload_dir);
+
+$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
+$re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.+)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)\s+(\d+\.\d+)$!m";
+$r = preg_match_all($re,
+    $all_files,
+    $matches,
+    PREG_SET_ORDER);
+
+$pkgs = array();
+foreach ($matches as $val) {
+
+    if ($_GET['user'] && ($_GET['user'] != $val[7])) {
+        continue;
+    }
+    $key = $val[6] . $val[7];
+    if (!is_array($pkgs[$key])) {
+
+        $pkgs[$key] = array(
+            'status'  => array(),
+            'path'    => $val[2],
+            'version' => $val[3],
+            'media'   => $val[4],
+            'section' => $val[5],
+            'user'    => $val[7],
+            'host'    => $val[8],
+            'job'     => $val[9]
+        );
+    }
+
+    $status = $val[1];
+    $data = $val[10];
+    $pkgs[$key]['status'][$status] = 1;
+    $ext = $val[11];
+    if ($ext == '.src.rpm.info') {
+        preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
+        $pkgs[$key]['package'] = $name[1];
+    } else if ($ext == '.src') {
+        $pkgs[$key]['status']['src'] = 1;
+    } else if ($ext == '.youri') {
+        $pkgs[$key]['status']['youri'] = 1;
+    } else if ($ext == '.lock') {
+        // parse build bot from $data
+        $pkgs[$key]['status']['build'] = 1;
+    } else if ($ext == '.done') {
+        $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
+        $pkgs[$key]['buildtime']['end'] = round($val[12]);
+        $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
+    }
+}
+// sort by key in reverse order to have more recent pkgs first
+krsort($pkgs);
+
+// count all packages statuses
+$stats = array(
+    'uploaded' => 0,
+    'failure'  => 0,
+    'todo'     => 0,
+    'building' => 0,
+    'partial'  => 0,
+    'built'    => 0,
+);
+$total = count($pkgs);
+
+// count users' packages
+$users = array();
+
+if ($total > 0) {
+    foreach ($pkgs as $key => $p) {
+        $pkgs[$key]['type'] = pkg_gettype($p);
+
+        $stats[$pkgs[$key]['type']] += 1;
+
+        if (!array_key_exists($p['user'], $users))
+            $users[$p['user']] = 1;
+        else
+            $users[$p['user']] += 1;
+    }
+}
+
+// feedback labels
+$badges = array(
+    'uploaded' => 'Congrats %s! \o/',
+    'failure'  => 'Booooo! /o\\',
+    'todo'     => '',
+    'building' => '',
+    'partial'  => '',
+    'built'    => ''
+);
+
+foreach ($stats as $k => $v) {
+    Header("X-BS-Queue-$k: $v");
+}
+
+$w = $stats['todo'] - 10;
+if($w < 0)
+    $w = 0;
+$w = $w * 60;
+Header("X-BS-Throttle: $w");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -251,41 +297,8 @@ $tmpl = <<<T
     <td class="status-box"></td>
 T;
 
-// count all packages statuses
-$stats = array(
-    'uploaded' => 0,
-    'failure'  => 0,
-    'todo'     => 0,
-    'building' => 0,
-    'partial'  => 0,
-    'built'    => 0,
-);
-$total = count($pkgs);
-
-// count users' packages
-$users = array();
-
-// feedback labels
-$badges = array(
-    'uploaded' => 'Congrats %s! \o/',
-    'failure'  => 'Booooo! /o\\',
-    'todo'     => '',
-    'building' => '',
-    'partial'  => '',
-    'built'    => ''
-);
-
 if ($total > 0) {
     foreach ($pkgs as $key => $p) {
-        $p['type'] = pkg_gettype($p);
-
-        $stats[$p['type']] += 1;
-
-        if (!array_key_exists($p['user'], $users))
-            $users[$p['user']] = 1;
-        else
-            $users[$p['user']] += 1;
-
         $s .= sprintf($tmpl,
             $p['type'],
             timediff(key2timestamp($key)) . ' ago',
