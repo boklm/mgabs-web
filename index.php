@@ -151,9 +151,11 @@ foreach ($matches as $val) {
             'job'     => $val[9]
         );
     }
-
     $status = $val[1];
     $data = $val[10];
+    if (preg_match("/@(\d+):/", $data, $revision)) {
+        $pkgs[$key]['revision'] = $revision[1];
+    }
     $pkgs[$key]['status'][$status] = 1;
     $ext = $val[11];
     if ($ext == '.src.rpm.info') {
@@ -291,7 +293,7 @@ $tmpl = <<<T
 <tr class="%s">
     <td>%s</td>
     <td><a href="?user=%s">%s</a></td>
-    <td>%s</td>
+    <td><a href="http://viewvc.mageia.org/packages?view=revision&revision=%d">%s</a></td>
     <td>%s</td>
     <td>%s/%s</td>
     <td class="status-box"></td>
@@ -303,6 +305,7 @@ if ($total > 0) {
             $p['type'],
             timediff(key2timestamp($key)) . ' ago',
             $p['user'], $p['user'],
+            $p['revision'],
             $p['package'],
             $p['version'],
             $p['media'], $p['section']
