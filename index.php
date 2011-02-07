@@ -117,9 +117,7 @@ $date_gen = date('c');
 
 # Temporary until initial mirror is ready
 chdir("data");
-$nb_rpm = shell_exec('rpm -qp --qf "%{SOURCERPM}\n" /distrib/bootstrap/distrib/cauldron/i586/media/core/release/*.rpm | sort -u | tee src.txt | wc -l');
-$nb_rpm_mga = shell_exec('grep mga src.txt | tee src.mga.txt | wc -l');
-shell_exec('grep -v mga src.txt > src.mdv.txt');
+$missing_deps = file("missing-deps.i586.txt");
 #########################################
 
 chdir($upload_dir);
@@ -275,14 +273,8 @@ if (!is_null($g_user))
 
 # Temporary until initial mirror is ready
 echo sprintf(
-    '<p><a href="%s">%d src.rpm</a> rebuilt for Mageia out of <a href="%s">%d</a> (%d%%)
-    (<a href="%s">list of %d Mandriva packages still present</a>). <strong><a href="%s">You can help!</a></strong>.</p>',
-
-    'data/src.mga.txt', $nb_rpm_mga,
-    'data/src.txt', $nb_rpm,
-    $nb_rpm > 0 ? floor($nb_rpm_mga / $nb_rpm * 100) : 0,
-    'data/src.mdv.txt',
-    $nb_rpm - $nb_rpm_mga,
+    '<p><a href="%s">%d broken dependencies</a>. <strong><a href="%s">You can help!</a></strong></p>',
+    'data/missing-deps.i586.txt', count($missing_deps),
     'http://www.mageia.org/wiki/doku.php?id=packaging#starting_package_import'
 );
 
