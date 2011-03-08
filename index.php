@@ -286,7 +286,7 @@ $tmpl = <<<T
 <tr class="%s">
     <td>%s</td>
     <td><a href="?user=%s">%s</a></td>
-    <td><a href="http://viewvc.mageia.org/packages?view=revision&revision=%d">%s</a></td>
+    <td><a href="http://svnweb.mageia.org/packages?view=revision&revision=%d">%s</a></td>
     <td>%s</td>
     <td>%s/%s</td>
     <td class="status-box"></td>
