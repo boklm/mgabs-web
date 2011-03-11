@@ -229,7 +229,7 @@ Header("X-BS-Throttle: $w");
     <meta charset="utf-8">
     <title><?php echo strip_tags($title); ?></title>
     <meta name="robots" content="<?php echo $robots; ?>">
-    <link rel="shortcut icon" type="image/ico" href="https://bugs.mageia.org/images/favicon.ico" />
+    <link rel="icon" type="image/png" href="favicon.png" />
     <style type="text/css">
     .clear { clear: both; }
     table { 
