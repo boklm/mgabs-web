@@ -289,7 +289,7 @@ $tmpl = <<<T
 <tr class="%s">
     <td>%s</td>
     <td><a href="?user=%s">%s</a></td>
-    <td><a href="http://svnweb.mageia.org/packages?view=revision&revision=%d">%s</a></td>
+    <td><a href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a></td>
     <td>%s</td>
     <td>%s/%s</td>
     <td class="status-box"></td>
@@ -302,6 +302,7 @@ if ($total > 0) {
             timediff(key2timestamp($key)) . ' ago',
             $p['user'], $p['user'],
             $p['revision'],
+            addslashes($p['summary']),
             $p['package'],
             $p['version'],
             $p['media'], $p['section']
