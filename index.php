@@ -345,7 +345,7 @@ if ($total > 0) {
         <div id="score-box"><div id="score-meter" style="height: %dpx;"></div></div></div>',
         $score, $score);
 
-    $s .= '<table><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
+    $s .= '<table style="width: 100%"><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
     foreach ($stats as $k => $v) {
         $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
             $k, $k, $v, round($v/$total*100));
@@ -353,7 +353,7 @@ if ($total > 0) {
 
     $s .= '</table><br /><br />';
 
-    $s .= '<table><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
+    $s .= '<table style="width: 100%"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
     foreach ($users as $k => $v)
         $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
             $k, $k, $v);
