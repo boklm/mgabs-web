@@ -360,7 +360,7 @@ if ($total > 0) {
 
     $s .= '</table><br /><br />';
 
-    $s .= '<table><caption>Build time</caption></tr><th></th><th></th></tr>';
+    $s .= '<table style="width: 100%"><caption>Build time</caption></tr><th>Duration</th><th>Count</th></tr>';
 
     /**
     */
