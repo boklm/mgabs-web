@@ -361,9 +361,31 @@ if ($total > 0) {
     $s .= '</table><br /><br />';
 
     $s .= '<table><caption>Build time</caption></tr><th></th><th></th></tr>';
-    ksort($buildtime_stats);
+
+    /**
+    */
+    function timesort($a, $b)
+    {
+        $a = explode(' ', trim($a));
+        $b = explode(' ', trim($b));
+
+        if ($a[1] == 'hour' || $a[1] == 'hours')
+            $a[0] *= 3600;
+
+        if ($b[1] == 'hour' || $a[1] == 'hours')
+            $b[0] *= 3600;
+
+        if ($a[0] > $b[0])
+            return 1;
+        elseif ($a[0] < $b[0])
+            return -1;
+
+        return 0;
+    }
+    uksort($buildtime_stats, "timesort");
+
     foreach ($buildtime_stats as $time => $count) {
-        $s .= sprintf('<tr><td><td>%s</td><td>%d</td></tr>',
+        $s .= sprintf('<tr><td>%s</td><td>%d</td></tr>',
             $time, $count);
     }
     // TODO (rda) compute/show average for all builds
