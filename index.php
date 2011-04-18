@@ -398,11 +398,15 @@ if ($total > 0) {
     $s .= '<table style="width: 100%;"><caption>Build time</caption>
         <tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>';
 
-    $s .= sprintf('<tr><td>Total time</td><td>%s</td></tr><tr><td>Average</td><td>%s</td></tr>',
-        $buildtime_avg, round($buildtime_avg / $buildtime_cnt, 1));
+    $s .= sprintf('<tr><td>Total time</td><td>%s</td></tr>
+        <tr><td>Average</td><td>%s</td></tr>
+        <tr><td>Builds count</td><td>%s</td></tr>',
+        $buildtime_avg,
+        round($buildtime_avg / $buildtime_cnt, 1),
+        $buildtime_cnt);
 
     $s .= $bts;
-    $s .= '</table>';
+    $s .= '</table><span style="font-size: 85%;">Does not take build failures into account.</span>';
 
     $s .= '</div>';
 
