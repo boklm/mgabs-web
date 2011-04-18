@@ -355,7 +355,7 @@ if ($total > 0) {
     $s .= '</table><br /><br />';
 
     $s .= '<table style="width: 100%"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
-    asort($users);
+    arsort($users);
     foreach ($users as $k => $v)
         $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
             $k, $k, $v);
