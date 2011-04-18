@@ -393,11 +393,13 @@ if ($total > 0) {
         $buildtime_avg += $tmp[0] * $count;
         $buildtime_cnt += $count;
     }
-    $buildtime_avg = round($buildtime_avg / $buildtime_cnt, 1);
 
-    $s .= sprintf('<table style="width: 100%%;"><caption>Build time (average: %s)</caption>
-        <tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>',
-        $buildtime_avg);
+    $s .= '<table style="width: 100%;"><caption>Build time</caption>
+        <tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>';
+
+    $s .= sprintf('<tr><td>Total time</td><td>%s</td></tr><tr><td>Average</td><td>%s</td></tr>',
+        $buildtime_avg, round($buildtime_avg / $buildtime_cnt, 1));
+
     $s .= $bts;
     $s .= '</table>';
 
