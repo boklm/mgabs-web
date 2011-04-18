@@ -87,7 +87,7 @@ function timediff($start, $end) {
  * @return string
 */
     if (is_null($end)) {
-	$end = time();
+        $end = time();
     }
     $diff = $end - $start;
     if ($diff<60)
@@ -282,6 +282,8 @@ echo sprintf(
 
 #########################################
 
+$buildtime_stats = array();
+
 $s = '';
 $tmpl = <<<T
 <tr class="%s">
@@ -318,8 +320,11 @@ if ($total > 0) {
             $p['type'];
 
         $s .= '</td><td>';
-        if ($p['type'] == 'uploaded')
-            $s .= timediff($p['buildtime']['start'], $p['buildtime']['end']);
+        if ($p['type'] == 'uploaded') {
+            $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']);
+            $s .= $tdiff;
+            @$buildtime_stats[$tdiff] += 1;
+        }
         $s .= '</td>';
         //$s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
         $s .= '</tr>';
@@ -353,7 +358,17 @@ if ($total > 0) {
         $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
             $k, $k, $v);
 
+    $s .= '</table><br /><br />';
+
+    $s .= '<table><caption>Build time</caption></tr><th></th><th></th></tr>';
+    ksort($buildtime_stats);
+    foreach ($buildtime_stats as $time => $count) {
+        $s .= sprintf('<tr><td><td>%s</td><td>%d</td></tr>',
+            $time, $count);
+    }
+    // TODO (rda) compute/show average for all builds
     $s .= '</table>';
+
     $s .= '</div>';
 
     echo $s;
