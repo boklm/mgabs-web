@@ -360,8 +360,6 @@ if ($total > 0) {
 
     $s .= '</table><br /><br />';
 
-    $s .= '<table style="width: 100%"><caption>Build time</caption></tr><th>Duration</th><th>Count</th></tr>';
-
     /**
     */
     function timesort($a, $b)
@@ -384,11 +382,23 @@ if ($total > 0) {
     }
     uksort($buildtime_stats, "timesort");
 
+    $bts = '';
+    $buildtime_avg = 0;
+    $buildtime_cnt = 0;
     foreach ($buildtime_stats as $time => $count) {
-        $s .= sprintf('<tr><td>%s</td><td>%d</td></tr>',
+        $bts .= sprintf('<tr><td>%s</td><td>%d</td></tr>',
             $time, $count);
+
+        $tmp = explode(' ', $time);
+        $buildtime_avg += $tmp[0] * $count;
+        $buildtime_cnt += $count;
     }
-    // TODO (rda) compute/show average for all builds
+    $buildtime_avg = round($buildtime_avg / $buildtime_cnt, 1);
+
+    $s .= sprintf('<table style="width: 100%"><caption>Build time (average: %s)</caption>
+        <tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>',
+        $buildtime_avg);
+    $s .= $bts;
     $s .= '</table>';
 
     $s .= '</div>';
