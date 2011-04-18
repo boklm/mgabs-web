@@ -406,7 +406,7 @@ if ($total > 0) {
         $buildtime_cnt);
 
     $s .= $bts;
-    $s .= '</table><span style="font-size: 85%;">Does not take build failures into account.</span>';
+    $s .= '</table><span style="font-size: 85%;">Does not take<br />build failures<br />into account.</span>';
 
     $s .= '</div>';
 
