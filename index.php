@@ -175,8 +175,14 @@ foreach ($matches as $val) {
         $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
         $pkgs[$key]['buildtime']['end'] = round($val[12]);
         $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
-        $buildtime_total += $pkgs[$key]['buildtime']['diff'];
-        $build_count += 1;
+        
+        // keep obviously dubious values out of there
+        // 12 hours is be an acceptable threshold given current BS global perfs
+        // as of April 2011
+        if ($pkgs[$key]['buildtime']['diff'] < 43200) {
+            $buildtime_total += $pkgs[$key]['buildtime']['diff'];
+            $build_count += 1;
+        }
     }
 }
 // sort by key in reverse order to have more recent pkgs first
