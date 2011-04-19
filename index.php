@@ -131,6 +131,10 @@ $r = preg_match_all($re,
     PREG_SET_ORDER);
 
 $pkgs = array();
+
+$buildtime_total = 0;
+$build_count = 0;
+
 foreach ($matches as $val) {
 
     if ($_GET['user'] && ($_GET['user'] != $val[7])) {
@@ -171,6 +175,8 @@ foreach ($matches as $val) {
         $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
         $pkgs[$key]['buildtime']['end'] = round($val[12]);
         $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
+        $buildtime_total += $pkgs[$key]['buildtime']['diff'];
+        $build_count += 1;
     }
 }
 // sort by key in reverse order to have more recent pkgs first
@@ -222,6 +228,10 @@ if($w < 0)
     $w = 0;
 $w = $w * 60;
 Header("X-BS-Throttle: $w");
+
+header(sprintf('X-BS-Buildtime: %d', $buildtime_total));
+$buildtime_avg = round($buildtime_total / $build_count, 2);
+header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -322,7 +332,7 @@ if ($total > 0) {
 
         $s .= '</td><td>';
         if ($p['type'] == 'uploaded') {
-            $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']);
+            $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']); // use $p['buildtime']['diff']; instead?
             $s .= $tdiff;
             @$buildtime_stats[$tdiff] += 1;
         }
@@ -385,15 +395,11 @@ if ($total > 0) {
     uksort($buildtime_stats, "timesort");
 
     $bts = '';
-    $buildtime_avg = 0;
-    $buildtime_cnt = 0;
     foreach ($buildtime_stats as $time => $count) {
         $bts .= sprintf('<tr><td>%s</td><td>%d</td></tr>',
             $time, $count);
 
         $tmp = explode(' ', $time);
-        $buildtime_avg += $tmp[0] * $count;
-        $buildtime_cnt += $count;
     }
 
     $s .= '<table style="width: 100%;"><caption>Build time</caption>';
@@ -401,8 +407,8 @@ if ($total > 0) {
     $s .= sprintf('<tr><td>Total time</td><td>%s</td></tr>
         <tr><td>Average</td><td>%s</td></tr>
         <tr><td>Builds count</td><td>%s</td></tr>',
+        $buildtime_total,
         $buildtime_avg,
-        round($buildtime_avg / $buildtime_cnt, 1),
         $buildtime_cnt);
 
     $s .= '<tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>';
