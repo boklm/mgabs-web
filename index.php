@@ -229,7 +229,8 @@ if($w < 0)
 $w = $w * 60;
 Header("X-BS-Throttle: $w");
 
-header(sprintf('X-BS-Buildtime: %d', $buildtime_total));
+$buildtime_total = $buildtime_total / 60;
+header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
 $buildtime_avg = round($buildtime_total / $build_count, 2);
 header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
 ?>
