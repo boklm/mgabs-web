@@ -408,7 +408,7 @@ if ($total > 0) {
         $tmp = explode(' ', $time);
     }
 
-    $s .= '<table><caption>Build time</caption>';
+    $s .= '<table style="width: 100%;"><caption>Build time</caption>';
 
     $s .= sprintf('<tr><td>Total time</td><td>%s hours</td></tr>
         <tr><td>Average</td><td>%s minutes</td></tr>
