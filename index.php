@@ -419,8 +419,8 @@ if ($total > 0) {
     $s .= '</table><span style="font-size: 85%;">Does not take<br />build failures<br />into account.</span>';
 
     $s .= '<table style="width:100%;"><caption>Build times</caption>';
-    $max = max($build_dates2);
-    foreach ($build_dates2 as $time => $count)
+    $max = max($build_dates);
+    foreach ($build_dates as $time => $count)
         $s .= sprintf('<tr><td>%d</td><td><span style="width: %dpx; height: 10px; background: #aaa;" title="%d"></span></td></tr>',
             $time, round($count / $max * 100), $count);
     $s .= '</table>';
