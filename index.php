@@ -398,14 +398,17 @@ if ($total > 0) {
     uksort($buildtime_stats, "timesort");
 
     $bts = '';
+    $max = max($buildtime_stats);
     foreach ($buildtime_stats as $time => $count) {
-        $bts .= sprintf('<tr><td>%s</td><td>%d</td></tr>',
-            $time, $count);
+        $bts .= sprintf('<tr><td>%s</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
+            $time,
+            round($count/$max*100),
+            $count);
 
         $tmp = explode(' ', $time);
     }
 
-    $s .= '<table style="width: 100%;"><caption>Build time</caption>';
+    $s .= '<table><caption>Build time</caption>';
 
     $s .= sprintf('<tr><td>Total time</td><td>%s hours</td></tr>
         <tr><td>Average</td><td>%s minutes</td></tr>
@@ -418,11 +421,13 @@ if ($total > 0) {
     $s .= $bts;
     $s .= '</table><span style="font-size: 85%;">Does not take<br />build failures<br />into account.</span>';
 
-    $s .= '<table style="width:100%;"><caption>Build times</caption>';
+    $s .= '<table><caption>Build times</caption>';
     $max = max($build_dates);
     foreach ($build_dates as $time => $count)
         $s .= sprintf('<tr><td>%d</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
-            $time, round($count / $max * 100), $count);
+            $time,
+            round($count / $max * 100),
+            $count);
     $s .= '</table>';
 
     $s .= '</div>';
