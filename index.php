@@ -132,8 +132,7 @@ $r = preg_match_all($re,
 
 $pkgs = array();
 
-$buildtime_total = 0;
-$build_count = 0;
+$buildtime_total = array();
 
 foreach ($matches as $val) {
 
@@ -180,13 +179,15 @@ foreach ($matches as $val) {
         // 12 hours is be an acceptable threshold given current BS global perfs
         // as of April 2011
         if ($pkgs[$key]['buildtime']['diff'] < 43200) {
-            $buildtime_total += $pkgs[$key]['buildtime']['diff'];
-            $build_count += 1;
+            $buildtime_total[$key] = $pkgs[$key]['buildtime']['diff'];
         }
     }
 }
 // sort by key in reverse order to have more recent pkgs first
 krsort($pkgs);
+
+$build_count = count($buildtime_total);
+$buildtime_total = array_sum($buildtime_total);
 
 // count all packages statuses
 $stats = array(
