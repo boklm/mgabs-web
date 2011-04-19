@@ -209,16 +209,6 @@ if ($total > 0) {
     }
 }
 
-// feedback labels
-$badges = array(
-    'uploaded' => 'Congrats %s! \o/',
-    'failure'  => 'Booooo! /o\\',
-    'todo'     => '',
-    'building' => '',
-    'partial'  => '',
-    'built'    => ''
-);
-
 foreach ($stats as $k => $v) {
     Header("X-BS-Queue-$k: $v");
 }
@@ -338,7 +328,6 @@ if ($total > 0) {
             @$buildtime_stats[$tdiff] += 1;
         }
         $s .= '</td>';
-        //$s .= '<td>' . sprintf($badges[$p['type']], $p['user']) . '</td>';
         $s .= '</tr>';
     }
     // Table
