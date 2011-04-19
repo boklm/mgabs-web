@@ -400,10 +400,10 @@ if ($total > 0) {
 
     $s .= '<table style="width: 100%;"><caption>Build time</caption>';
 
-    $s .= sprintf('<tr><td>Total time</td><td>%s</td></tr>
-        <tr><td>Average</td><td>%s</td></tr>
+    $s .= sprintf('<tr><td>Total time</td><td>%s hours</td></tr>
+        <tr><td>Average</td><td>%s minutes</td></tr>
         <tr><td>Builds count</td><td>%s</td></tr>',
-        $buildtime_total,
+        round($buildtime_total / 60, 2),
         $buildtime_avg,
         $buildtime_cnt);
 
