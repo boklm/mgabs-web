@@ -133,6 +133,7 @@ $r = preg_match_all($re,
 $pkgs = array();
 
 $buildtime_total = array();
+$buid_dates = array();
 
 foreach ($matches as $val) {
 
@@ -171,9 +172,13 @@ foreach ($matches as $val) {
         // parse build bot from $data
         $pkgs[$key]['status']['build'] = 1;
     } else if ($ext == '.done') {
+        // beware! this block is called twice for a given $key
+
         $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
         $pkgs[$key]['buildtime']['end'] = round($val[12]);
         $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
+        
+        @$build_dates[date('H', $pkgs[$key]['buildtime']['start'])] += 1;
         
         // keep obviously dubious values out of there
         // 12 hours is be an acceptable threshold given current BS global perfs
@@ -185,6 +190,7 @@ foreach ($matches as $val) {
 }
 // sort by key in reverse order to have more recent pkgs first
 krsort($pkgs);
+ksort($build_dates);
 
 $build_count = count($buildtime_total);
 $buildtime_total = array_sum($buildtime_total);
@@ -411,6 +417,13 @@ if ($total > 0) {
     $s .= '<tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>';
     $s .= $bts;
     $s .= '</table><span style="font-size: 85%;">Does not take<br />build failures<br />into account.</span>';
+
+    $s .= '<table style="width:100%;"><caption>Build times</caption>';
+    $max = max($build_dates2);
+    foreach ($build_dates2 as $time => $count)
+        $s .= sprintf('<tr><td>%d</td><td><span style="width: %dpx; height: 10px; background: #aaa;" title="%d"></span></td></tr>',
+            $time, round($count / $max * 100), $count);
+    $s .= '</table>';
 
     $s .= '</div>';
 
