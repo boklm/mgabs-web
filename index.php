@@ -169,8 +169,11 @@ foreach ($matches as $val) {
     } else if ($ext == '.youri') {
         $pkgs[$key]['status']['youri'] = 1;
     } else if ($ext == '.lock') {
-        // parse build bot from $data
-        $pkgs[$key]['status']['build'] = 1;
+        preg_match("!.*\.iurt\.(.*)\.\d+\.\d+!", $data, $buildhost);
+        if ($pkgs[$key]['status']['build'])
+            array_push($pkgs[$key]['status']['build'], $buildhost[1]);
+        else
+            $pkgs[$key]['status']['build'] = array($buildhost[1]);
     } else if ($ext == '.done') {
         // beware! this block is called twice for a given $key
 
@@ -328,11 +331,18 @@ if ($total > 0) {
         } elseif ($p['type'] == 'rejected') {
            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
         }
+        $typestr = $p['type'];
+        if ($p['status']['build']) {
+            $typealt = 'Building on';
+            foreach ($p['status']['build'] as $h)
+                $typealt .= " $h";
+            $typestr = "<span title='$typealt'>$typestr</a>";
+        }
 
         $s .= '<td>';
         $s .= ($typelink != '') ?
-            sprintf('<a href="%s">%s</a>', $typelink, $p['type']) :
-            $p['type'];
+            sprintf('<a href="%s">%s</a>', $typelink, $typestr) :
+            $typestr;
 
         $s .= '</td><td>';
         if ($p['type'] == 'uploaded') {
