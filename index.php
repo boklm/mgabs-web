@@ -7,6 +7,7 @@
  * @author Olivier Blin
  * @author Pascal Terjan
  * @author Romain d'Alverny
+ * @author Michael Scherer
  *
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU GPL v2
  *
@@ -292,8 +293,8 @@ if (!is_null($g_user))
 
 # Temporary until initial mirror is ready
 echo sprintf(
-    '<p><a href="%s">%d broken dependencies</a>. <strong><a href="%s">You can help!</a></strong></p>',
-    'data/missing-deps.i586.txt', count($missing_deps),
+    '<p><a href="%s">%s broken dependencies</a>. <strong><a href="%s">You can help!</a></strong></p>',
+    'data/missing-deps.i586.txt', count($missing_deps) == 0 ? 'no' : count($missing_deps),
     'http://www.mageia.org/wiki/doku.php?id=packaging#starting_package_import'
 );
 
