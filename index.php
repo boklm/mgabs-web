@@ -121,6 +121,7 @@ $date_gen = date('c');
 chdir("data");
 $missing_deps = file("missing-deps.i586.txt");
 #########################################
+$unmaintained = file('unmaintained.txt');
 
 chdir($upload_dir);
 
@@ -293,8 +294,9 @@ if (!is_null($g_user))
 
 # Temporary until initial mirror is ready
 echo sprintf(
-    '<p><a href="%s">%s broken dependencies</a>. <strong><a href="%s">You can help!</a></strong></p>',
+    '<p><a href="%s">%s broken dependencies</a>. <a href="%s">%s unmaintained packages</a>. <strong><a href="%s">You can help!</a></strong></p>',
     'data/missing-deps.i586.txt', count($missing_deps) == 0 ? 'no' : count($missing_deps),
+    'data/unmaintained.txt', count($unmaintained),
     'http://www.mageia.org/wiki/doku.php?id=packaging#starting_package_import'
 );
 
