@@ -250,10 +250,13 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     <meta name="robots" content="<?php echo $robots; ?>">
     <link rel="icon" type="image/png" href="favicon.png" />
     <style type="text/css">
+    body, table {
+        font-family: Verdana, "Trebuchet MS", "Lucida Grande", "Lucida Sans", Verdana, Tahoma, Arial, sans-serif;
+        font-size: 80%;
+    }
     .clear { clear: both; }
     table { 
         border-spacing: 0;
-        font-family: Helvetica, Verdana, Arial, sans-serif; font-size: 80%;
         border: 1px solid #ccc;
         float: left;
     }
