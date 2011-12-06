@@ -297,7 +297,7 @@ echo sprintf(
     '<p><a href="%s">%s broken dependencies</a>. <a href="%s">%s unmaintained packages</a>. <strong><a href="%s">You can help!</a></strong></p>',
     'data/missing-deps.i586.txt', count($missing_deps) == 0 ? 'no' : count($missing_deps),
     'data/unmaintained.txt', count($unmaintained),
-    'http://www.mageia.org/wiki/doku.php?id=packaging#starting_package_import'
+    'https://wiki.mageia.org/en/Importing_packages'
 );
 
 #########################################
@@ -456,6 +456,7 @@ else
 ?>
     <div class="clear"></div>
     <hr />
-    <p>Generated at <?php echo $date_gen; ?>.</p>
+    <p>Generated at <?php echo $date_gen; ?>.
+        Code for this page is in <a href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
 </body>
 </html>
