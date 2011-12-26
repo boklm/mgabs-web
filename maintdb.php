@@ -59,7 +59,7 @@ if (null !== $uid) {
     }
 } elseif (null !== $pkg) {
     if (preg_match_all(sprintf('/%s (.*)\n?/', $pkg), $s, $res)) {
-        $return = array($res[1][0] => $pkg);
+        $return = sprintf('%s %s', $res[1][0], $pkg);
     }
 }
 
@@ -76,6 +76,6 @@ else {
             }
         }
     } else {
-        echo "";
+        echo $return;
     }
 }
