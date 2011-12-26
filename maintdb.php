@@ -8,6 +8,8 @@
  *
  * @param string $uid (GET param) user id
  * @param string $pkg (GET param) package name
+ *
+ *
  * @param mixed  $txt (GET param) whether to return result in text or JSON (default)
  * @param string $iurt (GET param) return a iurt-specific response format: only the username
  *
@@ -15,13 +17,11 @@
  *
  * Returned format is JSON format as a default:
  * <code>
- * {"user_name": {"packages" => ["package_name1", "package_name2"]}}
+ * {"maintainers": {"username": => {"packages" => ["package_name1", "package_name2"]}}}
  * </code>
- *
- * either text format (use ?txt in query string)
+ * or
  * <code>
- * package_name user_name
- * package_name2 user_name2
+ * {"packages": {"package_name": {"maintainers" => ["user1", "user2"]}}}
  * </code>
  *
  * either specific, iurt format (use ?pkg=...&iurt in query string)
@@ -51,9 +51,6 @@ $uid = isset($_GET['uid']) ? trim(htmlentities(strip_tags($_GET['uid']))) : null
 
 /** Package name */
 $pkg = isset($_GET['pkg']) ? trim(htmlentities(strip_tags($_GET['pkg']))) : null;
-
-/** Return format */
-$txt = isset($_GET['txt']) ? true : false;
 
 $iurt = isset($_GET['iurt']) ? true : false;
 
@@ -88,26 +85,10 @@ if (null !== $uid) {
 
 if ($iurt && $pkg) {
     header('Content-Type: text/plain; charset: utf-8');
-    if (isset($return[$pkg]))
-        echo $return[$pkg]['uid'], "\n";
+    if (isset($return['packages']))
+        echo $return['packages'][$pkg]['maintainers'][0], "\n";
     else
-        echo '';
-}
-elseif ($txt) {
-    header('Content-Type: text/plain; charset: utf-8');
-    if (is_array($return)) {
-        if (null !== $uid) {
-            foreach ($return as $u => $data) {
-                foreach ($data['packages'] as $p) {
-                    echo sprintf("%s %s\n", $p, $u);
-                }
-            }
-        } else {
-            echo sprintf('%s %s', $pkg, $return[$pkg]['uid']);
-        }
-    } else {
-        echo $return;
-    }
+        echo "\n";
 }
 else {
     header('Content-Type: application/json; charset=utf-8');
