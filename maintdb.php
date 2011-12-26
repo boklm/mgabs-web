@@ -37,7 +37,7 @@
 */
 
 /** Path to maintdb.txt */
-$maintdb = __DIR__ . '/data/maintdb.txt';
+$maintdb = realpath(__DIR__) . '/data/maintdb.txt';
 
 /** User name */
 $uid = isset($_GET['uid']) ? trim(htmlentities(strip_tags($_GET['uid']))) : null;
@@ -50,6 +50,8 @@ $json = isset($_GET['json']) ? true : false;
 
 /** Returned data */
 $return  = null;
+
+$s = file_get_contents($maintdb);
 
 if (null !== $uid) {
     if (preg_match_all(sprintf('/(.*) %s\n?/', $uid), $s, $res)) {
