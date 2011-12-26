@@ -72,6 +72,19 @@ if (null !== $uid) {
     }
 } elseif (null !== $pkg) {
     $uid = null;
+
+    // just in case, only keep the package name
+    // x11-driver-video-ati-6.14.1-4.mga1.src.rpm => x11-driver-video-ati
+    $ptemp = explode('-', $pkg);
+    $pkg   = array();
+    foreach ($ptemp as $pi) {
+        if (is_numeric($pi[0]))
+            break;
+
+        $pkg[] = $pi;
+    }
+    $pkg = implode('-', $pkg);
+
     if (preg_match_all(sprintf('/%s (.*)\n?/', $pkg), $s, $res)) {
         $return = array(
             'packages' => array(
