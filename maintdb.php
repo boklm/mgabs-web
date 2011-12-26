@@ -111,5 +111,5 @@ elseif ($txt) {
 }
 else {
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($return, JSON_FORCE_OBJECT);
+    echo json_encode($return);
 }
