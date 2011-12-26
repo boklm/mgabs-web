@@ -65,21 +65,31 @@ $s = file_get_contents($maintdb);
 if (null !== $uid) {
     $pkg = null;
     if (preg_match_all(sprintf('/(.*) %s\n?/', $uid), $s, $res)) {
-        $return = array($uid => array('packages' => $res[1]));
+        $return = array(
+            'maintainers' => array(
+                $uid => array(
+                    'packages' => $res[1]
+                )
+            )
+        );
     }
 } elseif (null !== $pkg) {
     $uid = null;
     if (preg_match_all(sprintf('/%s (.*)\n?/', $pkg), $s, $res)) {
-        $return = array($pkg => array('uid' => $res[1][0]));
-    } else {
-        $return = array('_comment' => 'No maintainer found for this package.');
+        $return = array(
+            'packages' => array(
+                $pkg => array(
+                    'maintainers' => array($res[1][0])
+                )
+            )
+        );
     }
 }
 
 if ($iurt && $pkg) {
     header('Content-Type: text/plain; charset: utf-8');
     if (isset($return[$pkg]))
-        echo $return[$pkg]['uid'];
+        echo $return[$pkg]['uid'], "\n";
     else
         echo '';
 }
