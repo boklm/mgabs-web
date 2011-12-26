@@ -8,20 +8,27 @@
  *
  * @param string $uid (GET param) user id
  * @param string $pkg (GET param) package name
- * @param mixed  $json (GET param) whether to return result in text or JSON
+ * @param mixed  $txt (GET param) whether to return result in text or JSON (default)
+ * @param string $iurt (GET param) return a iurt-specific response format: only the username
  *
  * @return string 
  *
- * Returned format is either text format:
+ * Returned format is JSON format as a default:
+ * <code>
+ * {"user_name": {"packages" => ["package_name1", "package_name2"]}}
+ * </code>
+ *
+ * either text format (use ?txt in query string)
  * <code>
  * package_name user_name
  * package_name2 user_name2
  * </code>
  *
- * either JSON format:
+ * either specific, iurt format (use ?pkg=...&iurt in query string)
  * <code>
- * {"user_name": ["package_name1", "package_name2"]}
+ * user_name
  * </code>
+ *
  * 
  * TODO check if preg_match_all() is more efficient than exec('grep ...')
  * TODO if so, check security concerns for $uid and $pkg
@@ -46,36 +53,53 @@ $uid = isset($_GET['uid']) ? trim(htmlentities(strip_tags($_GET['uid']))) : null
 $pkg = isset($_GET['pkg']) ? trim(htmlentities(strip_tags($_GET['pkg']))) : null;
 
 /** Return format */
-$json = isset($_GET['json']) ? true : false;
+$txt = isset($_GET['txt']) ? true : false;
+
+$iurt = isset($_GET['iurt']) ? true : false;
 
 /** Returned data */
-$return  = null;
+$return  = array();
 
 $s = file_get_contents($maintdb);
 
 if (null !== $uid) {
+    $pkg = null;
     if (preg_match_all(sprintf('/(.*) %s\n?/', $uid), $s, $res)) {
-        $return = array($uid => $res[1]);
+        $return = array($uid => array('packages' => $res[1]));
     }
 } elseif (null !== $pkg) {
+    $uid = null;
     if (preg_match_all(sprintf('/%s (.*)\n?/', $pkg), $s, $res)) {
-        $return = sprintf('%s %s', $res[1][0], $pkg);
+        $return = array($pkg => array('uid' => $res[1][0]));
+    } else {
+        $return = array('_comment' => 'No maintainer found for this package.');
     }
 }
 
-if ($json) {
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($return);
+if ($iurt && $pkg) {
+    header('Content-Type: text/plain; charset: utf-8');
+    if (isset($return[$pkg]))
+        echo $return[$pkg]['uid'];
+    else
+        echo '';
 }
-else {
+elseif ($txt) {
     header('Content-Type: text/plain; charset: utf-8');
     if (is_array($return)) {
-        foreach ($return as $u => $packages) {
-            foreach ($packages as $p) {
-                echo sprintf("%s %s\n", $p, $u);
+        if (null !== $uid) {
+            foreach ($return as $u => $data) {
+                foreach ($data['packages'] as $p) {
+                    echo sprintf("%s %s\n", $p, $u);
+                }
             }
+        } else {
+            echo sprintf('%s %s', $pkg, $return[$pkg]['uid']);
         }
     } else {
         echo $return;
     }
+}
+else {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($return, JSON_FORCE_OBJECT);
 }
