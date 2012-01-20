@@ -227,6 +227,13 @@ if ($total > 0) {
     }
 }
 
+// check if emi is running
+$stat = stat("/var/lib/schedbot/tmp/upload");
+if ($stat) {
+	$upload_time = $stat['mtime'];
+}
+
+// publish stats as headers
 foreach ($stats as $k => $v) {
     Header("X-BS-Queue-$k: $v");
 }
@@ -304,6 +311,10 @@ echo sprintf(
 );
 
 #########################################
+
+if ($upload_time) {
+	echo sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
+}
 
 $buildtime_stats = array();
 
