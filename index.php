@@ -208,6 +208,7 @@ $stats = array(
     'building' => 0,
     'partial'  => 0,
     'built'    => 0,
+    'youri'    => 0,
 );
 $total = count($pkgs);
 
