@@ -166,7 +166,7 @@ foreach ($matches as $val) {
     if ($ext == '.src.rpm.info') {
         preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
         $pkgs[$key]['package'] = $name[1];
-    } else if ($ext == '.src') {
+    } else if ($ext == '.src.rpm') {
         $pkgs[$key]['status']['src'] = 1;
     } else if ($ext == '.youri') {
         $pkgs[$key]['status']['youri'] = 1;
