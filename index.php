@@ -342,7 +342,7 @@ foreach ($hosts as $machine => $b) {
 }
 echo '<div align="center"><table>',
      '<caption>', count($hosts), ' builds in progress.</caption>',
-     '<tr><th>Machine</th><th>Arch</th><<th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
+     '<tr><th>Machine</th><th>Arch</th><th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
      $s,
      '</table></div>';
 echo '<div class="clear"></div>';
