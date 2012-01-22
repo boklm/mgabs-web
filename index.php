@@ -129,6 +129,7 @@ $r = preg_match_all($re,
     PREG_SET_ORDER);
 
 $pkgs = array();
+$hosts = array();
 
 $buildtime_total = array();
 $buid_dates = array();
@@ -167,11 +168,15 @@ foreach ($matches as $val) {
     } else if ($ext == '.upload') {
         $pkgs[$key]['status']['upload'] = 1;
     } else if ($ext == '.lock') {
-        preg_match("!.*\.iurt\.(.*)\.\d+\.\d+!", $data, $buildhost);
+	preg_match("!(.*)\.iurt\.(.*)\.\d+\.\d+!", $data, $buildhost);
+	if (!$hosts[$buildhost[2]]) {
+		$hosts[$buildhost[2]]= array();
+	}
+	$hosts[$buildhost[2]][$buildhost[1]] = $key;
         if ($pkgs[$key]['status']['build'])
-            array_push($pkgs[$key]['status']['build'], $buildhost[1]);
+            array_push($pkgs[$key]['status']['build'], $buildhost[2]);
         else
-            $pkgs[$key]['status']['build'] = array($buildhost[1]);
+            $pkgs[$key]['status']['build'] = array($buildhost[2]);
     } else if ($ext == '.done') {
         // beware! this block is called twice for a given $key
 
@@ -311,6 +316,36 @@ if ($upload_time) {
 }
 
 $buildtime_stats = array();
+
+// Builds in progress
+$s = '';
+$tmpl = <<<TB
+<tr>
+    <td>%s</td>
+    <td>%s</td>
+    <td><a href="?user=%s">%s</a></td>
+    <td>%s</td>
+    <td>%s</td>
+    <td>%s/%s</td>
+</tr>
+TB;
+foreach ($hosts as $machine => $b) {
+    foreach ($b as $arch => $key) {
+        $s .= sprintf($tmpl,
+            $machine,
+	    $arch,
+            $pkgs[$key]['user'], $pkgs[$key]['user'],
+            $pkgs[$key]['package'],
+            $pkgs[$key]['version'],
+            $pkgs[$key]['media'], $pkgs[$key]['section']);
+    }
+}
+echo '<div align="center"><table>',
+     '<caption>', count($hosts), ' builds in progress.</caption>',
+     '<tr><th>Machine</th><th>Arch</th><<th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
+     $s,
+     '</table></div>';
+echo '<div class="clear"></div>';
 
 $s = '';
 $tmpl = <<<T
