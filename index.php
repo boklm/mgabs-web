@@ -34,12 +34,8 @@ error_reporting(E_ALL);
 function pkg_gettype($pkg) {
     if (array_key_exists("rejected", $pkg["status"]))
         return "rejected";
-    if (array_key_exists("youri", $pkg["status"])) {
-        if (array_key_exists("src", $pkg["status"]))
-            return "youri";
-        else
-            return "uploaded";
-    }
+    if (array_key_exists("upload", $pkg["status"]))
+        return "uploaded";
     if (array_key_exists("failure", $pkg["status"]))
         return "failure";
     if (array_key_exists("done", $pkg["status"]))
@@ -125,8 +121,8 @@ $unmaintained = file('unmaintained.txt');
 
 chdir($upload_dir);
 
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.youri' -o -name '*.lock' -o -name '*.done' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
-$re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.*)(\.src\.rpm(?:\.info)?|\.youri|\.lock|\.done)\s+(\d+\.\d+)$!m";
+$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.lock' -o -name '*.done' -o -name '*.upload' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
+$re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.*)(\.src\.rpm(?:\.info)?|\.lock|\.done|\.upload)\s+(\d+\.\d+)$!m";
 $r = preg_match_all($re,
     $all_files,
     $matches,
@@ -168,8 +164,8 @@ foreach ($matches as $val) {
         $pkgs[$key]['package'] = $name[1];
     } else if ($ext == '.src.rpm') {
         $pkgs[$key]['status']['src'] = 1;
-    } else if ($ext == '.youri') {
-        $pkgs[$key]['status']['youri'] = 1;
+    } else if ($ext == '.upload') {
+        $pkgs[$key]['status']['upload'] = 1;
     } else if ($ext == '.lock') {
         preg_match("!.*\.iurt\.(.*)\.\d+\.\d+!", $data, $buildhost);
         if ($pkgs[$key]['status']['build'])
@@ -208,7 +204,6 @@ $stats = array(
     'building' => 0,
     'partial'  => 0,
     'built'    => 0,
-    'youri'    => 0,
 );
 $total = count($pkgs);
 
@@ -279,7 +274,6 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     tr.building { background: #ffff99; }
     tr.partial { background: #bbbbff; }
     tr.built { background: #cceeff; }
-    tr.youri { background: #aacc66; }
 
     td.status-box { width: 1em; height: 1em; }
     tr.uploaded td.status-box { background: green; }
@@ -288,7 +282,6 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     tr.building td.status-box { background: yellow; }
     tr.partial td.status-box { background: blue; }
     tr.built td.status-box { background: #00ccff; }
-    tr.youri td.status-box { background: olive; }
     
     #stats { float: right; }
     #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
