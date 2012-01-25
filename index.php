@@ -194,6 +194,17 @@ foreach ($matches as $val) {
         }
     }
 }
+
+// filter packages if a package name was provided
+if ($_GET['package']) {
+    foreach ($pkgs as $key => $pkg) {
+        preg_match("/^(.*)-[^-]*-[^-]*$/", $pkg['package'], $name);
+        if ($_GET['package'] != $name[1]) {
+            unset($pkgs[$key]);
+        }
+    }
+}
+
 // sort by key in reverse order to have more recent pkgs first
 krsort($pkgs);
 ksort($build_dates);
@@ -235,6 +246,7 @@ if ($stat) {
 }
 
 // publish stats as headers
+
 foreach ($stats as $k => $v) {
     Header("X-BS-Queue-$k: $v");
 }
@@ -244,6 +256,12 @@ if($w < 0)
     $w = 0;
 $w = $w * 60;
 Header("X-BS-Throttle: $w");
+
+if ($_GET['last'] && $total > 0) {
+    reset($pkgs);
+    $last = current($pkgs);
+    Header("X-BS-Package-Status: ".$last['type']);
+}
 
 $buildtime_total = $buildtime_total / 60;
 header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
@@ -298,8 +316,10 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     <h1><?php echo $title ?></h1>
 
 <?php
-if (!is_null($g_user))
+if (!is_null($g_user) || $_GET['package'])
     echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
+
+if (!$_GET['package']) {
 
 # Temporary until initial mirror is ready
 echo sprintf(
@@ -347,6 +367,9 @@ echo '<div align="center"><table>',
      '</table></div>';
 echo '<div class="clear"></div>';
 
+}
+
+// Build queue
 $s = '';
 $tmpl = <<<T
 <tr class="%s">
