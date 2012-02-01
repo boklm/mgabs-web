@@ -316,6 +316,12 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     <h1><?php echo $title ?></h1>
 
 <?php
+
+$bannerfile = dirname(__FILE__) . '/banner.html';
+if (file_exists($bannerfile)) {
+    echo file_get_contents($bannerfile);
+}
+
 if (!is_null($g_user) || $_GET['package'])
     echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
 
