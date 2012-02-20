@@ -321,7 +321,7 @@ if (!is_null($g_user) || $_GET['package'])
 
 if (!$_GET['package']) {
 
-$missing_deps_count = preg_match_all("/<item>/m", strtr(file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), "\n", " "), $matches);
+$missing_deps_count = preg_match_all("/<item>/m", file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), $matches);
 $unmaintained_count = count(file(__DIR__ . '/data/unmaintained.txt'));
 if ($missing_deps_count > 0 || $unmaintained_count > 0) {
     echo "<p>";
