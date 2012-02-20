@@ -113,12 +113,6 @@ if ($g_user) {
 $tz = new DateTimeZone('UTC');
 $date_gen = date('c');
 
-# Temporary until initial mirror is ready
-chdir("data");
-$missing_deps = file("missing-deps.i586.txt");
-#########################################
-$unmaintained = file('unmaintained.txt');
-
 chdir($upload_dir);
 
 $all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.lock' -o -name '*.done' -o -name '*.upload' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
@@ -327,15 +321,16 @@ if (!is_null($g_user) || $_GET['package'])
 
 if (!$_GET['package']) {
 
-# Temporary until initial mirror is ready
-echo sprintf(
-    '<p><a href="%s">%s broken dependencies</a>. <a href="%s">%s unmaintained packages</a>. <strong><a href="%s">You can help!</a></strong></p>',
-    'data/missing-deps.i586.txt', count($missing_deps) == 0 ? 'no' : count($missing_deps),
-    'data/unmaintained.txt', count($unmaintained),
-    'https://wiki.mageia.org/en/Importing_packages'
-);
-
-#########################################
+$missing_deps_count = preg_match_all("/<item>/m", strtr(file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), "\n", " "), $matches);
+$unmaintained_count = count(file(__DIR__ . '/data/unmaintained.txt'));
+if ($missing_deps_count > 0 || $unmaintained_count > 0) {
+    echo "<p>";
+    if ($missing_deps_count > 0)
+        echo "<a href=\"http://check.mageia.org/cauldron/dependencies.html\">$missing_deps_count broken dependencies</a>. ";
+    if ($unmaintained_count > 0)
+	echo "<a href=\"data/unmaintained.txt\">$unmaintained_count unmaintained packages</a>. ";
+    echo '<a href="https://wiki.mageia.org/en/Importing_packages">You can help!</a></strong></p>';
+}
 
 if ($upload_time) {
 	echo sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
