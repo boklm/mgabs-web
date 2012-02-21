@@ -470,7 +470,7 @@ if ($total > 0) {
         if ($a[1] == 'hour' || $a[1] == 'hours')
             $a[0] *= 3600;
 
-        if ($b[1] == 'hour' || $a[1] == 'hours')
+        if ($b[1] == 'hour' || $b[1] == 'hours')
             $b[0] *= 3600;
 
         if ($a[0] > $b[0])
