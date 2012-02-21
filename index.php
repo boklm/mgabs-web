@@ -423,7 +423,8 @@ if ($total > 0) {
         if ($p['type'] == 'uploaded') {
             $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']); // use $p['buildtime']['diff']; instead?
             $s .= $tdiff;
-            @$buildtime_stats[$tdiff] += 1;
+            $tdiff = floor(($p['buildtime']['end'] - $p['buildtime']['start']) / 60)*60;
+            @$buildtime_stats[timediff(0, $tdiff)] += 1;
         }
         $s .= '</td>';
         $s .= '</tr>';
@@ -486,7 +487,7 @@ if ($total > 0) {
     $max = max($buildtime_stats);
     foreach ($buildtime_stats as $time => $count) {
         $bts .= sprintf('<tr><td>%s</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
-            $time,
+            $time == "0 second" ? "< 1 minute" : $time,
             round($count/$max*100),
             $count);
 
