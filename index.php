@@ -212,8 +212,7 @@ $stats = array(
     'failure'  => 0,
     'todo'     => 0,
     'building' => 0,
-    'partial'  => 0,
-    'built'    => 0,
+    'partial'  => 0
 );
 $total = count($pkgs);
 
@@ -286,19 +285,19 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
  
     tr { background: transparent; }
     tr.uploaded { background: #bbffbb; }
-    tr.failure, tr.rejected { background: #ffbbbb; }
+    tr.failure { background: #cc8888; }
+    tr.rejected { background: #B68A8A; }
     tr.todo { background: white; }
     tr.building { background: #ffff99; }
     tr.partial { background: #bbbbff; }
-    tr.built { background: #cceeff; }
 
     td.status-box { width: 1em; height: 1em; }
     tr.uploaded td.status-box { background: green; }
-    tr.failure td.status-box, tr.rejected td.status-box { background: red; }
+    tr.failure td.status-box { background: red; }
+    tr.rejected td.status-box { background: brown; }
     tr.todo td.status-box { background: white; }
     tr.building td.status-box { background: yellow; }
     tr.partial td.status-box { background: blue; }
-    tr.built td.status-box { background: #00ccff; }
     
     #stats { float: right; }
     #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
