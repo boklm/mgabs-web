@@ -286,7 +286,7 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     tr { background: transparent; }
     tr.uploaded { background: #bbffbb; }
     tr.failure { background: #ffbbbb; }
-    tr.rejected { background: #B68A8A; }
+    tr.rejected { background: #FFFFE0; }
     tr.todo { background: white; }
     tr.building { background: #ffff99; }
     tr.partial { background: #bbbbff; }
@@ -294,7 +294,7 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
     td.status-box { width: 1em; height: 1em; }
     tr.uploaded td.status-box { background: green; }
     tr.failure td.status-box { background: red; }
-    tr.rejected td.status-box { background: brown; }
+    tr.rejected td.status-box { background: orange; }
     tr.todo td.status-box { background: white; }
     tr.building td.status-box { background: yellow; }
     tr.partial td.status-box { background: blue; }
