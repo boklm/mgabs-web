@@ -285,7 +285,7 @@ header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
  
     tr { background: transparent; }
     tr.uploaded { background: #bbffbb; }
-    tr.failure { background: #cc8888; }
+    tr.failure { background: #ffbbbb; }
     tr.rejected { background: #B68A8A; }
     tr.todo { background: white; }
     tr.building { background: #ffff99; }
