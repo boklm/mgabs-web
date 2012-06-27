@@ -482,6 +482,12 @@ if ($total > 0) {
         if ($b[1] == 'hour' || $b[1] == 'hours')
             $b[0] *= 3600;
 
+        if ($a[1] == 'minute' || $a[1] == 'minutes')
+            $a[0] *= 60;
+
+        if ($b[1] == 'minute' || $b[1] == 'minutes')
+            $b[0] *= 60;
+
         if ($a[0] > $b[0])
             return 1;
         elseif ($a[0] < $b[0])
