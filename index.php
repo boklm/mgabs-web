@@ -331,8 +331,17 @@ if ($missing_deps_count > 0 || $unmaintained_count > 0) {
     echo '<a href="https://wiki.mageia.org/en/Importing_packages">You can help!</a></strong></p>';
 }
 
+	
+preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
+$qa_bugs = $matches[1][0];
+if ($qa_bugs > 0) {
+    echo "<p>";
+    echo "<a href=\"https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali\">$qa_bugs package updates to validate</a>. ";
+    echo '<a href="https://wiki.mageia.org/en/QA_process_for_validating_updates">You can help!</a></strong></p>';
+}
+
 if ($upload_time) {
-	echo sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
+    echo sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
 }
 
 $buildtime_stats = array();
