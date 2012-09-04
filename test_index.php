@@ -274,20 +274,9 @@ if ($total > 0) {
         <div id="buildschedule-chart"></div>';
     $s .= '</div>';
 
-    echo $s, '</li>';
-}
-else
-{
-    echo sprintf('<li><p>No package has been submitted in the past %d&nbsp;hours.</p></li>',
-        $max_modified * 24);
-}
+    echo $s, '</li></ul>';
 
-?>
-    </ul>
-    <div class="clear"></div>
-    <?php
     uksort($buildtime_stats, "timesort");
-
     echo '<script>',
         mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
         mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),
@@ -296,7 +285,16 @@ else
         mga_bs_charts::js_draw_charts(),
         '</script>';
         echo mga_bs_charts::js_init();
-    ?>
+}
+else
+{
+    echo sprintf('<li><p>No package has been submitted in the past %d&nbsp;hours.</p></li></ul>',
+        $max_modified * 24);
+}
+
+?>
+    </ul>
+    <div class="clear"></div>
     <hr />
     <p>Generated at <?php echo $date_gen; ?>.
         Code for this page is in <a href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
