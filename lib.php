@@ -301,21 +301,26 @@ S;
         $newdata = array();
         foreach ($data as $duration => $count) {
             if (false !== strpos($duration, 'hour')) {
-                $newdata['> 1 hour'] += $count;
+                $newdata['60 minutes'] += $count;
             } else {
                 $d = explode(' ', $duration);
-                if ($d[0] > 15) {
-                    $newdata['> 15 minutes'] += $count;
+                if ($d[0] > 20) {
+                    $newdata['21 minutes'] += $count;
                 } else {
                     $newdata[$duration] = $count;
                 }
             }
         }
+        uksort($newdata, "timesort");
 
         $rows  = array("['Duration', 'Builds']");
         foreach ($newdata as $duration => $count) {
             if ($duration == '0 second')
                 $duration = '< 1 minute';
+            elseif ($duration == '21 minutes')
+                $duration = '> 20 minutes';
+            elseif ($duration == '60 minutes')
+                $duration = '> 1 hour';
 
             $rows[] = sprintf("['%s', %d]", $duration, $count);
         }
