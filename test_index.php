@@ -144,11 +144,12 @@ $buildtime_total = array_sum($buildtime_total);
 
 // count all packages statuses
 $stats = array(
-    'uploaded' => 0,
-    'failure'  => 0,
     'todo'     => 0,
     'building' => 0,
-    'partial'  => 0
+    'partial'  => 0,
+    'uploaded' => 0,
+    'rejected' => 0,
+    'failure'  => 0
 );
 $total = count($pkgs);
 
