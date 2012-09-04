@@ -347,20 +347,12 @@ if ($total > 0) {
         <div id="status-chart"></div>
         <div id="packagers-chart"></div>';
 
-    // Packagers stats
-    $s .= '<table style="width: 70%; margin: 2em 0 2em 80px;"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
-    arsort($users);
-    foreach ($users as $k => $v) {
-        $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
-            $k, $k, $v);
-    }
     $s .= sprintf('<table style="width: 80%;"><tr><td>Total time</td><td>%s hours</td></tr>
         <tr><td>Average</td><td>%s minutes</td></tr>
         <tr><td>Builds count</td><td>%s</td></tr></table>',
         round($buildtime_total / 60, 2),
         $buildtime_avg,
         $buildtime_cnt);
-
     $s .= '</table><br /><br />';
 
     $s .= '<div id="buildtime-chart"></div>

@@ -316,7 +316,7 @@ function draw_packagers_chart() {
         'width':600,
         'height':200,
         'backgroundColor': '#f8f8f8',
-        'sliceVisibilityThreshold': 1/720
+        'sliceVisibilityThreshold': 2/90
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('{$id}'));
