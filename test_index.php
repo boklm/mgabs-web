@@ -365,6 +365,10 @@ if ($total > 0) {
 
     $s .= '</table><br /><br />';
 
+    $s .= '<div id="status-chart"></div>
+        <div id="buildtime-chart"></div>
+        <div id="buildschedule-chart"></div>';
+
     uksort($buildtime_stats, "timesort");
 
     $bts = '';
@@ -412,10 +416,6 @@ else
 ?>
     </ul>
     <div class="clear"></div>
-    <hr>
-    <div id="status-chart"></div>
-    <div id="buildtime-chart"></div>
-    <div id="buildschedule-chart"></div>
     <?php
     echo '<script>',
         mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
