@@ -46,12 +46,14 @@ $tz       = new DateTimeZone('UTC');
 $date_gen = date('c');
 
 $matches = get_submitted_packages($upload_dir);
+echo 'debug:count:matches', count($matches), '<br>';
 
 list($pkgs, $hosts, $build_dates, $buildtime_total) = get_refined_packages_list(
     $matches,
     isset($_GET['package']) ? $_GET['package'] : null,
     isset($_GET['user']) ? $_GET['user'] : null
 );
+echo 'debug:count:pkgs', count($pkgs), '<br>';
 
 list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
