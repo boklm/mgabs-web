@@ -285,7 +285,8 @@ function draw_status_chart() {
         'title':'Packages status',
         'width':600,
         'height':200,
-        'colors': ['white', 'yellow', 'blue', 'green', 'orange', 'red']
+        'colors': ['white', 'yellow', 'blue', 'green', 'orange', 'red'],
+        'backgroundColor': '#f8f8f8'
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('{$id}'));
@@ -334,7 +335,8 @@ function draw_buildtime_chart() {
         title: 'How long are most builds?',
         hAxis: {title: 'Time'},
         'width':600,
-        'height':200
+        'height':200,
+        'backgroundColor': '#f8f8f8'
     };
     var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
     chart.draw(data, options);
@@ -359,7 +361,8 @@ function draw_buildschedule_chart() {
         hAxis: {title: 'Hours'},
        'width':600,
        'height':200,
-       'curveType': 'function'
+       'curveType': 'function',
+       'backgroundColor': '#f8f8f8'
     };
     var chart = new google.visualization.LineChart(document.getElementById('{$id}'));
     chart.draw(data, options);
