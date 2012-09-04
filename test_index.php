@@ -49,7 +49,7 @@ $matches = get_submitted_packages($upload_dir);
 
 list($pkgs, $hosts, $build_dates, $buildtime_total) = get_refined_packages_list(
     $matches,
-    isset($_GET['package']) ? $_GET['package'] : null
+    isset($_GET['package']) ? $_GET['package'] : null,
     isset($_GET['user']) ? $_GET['user'] : null
 );
 
