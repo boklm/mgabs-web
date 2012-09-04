@@ -412,6 +412,19 @@ else
 ?>
     </ul>
     <div class="clear"></div>
+    <hr>
+    <div id="status-chart"></div>
+    <div id="buildtime-chart"></div>
+    <div id="buildschedule-chart"></div>
+    <?php
+    echo '<script>',
+        mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
+        mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),
+        mga_bs_charts::js_draw_buildschedule_chart($build_dates, 'buildschedule-chart'),
+        mga_bs_charts::js_draw_charts(),
+        '</script>';
+        echo mga_bs_charts::js_init();
+    ?>
     <hr />
     <p>Generated at <?php echo $date_gen; ?>.
         Code for this page is in <a href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>

@@ -236,3 +236,113 @@ function build_stats($pkgs)
         $pkgs
     );
 }
+
+
+class mga_bs_charts
+{
+
+    public static function js_init()
+    {
+        return <<<S
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+
+  // Load the Visualization API and the piechart package.
+  google.load('visualization', '1.0', {'packages':['corechart']});
+
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.setOnLoadCallback(drawChart);
+</script>
+S;
+    }
+
+    public static function js_draw_charts()
+    {
+        return <<<S
+function drawChart() {
+    draw_status_chart();
+    draw_buildtime_chart();
+    draw_buildschedule_chart();
+}
+S;
+    }
+
+    public static function js_draw_status_chart($stats, $id)
+    {
+        $rows = array();
+        foreach ($stats as $status => $count) {
+            $rows[] = sprintf("['%s', %d]", $status, $count);
+        }
+        $rows = implode(', ', $rows);
+        $s = <<<S
+function draw_status_chart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Status');
+    data.addColumn('number', 'Packages');
+    data.addRows([{$rows}]);
+
+    var options = {'title':'Packages status',
+                   'width':300,
+                   'height':300};
+
+    var chart = new google.visualization.PieChart(document.getElementById('{$id}'));
+    chart.draw(data, options);
+}
+S;
+        return $s;
+    }
+
+    public static function js_draw_buildtime_chart($data, $id)
+    {
+        $d = print_r($data, true);
+        $rows  = array("['Duration', 'Builds']", '[1, 3]');
+        foreach ($data as $duration => $count) {
+            $rows[] = sprintf("['%s', %d]", $duration, $count);
+        }
+        $rows = implode(', ', $rows);
+        return <<<S
+function draw_buildtime_chart() {
+    /*
+    {$d}
+    */
+    var data = google.visualization.arrayToDataTable([{$rows}]);
+    var options = {
+        title: 'Builds duration',
+        hAxis: {title: ''},
+        'width':600,
+        'height':300
+    };
+    var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
+    chart.draw(data, options);
+}
+S;
+    }
+
+    public static function js_draw_buildschedule_chart($data, $id)
+    {
+        $d = print_r($data, true);
+        $rows = array("['Hour', 'Builds']", '[1, 3]');
+        foreach ($data as $hour => $count) {
+            $rows[] = sprintf("['%s', %d]", $hour, $count);
+        }
+        $rows = implode(', ', $rows);
+        return <<<S
+function draw_buildschedule_chart() {
+    /*
+    {$d}
+    */
+    var data = google.visualization.arrayToDataTable([{$rows}]);
+    var options = {
+        title: 'Builds layout',
+        hAxis: {title: ''},
+       'width':600,
+       'height':300
+    };
+    var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
+    chart.draw(data, options);
+}
+S;
+    }
+
+}
+
