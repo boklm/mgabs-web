@@ -174,6 +174,7 @@ if (!is_null($g_user) || isset($_GET['package'])) {
     echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
 }
 
+echo '<ul>';
 $figures_list = array();
 
 if (!isset($_GET['package'])) {
@@ -223,8 +224,7 @@ if (!isset($_GET['package'])) {
     }
 
     if (count($figures_list) > 0) {
-        echo '<ul>',
-            array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
+        echo array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
     }
 
     $buildtime_stats = array();
