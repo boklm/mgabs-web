@@ -333,6 +333,7 @@ if ($total > 0) {
         $s .= '</tr>';
     }
     echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
+
     // Table
     echo '<table>',
         '<thead><tr><th>Submitted</th><th>User</th>
@@ -342,67 +343,26 @@ if ($total > 0) {
         '</table>';
 
     // Stats
-    $s     = '<div id="stats">';
-    $score = round($stats['uploaded']/$total * 100);
-    $s    .= sprintf('<div id="score"><h3>Score: %d/100</h3>
-        <div id="score-box"><div id="score-meter" style="height: %dpx;"></div></div></div>',
-        $score, $score);
+    $s     = '<div id="stats">
+        <div id="status-chart"></div>';
 
-    $s .= '<table style="width: 100%"><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
-    foreach ($stats as $k => $v) {
-        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td class="number">%s</td><td class="number">%d</td><td class="percent">%d%%</td></tr>',
-            $k, $k, $v, round($v/$total*100));
-    }
-
-    $s .= '</table><br /><br />';
-
-    $s .= '<table style="width: 100%"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
+    $s .= '<table style="width: 80%"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
     arsort($users);
     foreach ($users as $k => $v) {
         $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
             $k, $k, $v);
     }
-
-    $s .= '</table><br /><br />';
-
-    $s .= '<div id="status-chart"></div>
-        <div id="buildtime-chart"></div>
-        <div id="buildschedule-chart"></div>';
-
-    uksort($buildtime_stats, "timesort");
-
-    $bts = '';
-    $max = max($buildtime_stats);
-    foreach ($buildtime_stats as $time => $count) {
-        $bts .= sprintf('<tr><td>%s</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
-            $time == "0 second" ? "< 1 minute" : $time,
-            round($count/$max*100),
-            $count);
-
-        $tmp = explode(' ', $time);
-    }
-
-    $s .= '<table style="width: 100%;"><caption>Build time</caption>';
-
-    $s .= sprintf('<tr><td>Total time</td><td>%s hours</td></tr>
+    $s .= sprintf('<table style="width: 80%;"><tr><td>Total time</td><td>%s hours</td></tr>
         <tr><td>Average</td><td>%s minutes</td></tr>
-        <tr><td>Builds count</td><td>%s</td></tr>',
+        <tr><td>Builds count</td><td>%s</td></tr></table>',
         round($buildtime_total / 60, 2),
         $buildtime_avg,
         $buildtime_cnt);
 
-    $s .= '<tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>';
-    $s .= $bts;
-    $s .= '</table><span style="font-size: 85%;">Does not take<br />build failures<br />into account.</span>';
+    $s .= '</table><br /><br />';
 
-    $s  .= '<table><caption>Build times</caption>';
-    $max = max($build_dates);
-    foreach ($build_dates as $time => $count)
-        $s .= sprintf('<tr><td>%d</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
-            $time,
-            round($count / $max * 100),
-            $count);
-    $s .= '</table>';
+    $s .= '<div id="buildtime-chart"></div>
+        <div id="buildschedule-chart"></div>';
     $s .= '</div>';
 
     echo $s, '</li>';
@@ -417,6 +377,8 @@ else
     </ul>
     <div class="clear"></div>
     <?php
+    uksort($buildtime_stats, "timesort");
+
     echo '<script>',
         mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
         mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),

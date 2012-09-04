@@ -283,8 +283,8 @@ function draw_status_chart() {
 
     var options = {
         'title':'Packages status',
-        'width':300,
-        'height':300,
+        'width':600,
+        'height':200,
         'colors': ['white', 'yellow', 'blue', 'green', 'orange', 'red']
     };
 
@@ -334,7 +334,7 @@ function draw_buildtime_chart() {
         title: 'How long are most builds?',
         hAxis: {title: 'Time'},
         'width':600,
-        'height':300
+        'height':200
     };
     var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
     chart.draw(data, options);
