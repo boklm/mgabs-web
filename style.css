@@ -1,5 +1,9 @@
-body, table {
+html, body {
+    background: #f8f8f8;
+}
+html, body, table {
     font-family: Verdana, "Trebuchet MS", "Lucida Grande", "Lucida Sans", Tahoma, Arial, sans-serif;
+    color: #202020;
 }
 body { font-size: 80%; }
 .clear { clear: both; }
@@ -28,7 +32,7 @@ tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
 
-td.timeinfo { font-size: 85%; text-align: right; }
+td.timeinfo { font-size: 85%; text-align: right; color: #444444; }
 td.percent { text-align: right; }
 
 #stats { float: right; }
