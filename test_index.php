@@ -170,9 +170,13 @@ if ($total > 0) {
 }
 
 // check if emi is running
-$stat = stat("/var/lib/schedbot/tmp/upload");
-if ($stat) {
-    $upload_time = $stat['mtime'];
+$upload_time = null;
+$stat        = null;
+if (file_exists('/var/lib/schedbot/tmp/upload')) {
+    $stat = stat('/var/lib/schedbot/tmp/upload');
+    if ($stat) {
+        $upload_time = $stat['mtime'];
+    }
 }
 
 // publish stats as headers
@@ -269,7 +273,7 @@ if (!isset($_GET['package'])) {
         );
     }
 
-    if ($upload_time) {
+    if (!is_null($upload_time)) {
         $figures_list[] = sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
     }
 
