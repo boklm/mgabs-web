@@ -6,6 +6,7 @@ html, body, table {
     color: #202020;
 }
 body { font-size: 80%; }
+
 .clear { clear: both; }
 table { 
     border-spacing: 0;
@@ -17,8 +18,8 @@ th:last-child { border-right: 0; }
 td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
 
 tr { background: transparent; }
-tr.uploaded { background: #bbffbb; }
-tr.failure { background: #ffbbbb; }
+tr.uploaded { background: #ddffdd; }
+tr.failure { background: #ffdddd; }
 tr.rejected { background: #FFFFE0; }
 tr.todo { background: white; }
 tr.building { background: #ffff99; }
