@@ -215,38 +215,67 @@ if (!is_null($g_user) || $_GET['package']) {
     echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
 }
 
+$figures_list = array();
+
 if (!$_GET['package']) {
+
     $missing_deps_count = preg_match_all("/<item>/m", file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), $matches);
     $unmaintained_count = count(file(__DIR__ . '/data/unmaintained.txt'));
-    if ($missing_deps_count > 0 || $unmaintained_count > 0) {
-        echo "<p>";
+
+    if ($missing_deps_count > 0
+        || $unmaintained_count > 0
+    ) {
         if ($missing_deps_count > 0) {
-            echo "<a href=\"http://check.mageia.org/cauldron/dependencies.html\">$missing_deps_count broken dependencies</a>. ";
+            $figures_list[] = sprintf('<span class="figure">%d</span> <a href="%s">broken dependencies</a>', 
+                                $missing_deps_count,
+                                'http://check.mageia.org/cauldron/dependencies.html'
+            );
         }
 
         if ($unmaintained_count > 0) {
-            echo "<a href=\"data/unmaintained.txt\">$unmaintained_count unmaintained packages</a>. ";
+            $figures_list[] = sprintf('<span class="figure">%d</span> <a href="%s">unmaintained package%s</a>',
+                                $unmaintained_count,
+                                'data/unmaintained.txt',
+                                plural($unmaintained_count)
+            );
         }
-        echo '<a href="https://wiki.mageia.org/en/Importing_packages">You can help!</a></strong></p>';
-}
 
-preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
-$qa_bugs = $matches[1][0];
-if ($qa_bugs > 0) {
-    echo "<p>";
-    echo "<a href=\"https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali\">$qa_bugs package updates to validate</a>. ";
-    echo '<a href="https://wiki.mageia.org/en/QA_process_for_validating_updates">You can help!</a></strong></p>';
-}
+        if (count($figures_list) > 0)
+            $figures_list[count($figures_list)-1] .= sprintf(' &raquo; <a href="%s" class="action-btn">%s</a>',
+                                                        'https://wiki.mageia.org/en/Importing_packages',
+                                                        'you can help!');
+    }
 
-if ($upload_time) {
-    echo sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
-}
+    preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
+    $qa_bugs = $matches[1][0];
+    if ($qa_bugs > 0) {
+        $figures_list[] = sprintf('<span class="figure">%d</span> <a href="%s">package update%s to validate</a> &raquo; <a href="%s" class="action-btn">%s</a>',
+                $qa_bugs,
+                'https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali',
+                plural($qa_bugs),
+                'https://wiki.mageia.org/en/QA_process_for_validating_updates',
+                'you can help!'
+        );
+    }
 
-$buildtime_stats = array();
+    if ($upload_time) {
+        $figures_list[] = sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
+    }
 
-// Builds in progress
-$s = '';
-$tmpl = <<<TB
+    if (count($figures_list) > 0) {
+        echo '<ul>',
+            array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
+    }
+
+    $buildtime_stats = array();
+
+    // Builds in progress
+    if (count($hosts) > 0) {
+        echo '<li>',
+            sprintf('<p><span class="figure">%d</span> build%s in progress.</p>', count($hosts), plural(count($hosts)));
+
+        $s = '';
+        $tmpl = <<<TB
 <tr>
     <td>%s</td>
     <td>%s</td>
@@ -256,24 +285,26 @@ $tmpl = <<<TB
     <td>%s/%s</td>
 </tr>
 TB;
-foreach ($hosts as $machine => $b) {
-    foreach ($b as $arch => $key) {
-        $s .= sprintf($tmpl,
-            $machine,
-            $arch,
-            $pkgs[$key]['user'], $pkgs[$key]['user'],
-            $pkgs[$key]['package'],
-            $pkgs[$key]['version'],
-            $pkgs[$key]['media'], $pkgs[$key]['section']);
+        foreach ($hosts as $machine => $b) {
+            foreach ($b as $arch => $key) {
+                $s .= sprintf($tmpl,
+                    $machine,
+                    $arch,
+                    $pkgs[$key]['user'], $pkgs[$key]['user'],
+                    $pkgs[$key]['package'],
+                    $pkgs[$key]['version'],
+                    $pkgs[$key]['media'], $pkgs[$key]['section']);
+            }
+        }
+        echo '<div align="center"><table>',
+             '<tr><th>Machine</th><th>Arch</th><th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
+             $s,
+             '</table></div>',
+             '<div class="clear"></div>',
+             '</li>';
+    } else {
+        echo '<li><p>No build in progress.</p></li>';
     }
-}
-echo '<div align="center"><table>',
-     sprintf('<caption>%d build%c in progress.</caption>', count($hosts), plural(count($hosts))),
-     '<tr><th>Machine</th><th>Arch</th><th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
-     $s,
-     '</table></div>';
-echo '<div class="clear"></div>';
-
 }
 
 // Build queue
@@ -337,9 +368,9 @@ if ($total > 0) {
         $s .= '</td>';
         $s .= '</tr>';
     }
+    echo sprintf('<li><p><span class="figure">%d packages submitted in the past %d&nbsp;hours.</p>', $total, $max_modified * 24);
     // Table
     echo '<table>',
-        '<caption>', $total, ' packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
         '<tr><th>Submitted</th><th>User</th>
             <th>Package</th><th>Target</th><th>Media</th>
             <th colspan="2">Status</th><th>Build time</th></tr>',
@@ -406,15 +437,16 @@ if ($total > 0) {
     $s .= '</table>';
     $s .= '</div>';
 
-    echo $s;
+    echo $s, '</li>';
 }
 else
 {
-    echo sprintf('<p>No package has been submitted in the past %d&nbsp;hours.</p>',
+    echo sprintf('<li><p>No package has been submitted in the past %d&nbsp;hours.</p></li>',
         $max_modified * 24);
 }
 
 ?>
+    </ul>
     <div class="clear"></div>
     <hr />
     <p>Generated at <?php echo $date_gen; ?>.
