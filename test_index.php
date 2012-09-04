@@ -344,7 +344,8 @@ if ($total > 0) {
 
     // Stats
     $s     = '<div id="stats">
-        <div id="status-chart"></div>';
+        <div id="status-chart"></div>
+        <div id="packagers-chart"></div>';
 
     // Packagers stats
     $s .= '<table style="width: 70%; margin: 2em 0 2em 80px;"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
@@ -384,6 +385,7 @@ else
         mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
         mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),
         mga_bs_charts::js_draw_buildschedule_chart($build_dates, 'buildschedule-chart'),
+        mga_bs_charts::js_draw_packagers_chart(users, 'packagers-chart'),
         mga_bs_charts::js_draw_charts(),
         '</script>';
         echo mga_bs_charts::js_init();

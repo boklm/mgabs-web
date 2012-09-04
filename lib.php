@@ -263,6 +263,7 @@ function drawChart() {
     draw_status_chart();
     draw_buildtime_chart();
     draw_buildschedule_chart();
+    draw_packagers_chart();
 }
 S;
     }
@@ -287,6 +288,35 @@ function draw_status_chart() {
         'height':200,
         'colors': ['white', 'yellow', 'blue', 'green', 'orange', 'red'],
         'backgroundColor': '#f8f8f8'
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('{$id}'));
+    chart.draw(data, options);
+}
+S;
+        return $s;
+    }
+
+    public static function js_draw_packagers_chart($data, $id)
+    {
+        $rows = array();
+        foreach ($data as $packager => $count) {
+            $rows[] = sprintf("['%s', %d]", $packager, $count);
+        }
+        $rows = implode(', ', $rows);
+        $s = <<<S
+function draw_packagers_chart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Packagers');
+    data.addColumn('number', 'Packages');
+    data.addRows([{$rows}]);
+
+    var options = {
+        'title':'Packagers',
+        'width':600,
+        'height':200,
+        'backgroundColor': '#f8f8f8',
+        'sliceVisibilityThreshold': 1/720
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('{$id}'));
