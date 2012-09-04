@@ -36,6 +36,116 @@ function get_submitted_packages($upload_dir)
                     $all_files,
                     $matches,
                     PREG_SET_ORDER);
+
+    return $matches;
+}
+
+
+/**
+ *
+ * @param array $list_of_files such as returned by get_submitted_packages()
+ * @param string $package to filter against
+ * @param string $user to filter against
+ *
+ * @return array()
+*/
+function get_refined_packages_list($list_of_files, $package = null, $user = null)
+{
+    $pkgs  = array();
+    $hosts = array();
+
+    $buildtime_total = array();
+    $build_dates     = array();
+
+    foreach ($list_of_files as $val) {
+
+        if (!is_null($user) && $user != $val[7]) {
+            continue;
+        }
+        $key = $val[6] . $val[7];
+        if (!is_array($pkgs[$key])) {
+
+            $pkgs[$key] = array(
+                'status'  => array(),
+                'path'    => $val[2],
+                'version' => $val[3],
+                'media'   => $val[4],
+                'section' => $val[5],
+                'user'    => $val[7],
+                'host'    => $val[8],
+                'job'     => $val[9]
+            );
+        }
+        $status = $val[1];
+        $data   = $val[10];
+        if (preg_match("/@(\d+):/", $data, $revision)) {
+            $pkgs[$key]['revision'] = $revision[1];
+        }
+
+        $pkgs[$key]['status'][$status] = 1;
+        $ext                           = $val[11];
+
+        if ($ext == '.src.rpm.info') {
+            preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
+            $pkgs[$key]['package'] = $name[1];
+        } else if ($ext == '.src.rpm') {
+            $pkgs[$key]['status']['src'] = 1;
+        } else if ($ext == '.upload') {
+            $pkgs[$key]['status']['upload'] = 1;
+        } else if ($ext == '.lock') {
+            preg_match("!(.*)\.iurt\.(.*)\.\d+\.\d+!", $data, $buildhost);
+            if (!$hosts[$buildhost[2]]) {
+                $hosts[$buildhost[2]]= array();
+            }
+            $hosts[$buildhost[2]][$buildhost[1]] = $key;
+            if ($pkgs[$key]['status']['build']) {
+                array_push($pkgs[$key]['status']['build'], $buildhost[2]);
+            } else {
+                $pkgs[$key]['status']['build'] = array($buildhost[2]);
+            }
+        } else if ($ext == '.done') {
+            // beware! this block is called twice for a given $key
+
+            $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
+            $pkgs[$key]['buildtime']['end']   = round($val[12]);
+            $pkgs[$key]['buildtime']['diff']  = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
+
+            @$build_dates[date('H', $pkgs[$key]['buildtime']['start'])] += 1;
+
+            // keep obviously dubious values out of there
+            // 12 hours is be an acceptable threshold given current BS global perfs
+            // as of April 2011
+            if ($pkgs[$key]['buildtime']['diff'] < 43200) {
+                $buildtime_total[$key] = $pkgs[$key]['buildtime']['diff'];
+            }
+        }
+    }
+
+    // filter packages if a package name was provided
+    if (!is_null($package)) {
+        foreach ($pkgs as $key => $pkg) {
+            preg_match("/^(.*)-[^-]*-[^-]*$/", $pkg['package'], $name);
+            if ($package != $name[1]) {
+                unset($pkgs[$key]);
+            }
+        }
+    }
+
+    // sort by key in reverse order to have more recent pkgs first
+    krsort($pkgs);
+    ksort($build_dates);
+
+    $build_count     = count($buildtime_total);
+    $buildtime_total = array_sum($buildtime_total);
+
+    // above block. OUTPUT: $pkgs, $build_dates, $buildtime_total, $hosts
+
+    return array(
+        $pkgs,
+        $hosts,
+        $build_dates,
+        $buildtime_total
+    );
 }
 
 /**
