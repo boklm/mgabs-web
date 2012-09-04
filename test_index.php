@@ -33,7 +33,7 @@ require __DIR__ . '/lib.php';
 if (!is_dir($upload_dir)) {
     $msg = "$upload_dir does not exist on this system. Please check your config.";
     error_log($msg);
-    //die($msg);
+    die($msg);
 }
 
 $g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
@@ -281,6 +281,10 @@ T;
 
 if ($total > 0) {
     foreach ($pkgs as $key => $p) {
+        if (trim($p['package']) == '') {
+            continue;
+        }
+
         $s .= sprintf($tmpl,
             $p['type'],
             timediff(key2timestamp($key)) . ' ago',
@@ -346,7 +350,7 @@ if ($total > 0) {
 
     $s .= '<table style="width: 100%"><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
     foreach ($stats as $k => $v) {
-        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td class="number">%s</td><td>%d</td><td class="percent">%d%%</td></tr>',
+        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td class="number">%s</td><td class="number">%d</td><td class="percent">%d%%</td></tr>',
             $k, $k, $v, round($v/$total*100));
     }
 
