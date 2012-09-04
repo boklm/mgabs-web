@@ -47,6 +47,7 @@ $date_gen = date('c');
 
 chdir($upload_dir);
 
+$matches   = array();
 $all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.lock' -o -name '*.done' -o -name '*.upload' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
 $re        = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.*)(\.src\.rpm(?:\.info)?|\.lock|\.done|\.upload)\s+(\d+\.\d+)$!m";
 $r         = preg_match_all($re,
@@ -58,11 +59,11 @@ $pkgs  = array();
 $hosts = array();
 
 $buildtime_total = array();
-$buid_dates      = array();
+$build_dates     = array();
 
 foreach ($matches as $val) {
 
-    if ($_GET['user'] && ($_GET['user'] != $val[7])) {
+    if (isset($_GET['user']) && ($_GET['user'] != $val[7])) {
         continue;
     }
     $key = $val[6] . $val[7];
@@ -125,7 +126,7 @@ foreach ($matches as $val) {
 }
 
 // filter packages if a package name was provided
-if ($_GET['package']) {
+if (isset($_GET['package'])) {
     foreach ($pkgs as $key => $pkg) {
         preg_match("/^(.*)-[^-]*-[^-]*$/", $pkg['package'], $name);
         if ($_GET['package'] != $name[1]) {
@@ -187,7 +188,7 @@ if($w < 0) {
 $w = $w * 60;
 Header("X-BS-Throttle: $w");
 
-if ($_GET['last'] && $total > 0) {
+if (isset($_GET['last']) && $total > 0) {
     reset($pkgs);
     $last = current($pkgs);
     Header("X-BS-Package-Status: ".$last['type']);
@@ -195,6 +196,8 @@ if ($_GET['last'] && $total > 0) {
 
 $buildtime_total = $buildtime_total / 60;
 header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
+
+$build_count = $build_count == 0 ? 1 : $build_count;
 $buildtime_avg = round($buildtime_total / $build_count, 2);
 header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
 ?>
@@ -218,16 +221,17 @@ if (file_exists($bannerfile)) {
     echo file_get_contents($bannerfile);
 }
 
-if (!is_null($g_user) || $_GET['package']) {
+if (!is_null($g_user) || isset($_GET['package'])) {
     echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
 }
 
 $figures_list = array();
 
-if (!$_GET['package']) {
+if (!isset($_GET['package'])) {
 
+    // TODO should be cached.
     $missing_deps_count = preg_match_all("/<item>/m", file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), $matches);
-    $unmaintained_count = count(file(__DIR__ . '/data/unmaintained.txt'));
+    $unmaintained_count = file_exists(__DIR__ . '/data/unmaintained.txt') ? count(file(__DIR__ . '/data/unmaintained.txt')) : 0;
 
     if ($missing_deps_count > 0
         || $unmaintained_count > 0
