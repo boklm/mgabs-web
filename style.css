@@ -14,21 +14,22 @@ td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc;
 
 tr { background: transparent; }
 tr.uploaded { background: #bbffbb; }
-tr.failure, tr.rejected { background: #ffbbbb; }
+tr.failure { background: #ffbbbb; }
+tr.rejected { background: #FFFFE0; }
 tr.todo { background: white; }
 tr.building { background: #ffff99; }
 tr.partial { background: #bbbbff; }
-tr.built { background: #cceeff; }
 
 td.status-box { width: 1em; height: 1em; }
-td.timeinfo { font-size: 85%; }
-td.percent { text-align: right; }
 tr.uploaded td.status-box { background: green; }
-tr.failure td.status-box, tr.rejected td.status-box { background: red; }
+tr.failure td.status-box { background: red; }
+tr.rejected td.status-box { background: orange; }
 tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
-tr.built td.status-box { background: #00ccff; }
+
+td.timeinfo { font-size: 85%; }
+td.percent { text-align: right; }
 
 #stats { float: right; }
 #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
