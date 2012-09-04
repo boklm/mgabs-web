@@ -144,8 +144,6 @@ $buildtime_total = array_sum($buildtime_total);
 
 list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
-$upload_time = get_upload_time();
-
 $last_pkg = (isset($_GET['last']) && $total > 0) ? reset($pkgs) : null;
 publish_stats_headers($stats, $buildtime_total, $build_count, $last_pkg);
 
@@ -219,10 +217,6 @@ if (!isset($_GET['package'])) {
         );
     }
 
-    if (!is_null($upload_time)) {
-        $figures_list[] = sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
-    }
-
     if (count($figures_list) > 0) {
         echo array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
     }
@@ -232,7 +226,7 @@ if (!isset($_GET['package'])) {
     // Builds in progress
     if (count($hosts) > 0) {
         echo '<li>',
-            sprintf('<p><span class="figure">%d</span> build%s in progress.</p>', count($hosts), plural(count($hosts)));
+            sprintf('<p><span class="figure">%d</span> build%s in progress:</p>', count($hosts), plural(count($hosts)));
 
         $s = '';
         $tmpl = <<<TB
@@ -266,6 +260,12 @@ TB;
         echo '<li><p>No build in progress.</p></li>';
     }
 }
+
+$upload_time = get_upload_time();
+if (!is_null($upload_time)) {
+    echo sprintf('<li><p>Upload in progress for %s.</p></li>', timediff($upload_time));
+}
+
 
 // Build queue
 $s    = '';
@@ -332,7 +332,7 @@ if ($total > 0) {
         $s .= '</td>';
         $s .= '</tr>';
     }
-    echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours.</p>', $total, $max_modified * 24);
+    echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
     // Table
     echo '<table>',
         '<thead><tr><th>Submitted</th><th>User</th>
