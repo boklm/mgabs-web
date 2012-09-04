@@ -170,3 +170,20 @@ function publish_stats_headers($stats, $last_package = null)
         round($buildtime_total / $build_count, 2);
     header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
 }
+
+/**
+ * check if emi is running
+ *
+ * @return
+*/
+function get_upload_time()
+{
+    if (file_exists('/var/lib/schedbot/tmp/upload')) {
+        $stat = stat('/var/lib/schedbot/tmp/upload');
+        if ($stat) {
+            return $stat['mtime'];
+        }
+    }
+
+    return null;
+}

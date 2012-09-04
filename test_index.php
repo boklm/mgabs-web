@@ -170,15 +170,7 @@ if ($total > 0) {
     }
 }
 
-// check if emi is running
-$upload_time = null;
-$stat        = null;
-if (file_exists('/var/lib/schedbot/tmp/upload')) {
-    $stat = stat('/var/lib/schedbot/tmp/upload');
-    if ($stat) {
-        $upload_time = $stat['mtime'];
-    }
-}
+$upload_time = get_upload_time();
 
 $last_pkg = ($_GET['last'] && $total > 0) ? reset($pkgs) : null
 publish_stats_headers($stats, $last_pkg);
