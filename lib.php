@@ -187,3 +187,50 @@ function get_upload_time()
 
     return null;
 }
+
+/**
+ * Build and return stats about all packages.
+ *
+ * @todo should not alter/return $pkgs
+ *
+ * @param array $pkgs
+ *
+ * @return array (array, array, integer, array)
+*/
+function build_stats($pkgs)
+{
+    // count all packages statuses
+    $stats = array(
+        'todo'     => 0,
+        'building' => 0,
+        'partial'  => 0,
+        'uploaded' => 0,
+        'rejected' => 0,
+        'failure'  => 0
+    );
+    $total = count($pkgs);
+
+    // count users' packages
+    $users = array();
+
+    if ($total > 0) {
+        foreach ($pkgs as $key => $p) {
+            $pkgs[$key]['type'] = pkg_gettype($p);
+
+            $stats[$pkgs[$key]['type']] += 1;
+
+            if (!array_key_exists($p['user'], $users)) {
+                $users[$p['user']] = 1;
+            } else {
+                $users[$p['user']] += 1;
+            }
+        }
+    }
+
+    return array(
+        $stats,
+        $users,
+        $total,
+        $pkgs
+    );
+}

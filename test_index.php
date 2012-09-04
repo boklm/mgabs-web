@@ -142,33 +142,7 @@ ksort($build_dates);
 $build_count     = count($buildtime_total);
 $buildtime_total = array_sum($buildtime_total);
 
-// count all packages statuses
-$stats = array(
-    'todo'     => 0,
-    'building' => 0,
-    'partial'  => 0,
-    'uploaded' => 0,
-    'rejected' => 0,
-    'failure'  => 0
-);
-$total = count($pkgs);
-
-// count users' packages
-$users = array();
-
-if ($total > 0) {
-    foreach ($pkgs as $key => $p) {
-        $pkgs[$key]['type'] = pkg_gettype($p);
-
-        $stats[$pkgs[$key]['type']] += 1;
-
-        if (!array_key_exists($p['user'], $users)) {
-            $users[$p['user']] = 1;
-        } else {
-            $users[$p['user']] += 1;
-        }
-    }
-}
+list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
 $upload_time = get_upload_time();
 
