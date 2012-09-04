@@ -281,9 +281,12 @@ function draw_status_chart() {
     data.addColumn('number', 'Packages');
     data.addRows([{$rows}]);
 
-    var options = {'title':'Packages status',
-                   'width':300,
-                   'height':300};
+    var options = {
+        'title':'Packages status',
+        'width':300,
+        'height':300,
+        'colors': ['white', 'yellow', 'blue', 'green', 'orange', 'red']
+    };
 
     var chart = new google.visualization.PieChart(document.getElementById('{$id}'));
     chart.draw(data, options);
@@ -325,8 +328,8 @@ function draw_buildtime_chart() {
     var options = {
         title: 'How long are most builds?',
         hAxis: {title: 'Time'},
-        'width':500,
-        'height':200
+        'width':700,
+        'height':300
     };
     var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
     chart.draw(data, options);
@@ -349,7 +352,7 @@ function draw_buildschedule_chart() {
     var options = {
         title: 'When did builds happen? (CET)',
         hAxis: {title: 'Hours'},
-       'width':800,
+       'width':700,
        'height':200,
        'curveType': 'function'
     };
