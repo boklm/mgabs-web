@@ -146,7 +146,7 @@ list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
 $upload_time = get_upload_time();
 
-$last_pkg = ($_GET['last'] && $total > 0) ? reset($pkgs) : null
+$last_pkg = ($_GET['last'] && $total > 0) ? reset($pkgs) : null;
 publish_stats_headers($stats, $last_pkg);
 
 ?>
