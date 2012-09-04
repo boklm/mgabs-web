@@ -19,6 +19,26 @@
 */
 
 /**
+ * List all packages submitted to the BS.
+ *
+ * @param string $upload_dir
+ *
+ * @return array
+*/
+function get_submitted_packages($upload_dir)
+{
+    chdir($upload_dir);
+
+    $matches   = array();
+    $all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.lock' -o -name '*.done' -o -name '*.upload' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
+    $re        = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.*)(\.src\.rpm(?:\.info)?|\.lock|\.done|\.upload)\s+(\d+\.\d+)$!m";
+    $r         = preg_match_all($re,
+                    $all_files,
+                    $matches,
+                    PREG_SET_ORDER);
+}
+
+/**
  * Return a human-readable label for this package build status.
  *
  * @param array $pkg package information

@@ -45,15 +45,9 @@ if ($g_user) {
 $tz       = new DateTimeZone('UTC');
 $date_gen = date('c');
 
-chdir($upload_dir);
+$matches = get_submitted_packages($upload_dir);
 
-$matches   = array();
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.lock' -o -name '*.done' -o -name '*.upload' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
-$re        = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.*)(\.src\.rpm(?:\.info)?|\.lock|\.done|\.upload)\s+(\d+\.\d+)$!m";
-$r         = preg_match_all($re,
-                $all_files,
-                $matches,
-                PREG_SET_ORDER);
+// next block: INPUT: $matches, $_GET['package'] if set
 
 $pkgs  = array();
 $hosts = array();
@@ -141,6 +135,8 @@ ksort($build_dates);
 
 $build_count     = count($buildtime_total);
 $buildtime_total = array_sum($buildtime_total);
+
+// above block. OUTPUT: $pkgs, $build_dates, $buildtime_total, $hosts
 
 list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
