@@ -29,6 +29,13 @@ error_reporting(E_ALL);
 require __DIR__ . '/conf.php';
 require __DIR__ . '/lib.php';
 
+// sanity checks
+if (!is_dir($upload_dir)) {
+    $msg = "$upload_dir does not exist on this system. Please check your config.";
+    error_log($msg);
+    die($msg);
+}
+
 $g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
 
 if ($g_user) {
