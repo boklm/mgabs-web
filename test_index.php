@@ -347,7 +347,7 @@ if ($total > 0) {
         <div id="status-chart"></div>';
 
     // Packagers stats
-    $s .= '<table style="width: 70%; margin: 0 auto;"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
+    $s .= '<table style="width: 70%; margin: 2em 0 2em 80px;"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
     arsort($users);
     foreach ($users as $k => $v) {
         $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
