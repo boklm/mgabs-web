@@ -402,7 +402,7 @@ if ($total > 0) {
 
     $s .= '<table style="width: 100%"><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
     foreach ($stats as $k => $v) {
-        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
+        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td class="number">%s</td><td>%d</td><td class="percent">%d%%</td></tr>',
             $k, $k, $v, round($v/$total*100));
     }
 

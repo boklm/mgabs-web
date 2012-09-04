@@ -32,8 +32,8 @@ tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
 
-td.timeinfo { font-size: 85%; text-align: right; color: #444444; }
-td.percent { text-align: right; }
+.timeinfo { font-size: 85%; text-align: right; color: #444444; }
+.number, .percent { text-align: right; }
 
 #stats { float: right; }
 #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
