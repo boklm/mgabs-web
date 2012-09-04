@@ -311,7 +311,7 @@ TB;
 $s    = '';
 $tmpl = <<<T
 <tr class="%s">
-    <td>%s</td>
+    <td class="timeinfo">%s</td>
     <td><a href="?user=%s">%s</a></td>
     <td><a href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a></td>
     <td>%s</td>
@@ -357,7 +357,7 @@ if ($total > 0) {
             sprintf('<a href="%s">%s</a>', $typelink, $typestr) :
             $typestr;
 
-        $s .= '</td><td>';
+        $s .= '</td><td class="timeinfo">';
         if ($p['type'] == 'uploaded') {
             $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']); // use $p['buildtime']['diff']; instead?
             $s    .= $tdiff;
@@ -368,13 +368,13 @@ if ($total > 0) {
         $s .= '</td>';
         $s .= '</tr>';
     }
-    echo sprintf('<li><p><span class="figure">%d packages submitted in the past %d&nbsp;hours.</p>', $total, $max_modified * 24);
+    echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours.</p>', $total, $max_modified * 24);
     // Table
     echo '<table>',
-        '<tr><th>Submitted</th><th>User</th>
+        '<thead><tr><th>Submitted</th><th>User</th>
             <th>Package</th><th>Target</th><th>Media</th>
-            <th colspan="2">Status</th><th>Build time</th></tr>',
-        $s,
+            <th colspan="2">Status</th><th>Build time</th></tr></thead>',
+        '<tbody>', $s, '</tbody>',
         '</table>';
 
     // Stats

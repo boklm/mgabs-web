@@ -5,12 +5,12 @@ body { font-size: 80%; }
 .clear { clear: both; }
 table { 
     border-spacing: 0;
-    border: 1px solid #ccc;
     float: left;
 }
-table tr { padding: 0; margin: 0; }
-table th { padding: 0.2em 0.5em; margin: 0; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; text-align: left; font-size: 85%; color: #999; }
-table td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
+tr { padding: 0; margin: 0; }
+th { padding: 0.2em 0.5em; margin: 0; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; text-align: left; font-size: 85%; color: #999; }
+th:last-child { border-right: 0; }
+td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
 
 tr { background: transparent; }
 tr.uploaded { background: #bbffbb; }
