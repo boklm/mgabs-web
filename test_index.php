@@ -385,7 +385,7 @@ else
         mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
         mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),
         mga_bs_charts::js_draw_buildschedule_chart($build_dates, 'buildschedule-chart'),
-        mga_bs_charts::js_draw_packagers_chart(users, 'packagers-chart'),
+        mga_bs_charts::js_draw_packagers_chart($users, 'packagers-chart'),
         mga_bs_charts::js_draw_charts(),
         '</script>';
         echo mga_bs_charts::js_init();
