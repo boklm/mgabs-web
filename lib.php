@@ -300,6 +300,7 @@ S;
     public static function js_draw_packagers_chart($data, $id)
     {
         $rows = array();
+        arsort($data);
         foreach ($data as $packager => $count) {
             $rows[] = sprintf("['%s', %d]", $packager, $count);
         }
