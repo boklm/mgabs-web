@@ -36,7 +36,7 @@ tr.partial td.status-box { background: blue; }
 .timeinfo { font-size: 85%; text-align: right; color: #444444; }
 .number, .percent { text-align: right; }
 
-#stats { float: right; }
+#stats { float: right; border-left: 1px solid #f0f0f0; }
 #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
 #score-box { width: 100px; height: 100px; background: #faa; }
 #score-meter { width: 100px; background: #afa; }
