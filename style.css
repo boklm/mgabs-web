@@ -28,7 +28,7 @@ tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
 
-td.timeinfo { font-size: 85%; }
+td.timeinfo { font-size: 85%; text-align: right; }
 td.percent { text-align: right; }
 
 #stats { float: right; }
