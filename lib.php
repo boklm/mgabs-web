@@ -134,3 +134,39 @@ function timesort($a, $b)
         return 0;
     }
 }
+
+
+/**
+ * Publish BS stats as HTTP headers for remote services to adapt.
+ *
+ * @param array $stats
+ * @param array $last_package
+ *
+ * @return void
+*/
+function publish_stats_headers($stats, $last_package = null)
+{
+    foreach ($stats as $k => $v) {
+        header("X-BS-Queue-$k: $v");
+    }
+
+    $w = $stats['todo'] - 10;
+    if ($w < 0) {
+        $w = 0;
+    }
+    $w = $w * 60;
+    header("X-BS-Throttle: $w");
+
+    if (!is_null($last_package)) {
+        header("X-BS-Package-Status: ".$last_package['type']);
+    }
+
+    $buildtime_total = $buildtime_total / 60;
+    header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
+
+
+    $buildtime_avg = ($build_count == 0) ?
+        0 :
+        round($buildtime_total / $build_count, 2);
+    header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
+}

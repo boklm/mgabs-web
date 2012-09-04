@@ -180,31 +180,9 @@ if (file_exists('/var/lib/schedbot/tmp/upload')) {
     }
 }
 
-// publish stats as headers
+$last_pkg = ($_GET['last'] && $total > 0) ? reset($pkgs) : null
+publish_stats_headers($stats, $last_pkg);
 
-foreach ($stats as $k => $v) {
-    Header("X-BS-Queue-$k: $v");
-}
-
-$w = $stats['todo'] - 10;
-if($w < 0) {
-    $w = 0;
-}
-$w = $w * 60;
-Header("X-BS-Throttle: $w");
-
-if (isset($_GET['last']) && $total > 0) {
-    reset($pkgs);
-    $last = current($pkgs);
-    Header("X-BS-Package-Status: ".$last['type']);
-}
-
-$buildtime_total = $buildtime_total / 60;
-header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
-
-$build_count = $build_count == 0 ? 1 : $build_count;
-$buildtime_avg = round($buildtime_total / $build_count, 2);
-header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
