@@ -417,6 +417,7 @@ else
     <div id="buildtime-chart"></div>
     <div id="buildschedule-chart"></div>
     <?php
+    uksort($buildtime_stats, "timesort");
     echo '<script>',
         mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
         mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),

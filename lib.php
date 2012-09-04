@@ -294,23 +294,39 @@ S;
 
     public static function js_draw_buildtime_chart($data, $id)
     {
-        $d = print_r($data, true);
-        $rows  = array("['Duration', 'Builds']", '[1, 3]');
+        // first pass
+        $newdata = array();
         foreach ($data as $duration => $count) {
+            if (false !== strpos($duration, 'hour')) {
+                $newdata['> 1 hour'] += $count;
+            } else {
+                $d = explode(' ', $duration);
+                if ($d[0] > 15) {
+                    $newdata['> 15 minutes'] += $count;
+                } else {
+                    $newdata[$duration] = $count;
+                }
+            }
+        }
+
+        $rows  = array("['Duration', 'Builds']");
+        foreach ($newdata as $duration => $count) {
+            if ($duration == '0 second')
+                $duration = '< 1 minute';
+
             $rows[] = sprintf("['%s', %d]", $duration, $count);
         }
         $rows = implode(', ', $rows);
         return <<<S
 function draw_buildtime_chart() {
-    /*
-    {$d}
-    */
-    var data = google.visualization.arrayToDataTable([{$rows}]);
+    var data = google.visualization.arrayToDataTable([
+        {$rows}
+    ]);
     var options = {
-        title: 'Builds duration',
-        hAxis: {title: ''},
-        'width':600,
-        'height':300
+        title: 'How long are most builds?',
+        hAxis: {title: 'Time'},
+        'width':500,
+        'height':200
     };
     var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
     chart.draw(data, options);
@@ -320,25 +336,24 @@ S;
 
     public static function js_draw_buildschedule_chart($data, $id)
     {
-        $d = print_r($data, true);
-        $rows = array("['Hour', 'Builds']", '[1, 3]');
+        $rows = array("['Hour', 'Builds']");
         foreach ($data as $hour => $count) {
             $rows[] = sprintf("['%s', %d]", $hour, $count);
         }
         $rows = implode(', ', $rows);
         return <<<S
 function draw_buildschedule_chart() {
-    /*
-    {$d}
-    */
-    var data = google.visualization.arrayToDataTable([{$rows}]);
+    var data = google.visualization.arrayToDataTable([
+        {$rows}
+    ]);
     var options = {
-        title: 'Builds layout',
-        hAxis: {title: ''},
-       'width':600,
-       'height':300
+        title: 'When did builds happen? (CET)',
+        hAxis: {title: 'Hours'},
+       'width':800,
+       'height':200,
+       'curveType': 'function'
     };
-    var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
+    var chart = new google.visualization.LineChart(document.getElementById('{$id}'));
     chart.draw(data, options);
 }
 S;
