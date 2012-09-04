@@ -333,7 +333,7 @@ function draw_buildtime_chart() {
     var options = {
         title: 'How long are most builds?',
         hAxis: {title: 'Time'},
-        'width':700,
+        'width':600,
         'height':300
     };
     var chart = new google.visualization.ColumnChart(document.getElementById('{$id}'));
@@ -357,7 +357,7 @@ function draw_buildschedule_chart() {
     var options = {
         title: 'When did builds happen? (CET)',
         hAxis: {title: 'Hours'},
-       'width':700,
+       'width':600,
        'height':200,
        'curveType': 'function'
     };
