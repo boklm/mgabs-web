@@ -33,7 +33,7 @@ require __DIR__ . '/lib.php';
 if (!is_dir($upload_dir)) {
     $msg = "$upload_dir does not exist on this system. Please check your config.";
     error_log($msg);
-    die($msg);
+    //die($msg);
 }
 
 $g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
@@ -146,8 +146,8 @@ list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
 $upload_time = get_upload_time();
 
-$last_pkg = ($_GET['last'] && $total > 0) ? reset($pkgs) : null;
-publish_stats_headers($stats, $last_pkg);
+$last_pkg = (isset($_GET['last']) && $total > 0) ? reset($pkgs) : null;
+publish_stats_headers($stats, $buildtime_total, $build_count, $last_pkg);
 
 ?>
 <!DOCTYPE html>

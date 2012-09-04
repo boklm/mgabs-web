@@ -140,11 +140,13 @@ function timesort($a, $b)
  * Publish BS stats as HTTP headers for remote services to adapt.
  *
  * @param array $stats
+ * @param integer $buildtime_total
+ * @param integer $build_count
  * @param array $last_package
  *
  * @return void
 */
-function publish_stats_headers($stats, $last_package = null)
+function publish_stats_headers($stats, $buildtime_total, $build_count, $last_package = null)
 {
     foreach ($stats as $k => $v) {
         header("X-BS-Queue-$k: $v");
