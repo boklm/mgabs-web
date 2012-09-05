@@ -276,7 +276,7 @@ if ($total > 0) {
             </table>',
         round($buildtime_total / 60, 2),
         $buildtime_avg,
-        $buildtime_cnt
+        $build_count
     );
 
     $s .= '<br /><br />
