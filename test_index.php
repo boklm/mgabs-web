@@ -55,9 +55,15 @@ list($pkgs, $hosts, $build_count, $build_dates, $buildtime_total) = get_refined_
 
 list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
+$buildtime_total = $buildtime_total / 60;
+$buildtime_avg   = ($build_count == 0) ?
+    0 :
+    round($buildtime_total / $build_count, 2);
+
 publish_stats_headers(
     $stats,
     $buildtime_total,
+    $buildtime_avg,
     $build_count,
     (isset($_GET['last']) && $total > 0) ? reset($pkgs) : null
 );

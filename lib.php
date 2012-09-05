@@ -281,7 +281,7 @@ function timesort($a, $b)
  *
  * @return void
 */
-function publish_stats_headers($stats, $buildtime_total, $build_count, $last_package = null)
+function publish_stats_headers($stats, $buildtime_total, $buildtime_avg, $build_count, $last_package = null)
 {
     foreach ($stats as $k => $v) {
         header("X-BS-Queue-$k: $v");
@@ -298,13 +298,8 @@ function publish_stats_headers($stats, $buildtime_total, $build_count, $last_pac
         header("X-BS-Package-Status: ".$last_package['type']);
     }
 
-    $buildtime_total = $buildtime_total / 60;
+
     header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
-
-
-    $buildtime_avg = ($build_count == 0) ?
-        0 :
-        round($buildtime_total / $build_count, 2);
     header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
 }
 
