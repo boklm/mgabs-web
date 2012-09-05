@@ -239,7 +239,7 @@ if ($total > 0) {
 
         $s .= '<td>';
         $s .= ($typelink != '') ?
-            sprintf('<a href="%s">%s</a>', $typelink, $typestr) :
+            sprintf('<a href="%s" class="status-link">%s</a>', $typelink, $typestr) :
             $typestr;
 
         $s .= '</td><td class="timeinfo">';
@@ -304,6 +304,36 @@ else
 
 ?>
     </ul>
+    <script src="js/jquery.js"></script>
+    <script>
+    $(function () {
+        $('.status-link').click(function (ev) {
+            ev.preventDefault();
+            var key = $(this).attr("href");
+            var elId = 'e' + key.replace(/\/|\./g, '-');
+
+            if ($("#" + elId).length == 0) {
+                $(this).parent().parent().after($("<tr />",
+                    {
+                        class: "build-files-list",
+                        id: elId,
+                        html: '<td colspan="8">loading</td>'
+                    }
+                ));
+                $.get(
+                    "/pkg/log_files.php",
+                    {"k": $(this).attr("href")},
+                    function (data) {
+                        $("#" + elId).html('<td colspan="2"></td><td colspan="6">' + data + '</td>');
+                    }
+                );
+            } else {
+                $("#" + elId).toggle();
+            }
+            return false;
+        });
+    })();
+    </script>
     <div class="clear"></div>
     <hr />
     <p>Generated at <?php echo $date_gen; ?>.

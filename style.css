@@ -42,3 +42,6 @@ tr.partial td.status-box { background: blue; }
 #score-meter { width: 100px; background: #afa; }
 
 .figure { font-size: 120%%; font-weight: bold; }
+
+tr.build-files-list td ul { font-size: 85%; padding: 1em 0 2em 2em; color: #555; }
+    tr.build-files-list td a { text-decoration: none; }
