@@ -48,7 +48,7 @@ $date_gen = date('c');
 $matches = get_submitted_packages($upload_dir, $max_modified);
 echo 'debug:count:matches', count($matches), '<br>';
 
-list($pkgs, $hosts, $build_dates, $buildtime_total) = get_refined_packages_list(
+list($pkgs, $hosts, $build_count, $build_dates, $buildtime_total) = get_refined_packages_list(
     $matches,
     isset($_GET['package']) ? $_GET['package'] : null,
     isset($_GET['user']) ? $_GET['user'] : null

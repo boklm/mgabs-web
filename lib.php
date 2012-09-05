@@ -144,6 +144,7 @@ function get_refined_packages_list($list_of_files, $package = null, $user = null
     return array(
         $pkgs,
         $hosts,
+        $build_count,
         $build_dates,
         $buildtime_total
     );
