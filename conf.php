@@ -19,7 +19,7 @@
 */
 
 /** Full system path where packages are uploaded. */
-$upload_dir = '/home/schedbot/uploads';
+$upload_dir = '/var/lib/schedbot/uploads';
 
 /** How long a history should we keep, in days. */
 $max_modified = 2;
