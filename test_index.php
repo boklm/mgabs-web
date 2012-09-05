@@ -224,6 +224,7 @@ if ($total > 0) {
            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
         } else {
            $typelink = '/uploads/done/' . $p['path'];
+           echo $p['path'], ' => ', $typelink, '<br>';
            if (!is_dir(".$typelink")) {
               $typelink = '';
            }
