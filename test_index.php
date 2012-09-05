@@ -249,7 +249,7 @@ if ($total > 0) {
     }
     echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
 
-    // Table
+    // Last submitted packages
     echo '<table>',
         '<thead><tr><th>Submitted</th><th>User</th>
             <th>Package</th><th>Target</th><th>Media</th>
@@ -258,21 +258,25 @@ if ($total > 0) {
         '</table>';
 
     // Stats
-    $s     = '<div id="stats">
+    $s = '<div id="stats">
         <div id="status-chart"></div>
         <div id="packagers-chart"></div>';
 
-    $s .= sprintf('<table style="width: 80%;"><tr><td>Total time</td><td>%s hours</td></tr>
-        <tr><td>Average</td><td>%s minutes</td></tr>
-        <tr><td>Builds count</td><td>%s</td></tr></table>',
+    $s .= sprintf(
+        '<table style="width: 70%%; margin: 2em 0 2em 80px;">
+            <tr><td>Total time</td><td>%s hours</td></tr>
+            <tr><td>Average</td><td>%s minutes</td></tr>
+            <tr><td>Builds count</td><td>%s</td></tr>
+            </table>',
         round($buildtime_total / 60, 2),
         $buildtime_avg,
-        $buildtime_cnt);
-    $s .= '</table><br /><br />';
+        $buildtime_cnt
+    );
 
-    $s .= '<div id="buildtime-chart"></div>
-        <div id="buildschedule-chart"></div>';
-    $s .= '</div>';
+    $s .= '<br /><br />
+        <div id="buildtime-chart"></div>
+        <div id="buildschedule-chart"></div>
+    </div>';
 
     echo $s, '</li></ul>';
 
