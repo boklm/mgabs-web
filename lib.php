@@ -493,7 +493,7 @@ function draw_buildtime_chart() {
         {$rows}
     ]);
     var options = {
-        title: 'How long are most builds?',
+        title: 'How long are most of the builds?',
         hAxis: {title: 'Time'},
         'width':600,
         'height':200,
@@ -518,7 +518,7 @@ function draw_buildschedule_chart() {
         {$rows}
     ]);
     var options = {
-        title: 'When did builds happen? (CET)',
+        title: 'When do builds happen? (CET)',
         hAxis: {title: 'Hours'},
        'width':600,
        'height':200,
