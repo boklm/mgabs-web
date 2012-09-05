@@ -321,7 +321,7 @@ else
                     }
                 ));
                 $.get(
-                    "/pkg/log_files.php",
+                    "/log_files.php",
                     {"k": $(this).attr("href")},
                     function (data) {
                         $("#" + elId).html('<td colspan="2"></td><td colspan="6">' + data + '</td>');
