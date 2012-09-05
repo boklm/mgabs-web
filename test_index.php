@@ -201,7 +201,6 @@ $tmpl = <<<T
 T;
 
 if ($total > 0) {
-    echo getcwd();
     foreach ($pkgs as $key => $p) {
         if (trim($p['package']) == '') {
             continue;
@@ -220,16 +219,14 @@ if ($total > 0) {
 
         $typelink = '';
         if ($p['type'] == 'failure') {
-           $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
+            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
         } elseif ($p['type'] == 'rejected') {
-           $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
+            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
         } else {
-           $typelink = '/uploads/done/' . $p['path'];
-           echo ".$typelink", ' = ', print_r(is_dir(".$typelink"), true), '<br>';
-
-           if (!is_dir(".$typelink")) {
-              $typelink = '';
-           }
+            $typelink = '/uploads/done/' . $p['path'];
+            if (!is_dir(realpath($upload_dir . '/..' . $typelink))) {
+                $typelink = '';
+            }
         }
         $typestr = $p['type'];
         if ($p['status']['build']) {

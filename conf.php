@@ -18,6 +18,9 @@
  *
 */
 
+/** Where is the current app located. */
+$g_webapp_dir = '/var/www/bs';
+
 /** Full system path where packages are uploaded. */
 $upload_dir = '/var/lib/schedbot/uploads';
 
