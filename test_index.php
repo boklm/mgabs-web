@@ -45,7 +45,7 @@ if ($g_user) {
 $tz       = new DateTimeZone('UTC');
 $date_gen = date('c');
 
-$matches = get_submitted_packages($upload_dir);
+$matches = get_submitted_packages($upload_dir, $max_modified);
 echo 'debug:count:matches', count($matches), '<br>';
 
 list($pkgs, $hosts, $build_dates, $buildtime_total) = get_refined_packages_list(

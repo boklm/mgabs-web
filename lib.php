@@ -22,10 +22,11 @@
  * List all packages submitted to the BS.
  *
  * @param string $upload_dir
+ * @param integer $max_modified
  *
  * @return array
 */
-function get_submitted_packages($upload_dir)
+function get_submitted_packages($upload_dir, $max_modified)
 {
     chdir($upload_dir);
 
