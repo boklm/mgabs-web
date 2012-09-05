@@ -28,6 +28,7 @@
 */
 function get_submitted_packages($upload_dir, $max_modified)
 {
+    $cwd = getcwd();
     chdir($upload_dir);
 
     $matches   = array();
@@ -37,6 +38,8 @@ function get_submitted_packages($upload_dir, $max_modified)
                     $all_files,
                     $matches,
                     PREG_SET_ORDER);
+
+    chdir($cwd);
 
     return $matches;
 }
