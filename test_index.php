@@ -201,6 +201,7 @@ $tmpl = <<<T
 T;
 
 if ($total > 0) {
+    echo getcwd();
     foreach ($pkgs as $key => $p) {
         if (trim($p['package']) == '') {
             continue;
@@ -224,7 +225,8 @@ if ($total > 0) {
            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
         } else {
            $typelink = '/uploads/done/' . $p['path'];
-           echo $p['path'], ' => ', $typelink, '<br>';
+           echo ".$typelink", ' = ', print_r(is_dir(".$typelink"), true), '<br>';
+
            if (!is_dir(".$typelink")) {
               $typelink = '';
            }
