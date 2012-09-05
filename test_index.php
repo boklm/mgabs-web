@@ -332,7 +332,7 @@ else
             }
             return false;
         });
-    })();
+    });
     </script>
     <div class="clear"></div>
     <hr />
