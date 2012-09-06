@@ -268,9 +268,9 @@ if ($total > 0) {
         <div id="status-chart"></div>
         <div id="packagers-chart"></div>';
 
-    $total_buildtime = round($buildtime_total / 60, 2);
-    $avail_capacity  = $max_modified * $g_nodes_count;
-    $capacity_used   = round($total_buildtime / $avail_capacity * 100, 2);
+    $total_buildtime = round($buildtime_total / 60, 1);
+    $avail_capacity  = 24 * $max_modified * $g_nodes_count;
+    $capacity_used   = round($total_buildtime / $avail_capacity * 100, 1);
     $s .= sprintf(
         '<table style="width: 70%%; margin: 2em 0 2em 80px;">
             <tr><td>Total time</td><td>%s hours (%s%% of capacity with %d nodes)</td></tr>
@@ -279,7 +279,7 @@ if ($total > 0) {
             </table>',
         $total_buildtime,
         $capacity_used,
-        $nodes_count,
+        $g_nodes_count,
         $buildtime_avg,
         $build_count
     );
