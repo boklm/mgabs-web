@@ -27,6 +27,9 @@ $upload_dir = '/var/lib/schedbot/uploads';
 /** How long a history should we keep, in days. */
 $max_modified = 2;
 
+/** How many nodes are available. */
+$nodes_count = 2;
+
 /** html > body > h1 title */
 $title = '<a href="http://mageia.org/">Mageia</a> build system status';
 
