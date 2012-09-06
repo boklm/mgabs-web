@@ -279,6 +279,7 @@ if ($total > 0) {
             </table>',
         $total_buildtime,
         $capacity_used,
+        $nodes_count,
         $buildtime_avg,
         $build_count
     );
