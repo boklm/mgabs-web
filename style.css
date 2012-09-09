@@ -33,7 +33,6 @@ tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
 
-td span.committer,
 td span.media,
 td span.timeinfo { display: block; font-size: 85%; text-align: left; }
 

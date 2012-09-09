@@ -192,8 +192,8 @@ if (!is_null($upload_time)) {
 $s    = '';
 $tmpl = <<<T
 <tr class="%s">
-    <td><a rel="nofollow" href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a>
-        <span class="committer">by <a rel="nofollow" href="?user=%s">%s</a></span>
+    <td><a rel="nofollow" href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s" class="package">%s</a></td>
+    <td><a rel="nofollow" href="?user=%s" class="committer">%s</a>
         <span class="timeinfo">%s</span></td>
     <td>%s
         <span class="media">%s/%s</span></td>
@@ -257,6 +257,7 @@ if ($total > 0) {
     echo '<table id="submitted-packages">',
         '<thead><tr>
             <th>Package</th>
+            <th>Who</th>
             <th>Target, media</th>
             <th colspan="2">Status</th>
         </tr></thead>',
