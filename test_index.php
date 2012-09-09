@@ -312,7 +312,7 @@ else
     <script src="js/jquery.js"></script>
     <script>
     $(function () {
-        $('.status-link').click(function (ev) {
+        $('.status-link').on("click", function (ev) {
             ev.preventDefault();
             var key = $(this).attr("href");
             var elId = 'e' + key.replace(/\/|\./g, '-');
