@@ -106,14 +106,14 @@ if (!isset($_GET['package'])) {
         || $unmaintained_count > 0
     ) {
         if ($missing_deps_count > 0) {
-            $figures_list[] = sprintf('<span class="figure">%d</span> <a href="%s">broken dependencies</a>', 
+            $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">broken dependencies</a>',
                                 $missing_deps_count,
                                 'http://check.mageia.org/cauldron/dependencies.html'
             );
         }
 
         if ($unmaintained_count > 0) {
-            $figures_list[] = sprintf('<span class="figure">%d</span> <a href="%s">unmaintained package%s</a>',
+            $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">unmaintained package%s</a>',
                                 $unmaintained_count,
                                 'data/unmaintained.txt',
                                 plural($unmaintained_count)
@@ -129,7 +129,7 @@ if (!isset($_GET['package'])) {
     preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
     $qa_bugs = $matches[1][0];
     if ($qa_bugs > 0) {
-        $figures_list[] = sprintf('<span class="figure">%d</span> <a href="%s">package update%s to validate</a> &raquo; <a href="%s" class="action-btn">%s</a>',
+        $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">package update%s to validate</a> &raquo; <a href="%s" class="action-btn">%s</a>',
                 $qa_bugs,
                 'https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali',
                 plural($qa_bugs),
@@ -154,7 +154,7 @@ if (!isset($_GET['package'])) {
 <tr>
     <td>%s</td>
     <td>%s</td>
-    <td><a href="?user=%s">%s</a></td>
+    <td><a rel="nofollow" href="?user=%s">%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s/%s</td>
@@ -193,8 +193,8 @@ $s    = '';
 $tmpl = <<<T
 <tr class="%s">
     <td class="timeinfo">%s</td>
-    <td><a href="?user=%s">%s</a></td>
-    <td><a href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a></td>
+    <td><a rel="nofollow" href="?user=%s">%s</a></td>
+    <td><a rel="nofollow" href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a></td>
     <td>%s</td>
     <td>%s/%s</td>
     <td class="status-box"></td>
@@ -239,7 +239,7 @@ if ($total > 0) {
 
         $s .= '<td>';
         $s .= ($typelink != '') ?
-            sprintf('<a href="%s" class="status-link">%s</a>', $typelink, $typestr) :
+            sprintf('<a rel="nofollow" href="%s" class="status-link">%s</a>', $typelink, $typestr) :
             $typestr;
 
         $s .= '</td><td class="timeinfo">';
@@ -342,6 +342,6 @@ else
     <div class="clear"></div>
     <hr />
     <p>Generated at <?php echo $date_gen; ?>.
-        Code for this page is in <a href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
+        Code for this page is in <a rel="nofollow" href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
 </body>
 </html>
