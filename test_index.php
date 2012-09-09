@@ -317,10 +317,11 @@ else
             if (!ev.metaKey) {
                 ev.preventDefault();
 
-                var key = $(this).attr("href");
+                var key  = $(this).attr("href");
                 var elId = 'e' + key.replace(/\/|\./g, '-');
+                var el   = $("#" + elId);
 
-                if ($("#" + elId).length == 0) {
+                if (el.length == 0) {
                     $(this).parent().parent().after($("<tr />",
                         {
                             class: "build-files-list",
@@ -336,7 +337,7 @@ else
                         }
                     );
                 } else {
-                    $("#" + elId).toggle();
+                    el.toggle();
                 }
             }
         });
@@ -352,13 +353,21 @@ else
                 ev.preventDefault();
 
                 var elId = 'view-' + $(this).attr("href").replace(/\/|\./g, '-');
+                var cId  = elId + '-container';
+
+                var c    = $("#" + cId);
                 var el   = $("#" + elId);
-                if (el.length == 0) {
-                    $(this).after($("<textarea />", {
-                        id: elId,
-                        class: "file-view",
-                        html: "loading..."
-                    }));
+
+                if (c.length == 0) {
+                    $(this).after($("<div />", {
+                            id: cId
+                        })
+                        .append($("<textarea />", {
+                            id: elId,
+                            class: "file-view",
+                            html: "loading..."
+                        }))
+                    );
 
                     $.get(
                         "/" + $(this).attr("href"),
@@ -373,8 +382,7 @@ else
                                         class: "gototop",
                                         html: "top"
                                     }).on("click", function (ev) {
-                                        var d = $("#" + elId);
-                                        d.animate({ scrollTop: 0 }, 200);
+                                        $("#" + elId).animate({ scrollTop: 0 }, 200);
                                     })
                                 )
                                 .append($("<button />", {
@@ -389,7 +397,7 @@ else
                         }
                     );
                 } else {
-                    el.toggle();
+                    c.toggle();
                 }
             }
         });
