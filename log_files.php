@@ -25,6 +25,8 @@ require 'conf.php';
 // FIXME this expects to remove /uploads from $key. Could be different in the future.
 $key  = substr($key, 8);
 $path = realpath($upload_dir . $key);
+$job  = explode('/', $key);
+$job  = end($job);
 
 if (!is_dir($path)) {
     header('Status: 404 Not Found');
@@ -33,7 +35,8 @@ if (!is_dir($path)) {
 }
 
 $glob = $path . '/*';
-$s    = '<ul>';
+$s    = sprintf('<h4>%s</h4>', $job);
+$s   .= '<ul>';
 
 foreach (glob_recursive($glob) as $f) {
     if (is_dir($f))
@@ -41,11 +44,30 @@ foreach (glob_recursive($glob) as $f) {
 
     $link = 'uploads' . str_replace($upload_dir, '', $f);
     $show = str_replace(array($path . '/', '/'), array('', ' / '), $f);
-    $s .= sprintf('<li><a href="%s">%s</a> (%s)</li>',
+    $s   .= sprintf('<li><a href="%s" rel="nofollow">%s</a> (%s)</li>',
         $link, $show,
         _format_bytes(filesize($f))
     );
 }
+
+$others = array(
+    '.youri',
+    '_i586.done',
+    '_x86_64.done'
+);
+foreach ($others as $suffix) {
+    $f = $path . $suffix;
+    if (file_exists($f)) {
+        $link = 'uploads' . str_replace($upload_dir, '', $f);
+        $show = explode($path, $f);
+        $show = $job . $suffix;
+        $s   .= sprintf('<li><a href="%s" rel="nofollow">%s</a> (%s)</li>',
+            $link, $show,
+            _format_bytes(filesize($f))
+        );
+    }
+}
+
 $s .= '</ul>';
 
 echo $s;
