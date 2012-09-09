@@ -312,31 +312,35 @@ else
     <script src="js/jquery.js"></script>
     <script>
     $(function () {
-        $('.status-link').on("click", function (ev) {
-            ev.preventDefault();
-            var key = $(this).attr("href");
-            var elId = 'e' + key.replace(/\/|\./g, '-');
 
-            if ($("#" + elId).length == 0) {
-                $(this).parent().parent().after($("<tr />",
-                    {
-                        class: "build-files-list",
-                        id: elId,
-                        html: '<td colspan="8">loading</td>'
-                    }
-                ));
-                $.get(
-                    "/log_files.php",
-                    {"k": $(this).attr("href")},
-                    function (data) {
-                        $("#" + elId).html('<td colspan="2"></td><td colspan="6">' + data + '</td>');
-                    }
-                );
-            } else {
-                $("#" + elId).toggle();
+        $('.status-link').on("click", function (ev) {
+            if (!ev.metaKey) {
+                ev.preventDefault();
+
+                var key = $(this).attr("href");
+                var elId = 'e' + key.replace(/\/|\./g, '-');
+
+                if ($("#" + elId).length == 0) {
+                    $(this).parent().parent().after($("<tr />",
+                        {
+                            class: "build-files-list",
+                            id: elId,
+                            html: '<td colspan="8">loading</td>'
+                        }
+                    ));
+                    $.get(
+                        "/log_files.php",
+                        {"k": $(this).attr("href")},
+                        function (data) {
+                            $("#" + elId).html('<td colspan="8">' + data + '</td>');
+                        }
+                    );
+                } else {
+                    $("#" + elId).toggle();
+                }
             }
-            return false;
         });
+
     });
     </script>
     <div class="clear"></div>
