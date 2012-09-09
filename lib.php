@@ -67,17 +67,20 @@ function get_refined_packages_list($list_of_files, $package = null, $user = null
             continue;
         }
         $key = $val[6] . $val[7];
-        if (!is_array($pkgs[$key])) {
+        if (!array_key_exists($key, $pkgs)) {
 
             $pkgs[$key] = array(
-                'status'  => array(),
-                'path'    => $val[2],
-                'version' => $val[3],
-                'media'   => $val[4],
-                'section' => $val[5],
-                'user'    => $val[7],
-                'host'    => $val[8],
-                'job'     => $val[9]
+                'status'   => array(),
+                'path'     => $val[2],
+                'version'  => $val[3],
+                'media'    => $val[4],
+                'section'  => $val[5],
+                'user'     => $val[7],
+                'host'     => $val[8],
+                'job'      => $val[9],
+                'revision' => '',
+                'summary'  => '',
+                'package'  => ''
             );
         }
         $status = $val[1];
@@ -217,7 +220,7 @@ function key2timestamp($key) {
  *
  * @return string
 */
-function timediff($start, $end)
+function timediff($start, $end = null)
 {
     if (is_null($end)) {
         $end = time();
@@ -467,7 +470,11 @@ S;
             } else {
                 $d = explode(' ', $duration);
                 if ($d[0] > 20) {
-                    $newdata['21 minutes'] += $count;
+                    if (!array_key_exists('21 minutes', $newdata)) {
+                        $newdata['21 minutes'] = $count;
+                    } else {
+                        $newdata['21 minutes'] += $count;
+                    }
                 } else {
                     $newdata[$duration] = $count;
                 }

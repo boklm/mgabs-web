@@ -229,7 +229,7 @@ if ($total > 0) {
             }
         }
         $typestr = $p['type'];
-        if ($p['status']['build']) {
+        if (isset($p['status']['build'])) {
             $typealt = 'Building on';
             foreach ($p['status']['build'] as $h) {
                 $typealt .= " $h";
