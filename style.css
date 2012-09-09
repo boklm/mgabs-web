@@ -43,6 +43,32 @@ tr.partial td.status-box { background: blue; }
 
 .figure { font-size: 120%%; font-weight: bold; }
 
-tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 2em; color: #555; }
+tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 1em; color: #555; }
     tr.build-files-list td a { text-decoration: none; }
     tr.build-files-list td h4 { margin: 0 0 0.6em 0; }
+
+.file-view {
+    white-space: pre;
+    resize: both;
+    display: block;
+    overflow: auto;
+    box-shadow: 0 0 4px #303030;
+    margin: 0.5em 0;
+    width: 800px;
+    height: 10em;
+    background: #202020;
+    color: #f0f0fa;
+    padding: 0.5em 1em 1em 0.7em;
+    font-family: "Andale Mono", "Courier New", fixed;
+    position: relative;
+}
+
+.controls {
+    float: right;
+    display: block;
+    text-align: right;
+}
+.gotobo, .gototop {
+    margin-left: 0.5em;
+    font-size: 90%;
+}

@@ -256,7 +256,7 @@ if ($total > 0) {
     echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
 
     // Last submitted packages
-    echo '<table>',
+    echo '<table id="submitted-packages">',
         '<thead><tr><th>Submitted</th><th>User</th>
             <th>Package</th><th>Target</th><th>Media</th>
             <th colspan="2">Status</th><th>Build time</th></tr></thead>',
@@ -341,6 +341,58 @@ else
             }
         });
 
+        $("table#submitted-packages tbody").on("click", "tr td li a.view-inline", function (ev) {
+
+            // only open text log files
+            var ext = $(this).attr("href").split(".").pop();
+            if (["log", "done", "youri"].indexOf(ext) < 0)
+                return true;
+
+            if (!ev.metaKey) {
+                ev.preventDefault();
+
+                var elId = 'view-' + $(this).attr("href").replace(/\/|\./g, '-');
+                var el   = $("#" + elId);
+                if (el.length == 0) {
+                    $(this).after($("<textarea />", {
+                        id: elId,
+                        class: "file-view",
+                        html: "loading..."
+                    }));
+
+                    $.get(
+                        "/" + $(this).attr("href"),
+                        {},
+                        function (data) {
+                            $("#" + elId).html(data)
+                            .before(
+                                $("<div />", {
+                                    class: "controls"
+                                })
+                                .append($("<button />", {
+                                        class: "gototop",
+                                        html: "top"
+                                    }).on("click", function (ev) {
+                                        var d = $("#" + elId);
+                                        d.animate({ scrollTop: 0 }, 200);
+                                    })
+                                )
+                                .append($("<button />", {
+                                        class: "gotobo",
+                                        html: "bottom"
+                                    }).on("click", function (ev) {
+                                        var d = $("#" + elId);
+                                        d.animate({ scrollTop: d.prop("scrollHeight") }, 200);
+                                    })
+                                )
+                            )
+                        }
+                    );
+                } else {
+                    el.toggle();
+                }
+            }
+        });
     });
     </script>
     <div class="clear"></div>

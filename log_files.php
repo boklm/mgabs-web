@@ -44,7 +44,7 @@ foreach (glob_recursive($glob) as $f) {
 
     $link = 'uploads' . str_replace($upload_dir, '', $f);
     $show = str_replace(array($path . '/', '/'), array('', ' / '), $f);
-    $s   .= sprintf('<li><a href="%s" rel="nofollow">%s</a> (%s)</li>',
+    $s   .= sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> (%s)</li>',
         $link, $show,
         _format_bytes(filesize($f))
     );
@@ -61,7 +61,7 @@ foreach ($others as $suffix) {
         $link = 'uploads' . str_replace($upload_dir, '', $f);
         $show = explode($path, $f);
         $show = $job . $suffix;
-        $s   .= sprintf('<li><a href="%s" rel="nofollow">%s</a> (%s)</li>',
+        $s   .= sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> (%s)</li>',
             $link, $show,
             _format_bytes(filesize($f))
         );
