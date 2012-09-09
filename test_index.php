@@ -192,11 +192,11 @@ if (!is_null($upload_time)) {
 $s    = '';
 $tmpl = <<<T
 <tr class="%s">
-    <td class="timeinfo">%s</td>
-    <td><a rel="nofollow" href="?user=%s">%s</a></td>
-    <td><a rel="nofollow" href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a></td>
-    <td>%s</td>
-    <td>%s/%s</td>
+    <td><a rel="nofollow" href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a>
+        <span class="committer">by <a rel="nofollow" href="?user=%s">%s</a></span>
+        <span class="timeinfo">%s</span></td>
+    <td>%s
+        <span class="media">%s/%s</span></td>
     <td class="status-box"></td>
 T;
 
@@ -208,11 +208,11 @@ if ($total > 0) {
 
         $s .= sprintf($tmpl,
             $p['type'],
-            timediff(key2timestamp($key)) . ' ago',
-            $p['user'], $p['user'],
             $p['revision'],
             addslashes($p['summary']),
             $p['package'],
+            $p['user'], $p['user'],
+            timediff(key2timestamp($key)) . ' ago',
             $p['version'],
             $p['media'], $p['section']
         );
@@ -242,24 +242,24 @@ if ($total > 0) {
             sprintf('<a rel="nofollow" href="%s" class="status-link">%s</a>', $typelink, $typestr) :
             $typestr;
 
-        $s .= '</td><td class="timeinfo">';
         if ($p['type'] == 'uploaded') {
             $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']); // use $p['buildtime']['diff']; instead?
-            $s    .= $tdiff;
-            $tdiff = floor(($p['buildtime']['end'] - $p['buildtime']['start']) / 60)*60;
+            $s    .= '<span class="timeinfo">' . $tdiff . '</span>';
 
+            $tdiff = floor(($p['buildtime']['end'] - $p['buildtime']['start']) / 60)*60;
             @$buildtime_stats[timediff(0, $tdiff)] += 1;
         }
-        $s .= '</td>';
-        $s .= '</tr>';
+        $s .= '</td></tr>';
     }
     echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
 
     // Last submitted packages
     echo '<table id="submitted-packages">',
-        '<thead><tr><th>Submitted</th><th>User</th>
-            <th>Package</th><th>Target</th><th>Media</th>
-            <th colspan="2">Status</th><th>Build time</th></tr></thead>',
+        '<thead><tr>
+            <th>Package</th>
+            <th>Target, media</th>
+            <th colspan="2">Status</th>
+        </tr></thead>',
         '<tbody>', $s, '</tbody>',
         '</table>';
 
@@ -326,14 +326,14 @@ else
                         {
                             class: "build-files-list",
                             id: elId,
-                            html: '<td colspan="8">loading</td>'
+                            html: '<td colspan="4">loading</td>'
                         }
                     ));
                     $.get(
                         "/log_files.php",
                         {"k": $(this).attr("href")},
                         function (data) {
-                            $("#" + elId).html('<td colspan="8">' + data + '</td>');
+                            $("#" + elId).html('<td colspan="4">' + data + '</td>');
                         }
                     );
                 } else {

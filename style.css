@@ -15,7 +15,7 @@ table {
 tr { padding: 0; margin: 0; }
 th { padding: 0.2em 0.5em; margin: 0; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; text-align: left; font-size: 85%; color: #999; }
 th:last-child { border-right: 0; }
-td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
+td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; vertical-align: top; }
 
 tr { background: transparent; }
 tr.uploaded { background: #ddffdd; }
@@ -32,6 +32,10 @@ tr.rejected td.status-box { background: orange; }
 tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
+
+td span.committer,
+td span.media,
+td span.timeinfo { display: block; font-size: 85%; text-align: left; }
 
 .timeinfo { font-size: 85%; text-align: right; color: #444444; }
 .number, .percent { text-align: right; }
