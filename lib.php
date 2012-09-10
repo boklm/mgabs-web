@@ -417,7 +417,7 @@ function draw_status_chart() {
 
     var options = {
         'title':'Packages status',
-        'width':600,
+        'width':500,
         'height':200,
         'colors': ['white', 'yellow', 'blue', 'green', 'orange', 'red'],
         'backgroundColor': '#f8f8f8'
@@ -447,7 +447,7 @@ function draw_packagers_chart() {
 
     var options = {
         'title':'Packagers',
-        'width':600,
+        'width':500,
         'height':200,
         'backgroundColor': '#f8f8f8',
         'sliceVisibilityThreshold': 2/90
@@ -502,7 +502,7 @@ function draw_buildtime_chart() {
     var options = {
         title: 'How long are most of the builds?',
         hAxis: {title: 'Time'},
-        'width':600,
+        'width':500,
         'height':200,
         'backgroundColor': '#f8f8f8'
     };
@@ -527,7 +527,7 @@ function draw_buildschedule_chart() {
     var options = {
         title: 'When do builds happen? (CET)',
         hAxis: {title: 'Hours'},
-       'width':600,
+       'width':500,
        'height':200,
        'curveType': 'function',
        'backgroundColor': '#f8f8f8'

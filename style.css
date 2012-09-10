@@ -51,7 +51,7 @@ td .revision a { color: #777777; text-decoration: none; }
 
 .figure { font-size: 120%%; font-weight: bold; }
 
-#submitted-packages { width: 1030px; }
+#submitted-packages { width: 960px; }
 
 tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 0.5em; color: #222; }
     tr.build-files-list td ul { padding: 0 0 0 2em; }
@@ -84,7 +84,6 @@ span.dir { font-weight: bold; }
 
 .controls {
     float: right;
-    display: block;
     text-align: right;
 }
 .short .controls { display: none; }
