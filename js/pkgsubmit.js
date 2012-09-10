@@ -66,7 +66,6 @@ function isShortFile(path) {
 */
 function highlight_text(text) {
     return text.replace(/.*(ok|succe|test|warn|info|deprecat|error|fail).*/gi, function (match, p1, p2, offset, string) {
-        console.log([match, p1, offset, string]);
         var cl = 'none';
         switch (p1.toLowerCase()) {
         case 'succe':
