@@ -46,9 +46,12 @@ td span.timeinfo { display: block; font-size: 85%; text-align: left; }
 
 .figure { font-size: 120%%; font-weight: bold; }
 
-tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 1em; color: #555; }
+tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 0.5em; color: #222; }
+    tr.build-files-list td ul { padding: 0 0 0 2em; }
     tr.build-files-list td a { text-decoration: none; }
     tr.build-files-list td h4 { margin: 0 0 0.6em 0; }
+
+span.dir { font-weight: bold; }
 
 .file-view {
     white-space: pre;

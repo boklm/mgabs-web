@@ -34,44 +34,23 @@ if (!is_dir($path)) {
     die('Sorry, not found');
 }
 
-$glob = $path . '/*';
-$s    = sprintf('<h4>%s</h4>', $job);
-$s   .= '<ul>';
-
-foreach (glob_recursive($glob) as $f) {
-    if (is_dir($f))
-        continue;
-
-    $link = 'uploads' . str_replace($upload_dir, '', $f);
-    $show = str_replace(array($path . '/', '/'), array('', ' / '), $f);
-    $s   .= sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> (%s)</li>',
-        $link, $show,
-        _format_bytes(filesize($f))
-    );
-}
+$list = glob_recursive_tree($path . '/*');
 
 $others = array(
     '.youri',
     '_i586.done',
     '_x86_64.done'
 );
+
 foreach ($others as $suffix) {
     $f = $path . $suffix;
     if (file_exists($f)) {
-        $link = 'uploads' . str_replace($upload_dir, '', $f);
-        $show = explode($path, $f);
-        $show = $job . $suffix;
-        $s   .= sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> (%s)</li>',
-            $link, $show,
-            _format_bytes(filesize($f))
-        );
+        $list[] = $f;
     }
 }
 
-$s .= '</ul>';
-
-echo $s;
-
+echo sprintf('<h4>%s</h4>', $job),
+    print_list($list);
 
 // lib code below.
 
@@ -128,4 +107,39 @@ function glob_recursive($pattern, $flags = 0)
     }
 
     return $files;
+}
+
+function glob_recursive_tree($pattern, $flags = 0)
+{
+    $files = glob($pattern, $flags);
+    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+        $dirtop = explode('/', $dir);
+        $files[end($dirtop)] = glob_recursive_tree($dir . '/' . basename($pattern), $flags);
+    }
+
+    return $files;
+}
+
+function print_list($list)
+{
+    global $upload_dir, $path;
+
+    $l = array();
+    foreach ($list as $f) {
+        if (!is_string($f)) {
+            continue;
+        }
+
+        if (is_dir($f)) {
+            $top = basename($f);
+            $l[] = sprintf('<li><span class="dir">%s</span>%s</li>', $top, print_list($list[$top]));
+        } elseif (file_exists($f)) {
+            $l[] = sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> (%s)</li>',
+                'uploads' . str_replace($upload_dir, '', $f),
+                basename($f),
+                _format_bytes(filesize($f))
+            );
+        }
+    }
+    return sprintf('<ul>%s</ul>', implode($l));
 }
