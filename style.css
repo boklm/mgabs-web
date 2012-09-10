@@ -75,7 +75,7 @@ a.package { color: #202020; text-decoration: none; }
 
 .builds { list-style: none; padding: 0; margin: 0 0 0 2em; }
 
-#submitted-packages { width: 800px; }
+#submitted-packages { width: 890px; }
 
 tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 0.5em; color: #222; }
     tr.build-files-list td ul { padding: 0 0 0 2em; }
