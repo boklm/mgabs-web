@@ -55,7 +55,7 @@ a.package { color: #202020; text-decoration: none; }
 
 .number, .percent { text-align: right; }
 
-#stats { float: right; border-left: 1px solid #f0f0f0; }
+#stats { float: right; border-left: 1px solid #f0f0f0; margin: 0; padding: 0; }
 #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
 #score-box { width: 100px; height: 100px; background: #faa; }
 #score-meter { width: 100px; background: #afa; }
@@ -66,7 +66,7 @@ a.package { color: #202020; text-decoration: none; }
 .action-btn {
     text-decoration: none;
     background: #40a040;
-    color: #fafafa;
+    color: #ffffff;
     padding: 0.5em;
     font-weight: bold;
     border-radius: 5px;
