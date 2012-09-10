@@ -35,10 +35,12 @@ tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
 
 tr .media,
-tr .timeinfo { display: block; font-size: 85%; text-align: left; }
+tr .timeinfo,
+tr .revision { display: block; font-size: 85%; text-align: left; }
 
 td .media,
-td .timeinfo { color: #444444; }
+td .timeinfo,
+td .revision a { color: #777777; text-decoration: none; }
 
 .number, .percent { text-align: right; }
 

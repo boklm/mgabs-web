@@ -192,7 +192,8 @@ if (!is_null($upload_time)) {
 $s    = '';
 $tmpl = <<<T
 <tr class="%s">
-    <td><a rel="nofollow" href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s" class="package">%s</a></td>
+    <td><a rel="nofollow" href="%s" title="%s" class="package">%s</a>
+        <span class="revision"><a href="%s">view changes @ r%d</a></span></td>
     <td><a rel="nofollow" href="?user=%s" class="committer">%s</a>
         <span class="timeinfo">%s</span></td>
     <td>%s
@@ -205,12 +206,14 @@ if ($total > 0) {
         if (trim($p['package']) == '') {
             continue;
         }
+        $revision_link = sprintf('http://svnweb.mageia.org/packages?view=revision&revision=%d', $p['revision']);
 
         $s .= sprintf($tmpl,
             $p['type'],
-            $p['revision'],
+            $revision_link,
             addslashes($p['summary']),
             $p['package'],
+            $revision_link, $p['revision'],
             $p['user'], $p['user'],
             timediff(key2timestamp($key)) . ' ago',
             $p['version'],
