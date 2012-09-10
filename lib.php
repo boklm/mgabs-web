@@ -501,7 +501,7 @@ function draw_buildtime_chart() {
     ]);
     var options = {
         title: 'How long are most of the builds?',
-        hAxis: {title: 'Time'},
+        hAxis: {title: 'Duration'},
         'width':500,
         'height':200,
         'backgroundColor': '#f8f8f8'
