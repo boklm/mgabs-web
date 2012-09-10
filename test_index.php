@@ -269,7 +269,7 @@ if ($total > 0) {
             <th>Package</th>
             <th>Who <span class="timeinfo">when</span></th>
             <th>Target <span class="media">media</span></th>
-            <th>Status <span class="timeinfo">build time</span></th>
+            <th>Status <span class="timeinfo">process time</span></th>
         </tr></thead>',
         '<tbody>', $s, '</tbody>',
         '</table>';
