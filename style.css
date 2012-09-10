@@ -102,6 +102,9 @@ span.dir { font-weight: bold; }
     position: relative;
     left: -22px;
 }
+ul > li .file-view { left: -22px; }
+ul > li > ul > li .file-view { left: -44px; }
+ul > li > ul > li > ul > li .file-view { left: -66px; }
 
 .short .file-view {
     height: 1.5em;
