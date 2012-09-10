@@ -1,3 +1,26 @@
+function isLogFile(path) {
+
+    var ext = path.split(".").pop();
+    if (["log", "done", "youri"].indexOf(ext) < 0) {
+        return true;
+    }
+
+    return false;
+}
+
+function isShortFile(path) {
+
+    var ext  = path.split(".").pop();
+    var file = path.split("/").pop();
+
+    if (["done"].indexOf(ext) >= 0
+        || ["status.log"].indexOf(file) >= 0) {
+        return true;
+    }
+
+    return false;
+}
+
 $(function () {
 
     $('.status-link').on("click", function (ev) {
@@ -31,17 +54,15 @@ $(function () {
 
     $("table#submitted-packages tbody").on("click", "tr td li a.view-inline", function (ev) {
 
-        // only open text log files
-        var ext = $(this).attr("href").split(".").pop();
-        if (["log", "done", "youri"].indexOf(ext) < 0)
+        if (isLogFile($(this).attr("href"))) {
             return true;
+        }
 
         if (!ev.metaKey) {
             ev.preventDefault();
 
             var elId = 'view-' + $(this).attr("href").replace(/\/|\./g, '-');
             var cId  = elId + '-container';
-
             var c    = $("#" + cId);
             var el   = $("#" + elId);
 
@@ -49,6 +70,7 @@ $(function () {
                 $(this).after($("<div />", {
                         id: cId
                     })
+                    .addClass(isShortFile($(this).attr("href")) ? "short" : "")
                     .append($("<textarea />", {
                         id: elId,
                         class: "file-view",

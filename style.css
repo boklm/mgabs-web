@@ -66,11 +66,18 @@ tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 1em; color: #555; }
     position: relative;
 }
 
+.short .file-view {
+    height: 1.5em;
+    width: 500px;
+}
+
 .controls {
     float: right;
     display: block;
     text-align: right;
 }
+.short .controls { display: none; }
+
 .gotobo, .gototop {
     margin-left: 0.5em;
     font-size: 90%;
