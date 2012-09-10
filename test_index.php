@@ -243,7 +243,7 @@ if ($total > 0) {
             $typestr = "<span title='$typealt'>$typestr</a>";
         }
 
-        $s .= '<td>';
+        $s .= '<td class="status">';
 
         $show_time = '';
         if ($p['type'] == 'uploaded') {

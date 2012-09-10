@@ -43,6 +43,8 @@ tr.partial .status-box { background: blue; }
 
 .status-link { text-decoration: none; display: block; margin: 0; padding: 0; }
 
+td.status { white-space: nowrap; }
+
 tr .media,
 tr .timeinfo,
 tr .revision { display: block; font-size: 85%; text-align: left; }
