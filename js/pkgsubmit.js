@@ -107,14 +107,14 @@ function build_log_files_list(ev) {
                 {
                     class: "build-files-list",
                     id: elId,
-                    html: '<td colspan="5">loading</td>'
+                    html: '<td colspan="4">loading</td>'
                 }
             ));
             $.get(
                 "/log_files.php",
                 {"k": $(this).attr("href")},
                 function (data) {
-                    $("#" + elId).html('<td colspan="5">' + data + '</td>');
+                    $("#" + elId).html('<td colspan="4">' + data + '</td>');
                 }
             );
         } else {

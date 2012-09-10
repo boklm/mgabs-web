@@ -202,7 +202,6 @@ $tmpl = <<<T
         <span class="timeinfo">%s</span></td>
     <td>%s
         <span class="media">%s/%s</span></td>
-    <td class="status-box"></td>
 T;
 
 if ($total > 0) {
