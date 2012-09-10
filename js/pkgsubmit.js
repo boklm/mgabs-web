@@ -142,6 +142,7 @@ $(function () {
                                 })
                             )
                         )
+                        .animate({ scrollTop: $("#" + elId).prop("scrollHeight") }, 1000);
                     }
                 );
             } else {
