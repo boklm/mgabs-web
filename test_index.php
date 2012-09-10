@@ -76,12 +76,15 @@ publish_stats_headers(
     <title><?php echo strip_tags($title); ?></title>
     <meta name="robots" content="<?php echo $robots; ?>">
     <link rel="home" href="<?php echo $g_root_url; ?>">
+    <link rel="author" href="http://www.mageia.org/">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h1><?php echo $title ?></h1>
-
+<body class="contribute">
+    <header id="mgnavt">
+        <h1><?php echo $title ?></h1>
+    </header>
+    <article>
 <?php
 
 $bannerfile = dirname(__FILE__) . '/banner.html';
@@ -315,9 +318,11 @@ else
     </ul>
     <script src="js/jquery.js"></script>
     <script src="js/pkgsubmit.js"></script>
+    <script src="//nav.mageia.org/js"></script>
     <div class="clear"></div>
     <hr />
     <p>Generated at <?php echo $date_gen; ?>.
         Code for this page is in <a rel="nofollow" href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
+    </article>
 </body>
 </html>

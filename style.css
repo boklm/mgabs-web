@@ -1,11 +1,18 @@
 html, body {
     background: #f8f8f8;
+    margin: 0;
+    padding: 0;
 }
 html, body, table {
     font-family: Verdana, "Trebuchet MS", "Lucida Grande", "Lucida Sans", Tahoma, Arial, sans-serif;
     color: #202020;
 }
 body { font-size: 80%; }
+
+article {
+    position: fixed;
+    top: 128px;
+}
 
 .clear { clear: both; }
 table { 
