@@ -146,7 +146,7 @@ if (!isset($_GET['package'])) {
         echo array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
     }
 
-    echo '</ul><ul>';
+    echo '</ul><ul class="builds">';
     $buildtime_stats = array();
 
     // Builds in progress
