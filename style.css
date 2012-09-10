@@ -15,7 +15,8 @@ table {
 tr { padding: 0; margin: 0; }
 th { padding: 0.2em 0.5em; margin: 0; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; text-align: left; font-size: 85%; color: #999; }
 th:last-child { border-right: 0; }
-td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; vertical-align: top; }
+td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
+th, td { vertical-align: top; }
 
 tr { background: transparent; }
 tr.uploaded { background: #ddffdd; }
@@ -33,10 +34,12 @@ tr.todo td.status-box { background: white; }
 tr.building td.status-box { background: yellow; }
 tr.partial td.status-box { background: blue; }
 
-td span.media,
-td span.timeinfo { display: block; font-size: 85%; text-align: left; }
+tr .media,
+tr .timeinfo { display: block; font-size: 85%; text-align: left; }
 
-.timeinfo { font-size: 85%; text-align: right; color: #444444; }
+td .media,
+td .timeinfo { color: #444444; }
+
 .number, .percent { text-align: right; }
 
 #stats { float: right; border-left: 1px solid #f0f0f0; }
@@ -45,6 +48,8 @@ td span.timeinfo { display: block; font-size: 85%; text-align: left; }
 #score-meter { width: 100px; background: #afa; }
 
 .figure { font-size: 120%%; font-weight: bold; }
+
+#submitted-packages { width: 1030px; }
 
 tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 0.5em; color: #222; }
     tr.build-files-list td ul { padding: 0 0 0 2em; }
@@ -58,10 +63,11 @@ span.dir { font-weight: bold; }
     resize: both;
     display: block;
     overflow: auto;
+    word-wrap: break-word;
     box-shadow: 0 0 4px #303030;
     margin: 0.5em 0;
     width: 800px;
-    height: 10em;
+    height: 13em;
     background: #202020;
     color: #f0f0fa;
     padding: 0.5em 1em 1em 0.7em;

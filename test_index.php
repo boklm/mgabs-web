@@ -257,8 +257,8 @@ if ($total > 0) {
     echo '<table id="submitted-packages">',
         '<thead><tr>
             <th>Package</th>
-            <th>Who</th>
-            <th>Target, media</th>
+            <th>Who <span class="timeinfo">when</span></th>
+            <th>Target <span class="media">media</span></th>
             <th colspan="2">Status</th>
         </tr></thead>',
         '<tbody>', $s, '</tbody>',
