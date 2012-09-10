@@ -33,13 +33,15 @@ tr.todo { background: white; }
 tr.building { background: #ffff99; }
 tr.partial { background: #bbbbff; }
 
-td.status-box { width: 1em; height: 1em; }
-tr.uploaded td.status-box { background: green; }
-tr.failure td.status-box { background: red; }
-tr.rejected td.status-box { background: orange; }
-tr.todo td.status-box { background: white; }
-tr.building td.status-box { background: yellow; }
-tr.partial td.status-box { background: blue; }
+.status-box { display: inline-block; width: 12px; height: 12px; }
+tr.uploaded .status-box { background: green; }
+tr.failure .status-box { background: red; }
+tr.rejected .status-box { background: orange; }
+tr.todo .status-box { background: white; }
+tr.building .status-box { background: yellow; }
+tr.partial .status-box { background: blue; }
+
+.status-link { text-decoration: none; display: block; margin: 0; padding: 0; }
 
 tr .media,
 tr .timeinfo,
@@ -48,6 +50,8 @@ tr .revision { display: block; font-size: 85%; text-align: left; }
 td .media,
 td .timeinfo,
 td .revision a { color: #777777; text-decoration: none; }
+
+a.package { color: #202020; text-decoration: none; }
 
 .number, .percent { text-align: right; }
 

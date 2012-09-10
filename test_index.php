@@ -244,17 +244,21 @@ if ($total > 0) {
         }
 
         $s .= '<td>';
-        $s .= ($typelink != '') ?
-            sprintf('<a rel="nofollow" href="%s" class="status-link">%s</a>', $typelink, $typestr) :
-            $typestr;
 
+        $show_time = '';
         if ($p['type'] == 'uploaded') {
             $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']); // use $p['buildtime']['diff']; instead?
-            $s    .= '<span class="timeinfo">' . $tdiff . '</span>';
+            $show_time = '<span class="timeinfo">' . $tdiff . '</span>';
 
             $tdiff = floor(($p['buildtime']['end'] - $p['buildtime']['start']) / 60)*60;
             @$buildtime_stats[timediff(0, $tdiff)] += 1;
         }
+        $s .= ($typelink != '')
+            ? sprintf('<a rel="nofollow" href="%s" class="status-link"><span class="status-box"></span> %s %s</a>',
+                $typelink, $typestr, $show_time)
+            : sprintf('<span class="status-box"></span> %s %s',
+                $typestr, $show_time);
+
         $s .= '</td></tr>';
     }
     echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
@@ -265,7 +269,7 @@ if ($total > 0) {
             <th>Package</th>
             <th>Who <span class="timeinfo">when</span></th>
             <th>Target <span class="media">media</span></th>
-            <th colspan="2">Status</th>
+            <th>Status <span class="timeinfo">build time</span></th>
         </tr></thead>',
         '<tbody>', $s, '</tbody>',
         '</table>';
