@@ -175,6 +175,13 @@ function show_log_file(ev) {
                                 d.animate({ scrollTop: d.prop("scrollHeight") }, 200);
                             })
                         )
+                        .append($("<button />", {
+                                class: "close",
+                                html: "close"
+                            }).on("click", function (ev) {
+                                $("#" + cId).toggle();
+                            })
+                        )
                     )
                     .animate({ scrollTop: $("#" + elId).prop("scrollHeight") }, 1000);
                 }
