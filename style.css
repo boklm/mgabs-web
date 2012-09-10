@@ -74,6 +74,7 @@ a.package { color: #202020; text-decoration: none; }
 }
 
 .builds { list-style: none; padding: 0; margin: 0 0 0 2em; }
+.builds table { width: 720px; }
 
 #submitted-packages { width: 720px; }
 
