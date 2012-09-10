@@ -155,33 +155,32 @@ if (!isset($_GET['package'])) {
         $s = '';
         $tmpl = <<<TB
 <tr>
-    <td>%s</td>
-    <td>%s</td>
+    <td><span class="package">%s</span></td>
     <td><a rel="nofollow" href="?user=%s">%s</a></td>
-    <td>%s</td>
-    <td>%s</td>
-    <td>%s/%s</td>
+    <td>%s <span class="media">%s/%s</span></td>
+    <td>%s <span class="media">%s</span></td>
 </tr>
 TB;
         foreach ($hosts as $machine => $b) {
             foreach ($b as $arch => $key) {
                 $s .= sprintf($tmpl,
-                    $machine,
-                    $arch,
-                    $pkgs[$key]['user'], $pkgs[$key]['user'],
                     $pkgs[$key]['package'],
-                    $pkgs[$key]['version'],
-                    $pkgs[$key]['media'], $pkgs[$key]['section']);
+                    $pkgs[$key]['user'], $pkgs[$key]['user'],
+                    $pkgs[$key]['version'], $pkgs[$key]['media'], $pkgs[$key]['section'],
+                    $machine, $arch);
             }
         }
-        echo '<div align="center"><table>',
-             '<tr><th>Machine</th><th>Arch</th><th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
+        echo '<div align="center"><table><thead><tr>',
+             '<th>Package</th>
+                <th>User</th>
+                <th>Target <span class="media">media</span></th>
+                <th>Machine <span class="media">arch</span></th></tr></thead><tbody>',
              $s,
-             '</table></div>',
+             '</tbody></table></div>',
              '<div class="clear"></div>',
              '</li>';
     } else {
-        echo '<li><p>No build in progress.</p></li>';
+        //echo '<li><p>No build in progress.</p></li>';
     }
 }
 
