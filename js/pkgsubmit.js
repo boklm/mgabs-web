@@ -140,7 +140,7 @@ function show_log_file(ev) {
         var el   = $("#" + elId);
 
         if (c.length == 0) {
-            $(this).after($("<div />", {
+            $(this).next().after($("<div />", {
                     id: cId
                 })
                 .addClass(isShortFile($(this).attr("href")) ? "short" : "")

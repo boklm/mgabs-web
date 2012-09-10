@@ -134,7 +134,7 @@ function print_list($list)
             $top = basename($f);
             $l[] = sprintf('<li><span class="dir">%s</span>%s</li>', $top, print_list($list[$top]));
         } elseif (file_exists($f)) {
-            $l[] = sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> (%s)</li>',
+            $l[] = sprintf('<li><a href="%s" rel="nofollow" class="view-inline">%s</a> <span class="filesize">(%s)</span></li>',
                 'uploads' . str_replace($upload_dir, '', $f),
                 basename($f),
                 _format_bytes(filesize($f))
