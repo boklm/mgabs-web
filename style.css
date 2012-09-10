@@ -10,7 +10,7 @@ html, body, table {
 body { font-size: 80%; }
 
 article {
-    position: fixed;
+    position: absolute;
     top: 128px;
 }
 
