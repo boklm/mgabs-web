@@ -85,3 +85,10 @@ span.dir { font-weight: bold; }
     margin-left: 0.5em;
     font-size: 90%;
 }
+
+.hl-none { font-weight: bold; }
+.hl { font-weight: bold; }
+.hl-ok { color: #33ff33; }
+.hl-info { color: #3e3eff; }
+.hl-warn { color: orange; }
+.hl-error { color: red; }

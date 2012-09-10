@@ -21,6 +21,45 @@ function isShortFile(path) {
     return false;
 }
 
+/**
+ * Inject <span /> elements with appropriate classes into given text
+ * to allow for highlighting specific portions of a text file.
+ *
+ * Here, log files with ok|success|test|warning|info|error|fail|etc.
+ *
+ * @param string text
+ *
+ * @return string
+*/
+function highlight_text(text) {
+    return text.replace(/.*(ok|succe|test|warn|info|deprecat|error|fail).*/gi, function (match, p1, p2, offset, string) {
+        console.log([match, p1, offset, string]);
+        var cl = 'none';
+        switch (p1.toLowerCase()) {
+        case 'succe':
+        case 'ok':
+            cl = 'ok';
+            break
+
+        case 'test':
+        case 'info':
+            cl = 'info';
+            break;
+
+        case 'warn':
+        case 'deprecat':
+            cl = 'warn';
+            break;
+
+        case 'error':
+        case 'fail':
+            cl = 'error';
+            break;
+        }
+        return '<span class="hl hl-' + cl + '">' + match + '</span>';
+    });
+}
+
 $(function () {
 
     $('.status-link').on("click", function (ev) {
@@ -71,7 +110,7 @@ $(function () {
                         id: cId
                     })
                     .addClass(isShortFile($(this).attr("href")) ? "short" : "")
-                    .append($("<textarea />", {
+                    .append($("<div />", {
                         id: elId,
                         class: "file-view",
                         html: "loading..."
@@ -82,7 +121,7 @@ $(function () {
                     "/" + $(this).attr("href"),
                     {},
                     function (data) {
-                        $("#" + elId).html(data)
+                        $("#" + elId).html(highlight_text(data))
                         .before(
                             $("<div />", {
                                 class: "controls"
