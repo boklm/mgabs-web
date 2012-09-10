@@ -60,9 +60,20 @@ a.package { color: #202020; text-decoration: none; }
 #score-box { width: 100px; height: 100px; background: #faa; }
 #score-meter { width: 100px; background: #afa; }
 
-.figure { font-size: 120%%; font-weight: bold; }
+.figures { display: table; margin: 0; padding: 0; }
+.figures li { display: table-cell; margin: 0; padding: 0 2em; border-right: 1px solid #a0a0a0; background: #f0f0f0; border-bottom: 1px solid #a0a0a0; vertical-align: top; }
+.figure { font-size: 160%; font-weight: bold; }
+.action-btn {
+    text-decoration: none;
+    background: #40a040;
+    color: #fafafa;
+    padding: 0.5em;
+    font-weight: bold;
+    border-radius: 5px;
+    font-size: 80%;
+}
 
-#submitted-packages { width: 960px; }
+#asubmitted-packages { width: 960px; }
 
 tr.build-files-list td { font-size: 85%; padding: 1em 0 2em 0.5em; color: #222; }
     tr.build-files-list td ul { padding: 0 0 0 2em; }

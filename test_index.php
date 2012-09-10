@@ -96,7 +96,7 @@ if (!is_null($g_user) || isset($_GET['package'])) {
     echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
 }
 
-echo '<ul>';
+echo '<ul class="figures">';
 $figures_list = array();
 
 if (!isset($_GET['package'])) {
@@ -124,20 +124,21 @@ if (!isset($_GET['package'])) {
         }
 
         if (count($figures_list) > 0)
-            $figures_list[count($figures_list)-1] .= sprintf(' &raquo; <a href="%s" class="action-btn">%s</a>',
+            $figures_list[count($figures_list)-1] .= sprintf(' <a href="%s" class="action-btn" title="%s">%s</a>',
                                                         'https://wiki.mageia.org/en/Importing_packages',
-                                                        'you can help!');
+                                                        'YES you can!', 'you can help!');
     }
 
     preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
     $qa_bugs = $matches[1][0];
     if ($qa_bugs > 0) {
-        $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">package update%s to validate</a> &raquo; <a href="%s" class="action-btn">%s</a>',
+        $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">package update%s to validate</a>
+                                    <a href="%s" class="action-btn" title="%s">%s</a>',
                 $qa_bugs,
                 'https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali',
                 plural($qa_bugs),
                 'https://wiki.mageia.org/en/QA_process_for_validating_updates',
-                'you can help!'
+                'YES you can!', 'you can help!'
         );
     }
 
@@ -145,6 +146,7 @@ if (!isset($_GET['package'])) {
         echo array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
     }
 
+    echo '</ul><ul>';
     $buildtime_stats = array();
 
     // Builds in progress
