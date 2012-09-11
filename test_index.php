@@ -81,22 +81,8 @@ publish_stats_headers(
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="contribute">
-    <header id="mgnavt">
-        <h1><?php echo $title ?></h1>
-    </header>
-    <article>
 <?php
 
-$bannerfile = dirname(__FILE__) . '/banner.html';
-if (file_exists($bannerfile)) {
-    echo file_get_contents($bannerfile);
-}
-
-if (!is_null($g_user) || isset($_GET['package'])) {
-    echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
-}
-
-echo '<ul class="figures">';
 $figures_list = array();
 
 if (!isset($_GET['package'])) {
@@ -109,44 +95,64 @@ if (!isset($_GET['package'])) {
         || $unmaintained_count > 0
     ) {
         if ($missing_deps_count > 0) {
-            $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">broken dependencies</a>',
+            $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">broken <abbr title="dependencies">deps.</abbr></a>',
                                 $missing_deps_count,
                                 'http://check.mageia.org/cauldron/dependencies.html'
             );
         }
 
         if ($unmaintained_count > 0) {
-            $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">unmaintained package%s</a>',
+            $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">unmaintained</a>',
                                 $unmaintained_count,
-                                'data/unmaintained.txt',
-                                plural($unmaintained_count)
+                                'data/unmaintained.txt'
             );
         }
 
         if (count($figures_list) > 0)
             $figures_list[count($figures_list)-1] .= sprintf(' <a href="%s" class="action-btn" title="%s">%s</a>',
                                                         'https://wiki.mageia.org/en/Importing_packages',
-                                                        'YES you can!', 'you can help!');
+                                                        'YES you can help!', 'pick one');
     }
 
     preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
     $qa_bugs = $matches[1][0];
     if ($qa_bugs > 0) {
-        $figures_list[] = sprintf('<span class="figure">%d</span> <a rel="nofollow" href="%s">package update%s to validate</a>
+        $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">update%s to validate</a>
                                     <a href="%s" class="action-btn" title="%s">%s</a>',
                 $qa_bugs,
                 'https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali',
                 plural($qa_bugs),
                 'https://wiki.mageia.org/en/QA_process_for_validating_updates',
-                'YES you can!', 'you can help!'
+                'YES you can help!', 'see how'
         );
     }
 
+    $html_figures = null;
     if (count($figures_list) > 0) {
-        echo array_reduce($figures_list, function ($res, $e) { return $res . '<li><p>' . $e . '</p></li>'; }, '');
+        $html_figures = 'Packages: ' . implode(', ', $figures_list) . '.';
     }
 
-    echo '</ul><ul class="builds">';
+?>
+    <header id="mgnavt">
+        <h1><?php echo $title ?></h1>
+        <ul>
+            <li><a href="#stats">Stats</a></li>
+            <li><?php echo $html_figures; ?></li>
+        </ul>
+    </header>
+    <article>
+<?php
+
+    $bannerfile = dirname(__FILE__) . '/banner.html';
+    if (file_exists($bannerfile)) {
+        echo file_get_contents($bannerfile);
+    }
+
+    if (!is_null($g_user) || isset($_GET['package'])) {
+        echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
+    }
+
+    echo '<ul class="builds">';
     $buildtime_stats = array();
 
     // Builds in progress
@@ -273,10 +279,13 @@ if ($total > 0) {
         '<tbody>', $s, '</tbody>',
         '</table>';
 
+    echo '</li></ul>';
+
     // Stats
-    $s = '<div id="stats">
-        <div id="status-chart"></div>
-        <div id="packagers-chart"></div>';
+    $s = '<ul id="stats">
+        <li><p><span class="figure">Stats</span></p></li>
+        <li id="status-chart"></li>
+        <li id="packagers-chart"></li>';
 
     $total_buildtime = round($buildtime_total / 60, 1);
     $avail_capacity  = 24 * $max_modified * $g_nodes_count;
@@ -294,12 +303,11 @@ if ($total > 0) {
         $build_count
     );
 
-    $s .= '<br /><br />
-        <div id="buildtime-chart"></div>
-        <div id="buildschedule-chart"></div>
-    </div>';
+    $s .= '<li id="buildtime-chart"></li>
+        <li id="buildschedule-chart"></li>
+    </ul>';
 
-    echo $s, '</li></ul>';
+    echo $s;
 
     uksort($buildtime_stats, "timesort");
     echo '<script>',
@@ -321,11 +329,13 @@ else
     </ul>
     <script src="js/jquery.js"></script>
     <script src="js/pkgsubmit.js"></script>
-    <script src="//nav.mageia.org/js"></script>
+    <script src="//nav.mageia.org/js/"></script>
     <div class="clear"></div>
     <hr />
-    <p>Generated at <?php echo $date_gen; ?>.
-        Code for this page is in <a rel="nofollow" href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
+    <footer>
+        <p>Generated at <?php echo $date_gen; ?>.
+            Code for this page is in <a rel="nofollow" href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
+    </footer>
     </article>
 </body>
 </html>

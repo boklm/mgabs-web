@@ -31,7 +31,7 @@ $max_modified = 2;
 $g_nodes_count = 2;
 
 /** html > body > h1 title */
-$title = '<a href="http://mageia.org/">Mageia</a> build system status';
+$title = 'Build system status';
 
 /** Should crawlers index this page or not? meta[robots] tag.*/
 $robots = 'index,nofollow,nosnippet,noarchive';
