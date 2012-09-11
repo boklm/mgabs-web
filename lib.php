@@ -117,7 +117,7 @@ function get_refined_packages_list($list_of_files, $package = null, $user = null
             $pkgs[$key]['buildtime']['end']   = round($val[12]);
             $pkgs[$key]['buildtime']['diff']  = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
 
-            @$build_dates[date('G', $pkgs[$key]['buildtime']['start'])] += 1;
+            @$build_dates[gmdate('G', $pkgs[$key]['buildtime']['start'])] += 1;
 
             // keep obviously dubious values out of there
             // 12 hours is be an acceptable threshold given current BS global perfs
