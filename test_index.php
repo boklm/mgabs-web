@@ -191,14 +191,13 @@ if (!is_null($upload_time)) {
     echo sprintf('<li><p>Upload in progress for %s.</p></li>', timediff($upload_time));
 }
 
-
 // Build queue
 $s    = '';
 $tmpl = <<<T
 <tr class="%s">
     <td><a rel="nofollow" href="%s" title="%s" class="package">%s</a>
         <span class="revision"><a href="%s">view changes @ r%d</a></span></td>
-    <td><a rel="nofollow" href="?user=%s" class="committer">%s</a>
+    <td class="user"><a rel="nofollow" href="?user=%s" class="committer">%s</a>
         <span class="timeinfo">%s</span></td>
     <td>%s
         <span class="media">%s/%s</span></td>

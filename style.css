@@ -43,6 +43,7 @@ tr.partial .status-box { background: blue; }
 
 .status-link { text-decoration: none; display: block; margin: 0; padding: 0; }
 
+td.user,
 td.status { white-space: nowrap; }
 
 tr .media,
