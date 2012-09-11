@@ -469,11 +469,17 @@ S;
                 $newdata['60 minutes'] += $count;
             } else {
                 $d = explode(' ', $duration);
-                if ($d[0] > 20) {
-                    if (!array_key_exists('21 minutes', $newdata)) {
-                        $newdata['21 minutes'] = $count;
+                if ($d[0] >= 20) {
+                    if (!array_key_exists('20 minutes', $newdata)) {
+                        $newdata['20 minutes'] = $count;
                     } else {
-                        $newdata['21 minutes'] += $count;
+                        $newdata['20 minutes'] += $count;
+                    }
+                } elseif ($d[0] >= 10) {
+                    if (!array_key_exists('10 minutes', $newdata)) {
+                        $newdata['10 minutes'] = $count;
+                    } else {
+                        $newdata['10 minutes'] += $count;
                     }
                 } else {
                     $newdata[$duration] = $count;
@@ -486,8 +492,10 @@ S;
         foreach ($newdata as $duration => $count) {
             if ($duration == '0 second')
                 $duration = '< 1 minute';
-            elseif ($duration == '21 minutes')
-                $duration = '> 20 minutes';
+            elseif ($duration == '10 minutes')
+                $duration = '>= 10 minutes';
+            elseif ($duration == '20 minutes')
+                $duration = '>= 20 minutes';
             elseif ($duration == '60 minutes')
                 $duration = '> 1 hour';
 
