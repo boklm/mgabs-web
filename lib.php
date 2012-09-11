@@ -529,11 +529,15 @@ S;
         $rows = implode(', ', $rows);
         return <<<S
 function draw_buildschedule_chart() {
+    var UTCOffsetInHours = new Date().getTimezoneOffset()/-60;
+    //alert(UTCOffsetInHours);
+    //TODO rotate hours in \$rows so it represents local time.
+
     var data = google.visualization.arrayToDataTable([
         {$rows}
     ]);
     var options = {
-        title: 'When do builds happen? (CET)',
+        title: 'When do builds happen? (UTC - working on a local time fix)',
         hAxis: {title: 'Hours'},
        'width':500,
        'height':200,
