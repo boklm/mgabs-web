@@ -79,7 +79,7 @@ publish_stats_headers(
     <link rel="author" href="http://www.mageia.org/">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta name="viewport" content="width=900,initial-scale=1,user-scalable=yes">
 </head>
 <body class="contribute">
 <?php
