@@ -490,14 +490,15 @@ S;
 
         $rows  = array("['Duration', 'Builds']");
         foreach ($newdata as $duration => $count) {
-            if ($duration == '0 second')
-                $duration = '< 1 minute';
-            elseif ($duration == '10 minutes')
-                $duration = '>= 10 minutes';
-            elseif ($duration == '20 minutes')
-                $duration = '>= 20 minutes';
-            elseif ($duration == '60 minutes')
-                $duration = '> 1 hour';
+
+            if     ($duration == '0 second')   { $duration = '<1'; }
+            elseif ($duration == '10 minutes') { $duration = '>10'; }
+            elseif ($duration == '20 minutes') { $duration = '>20'; }
+            elseif ($duration == '60 minutes') { $duration = '>60'; }
+            else {
+                $duration = explode(' ', $duration);
+                $duration = $duration[0];
+            }
 
             $rows[] = sprintf("['%s', %d]", $duration, $count);
         }
@@ -508,7 +509,7 @@ function draw_buildtime_chart() {
         {$rows}
     ]);
     var options = {
-        title: 'How long are most of the builds?',
+        title: 'How long are most of the builds (in minutes)?',
         hAxis: {title: 'Duration'},
         'width':500,
         'height':200,
