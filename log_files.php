@@ -28,24 +28,43 @@ $path = realpath($upload_dir . $key);
 $job  = explode('/', $key);
 $job  = end($job);
 
-if (!is_dir($path)) {
+if (false !== strpos($key, 'rejected')) {
+    $valid = file_exists($path);
+    $type  = 'rejected';
+    $job   = str_replace('.youri', '', $job);
+    $path  = str_replace('.youri', '', $path);
+} else {
+    $valid = is_dir($path);
+    $type  = 'regular';
+}
+
+if (!$valid) {
     header('Status: 404 Not Found');
     header('HTTP/1.0 404 Not Found');
     die('Sorry, not found');
 }
 
-$list = glob_recursive_tree($path . '/*');
+$list = array();
 
-$others = array(
-    '.youri',
-    '_i586.done',
-    '_x86_64.done'
-);
+if ($type == 'rejected') {
 
-foreach ($others as $suffix) {
-    $f = $path . $suffix;
-    if (file_exists($f)) {
-        $list[] = $f;
+    $list = glob($path . '.*');
+
+} else {
+
+    $list = glob_recursive_tree($path . '/*');
+
+    $others = array(
+        '.youri',
+        '_i586.done',
+        '_x86_64.done'
+    );
+
+    foreach ($others as $suffix) {
+        $f = $path . $suffix;
+        if (file_exists($f)) {
+            $list[] = $f;
+        }
     }
 }
 
