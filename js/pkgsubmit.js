@@ -65,7 +65,7 @@ function isShortFile(path) {
  * @return string
 */
 function highlight_text(text) {
-    return text.replace(/.*(ok|succe|test|warn|info|deprecat|error|fail).*/gi, function (match, p1, p2, offset, string) {
+    return text.replace(/.*(ok|succe|test|warn|info|deprecat|error|fail|non\-standard|abort).*/gi, function (match, p1, p2, offset, string) {
         var cl = 'none';
         switch (p1.toLowerCase()) {
         case 'succe':
@@ -80,11 +80,13 @@ function highlight_text(text) {
 
         case 'warn':
         case 'deprecat':
+        case 'non-standard':
             cl = 'warn';
             break;
 
         case 'error':
         case 'fail':
+        case 'abort':
             cl = 'error';
             break;
         }
