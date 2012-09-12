@@ -509,8 +509,8 @@ function draw_buildtime_chart() {
         {$rows}
     ]);
     var options = {
-        title: 'How long are most of the builds (in minutes)?',
-        hAxis: {title: 'Duration'},
+        title: 'How long are most of the builds?',
+        hAxis: {title: 'Duration (in minutes)'},
         'width':500,
         'height':200,
         'backgroundColor': '#f8f8f8'
