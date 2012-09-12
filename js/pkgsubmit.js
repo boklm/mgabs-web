@@ -126,6 +126,13 @@ function build_log_files_list(ev) {
 }
 
 /**
+ * See http://jsperf.com/encode-html-entities
+*/
+function safe_tags_regex(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/**
 */
 function show_log_file(ev) {
 
@@ -157,7 +164,7 @@ function show_log_file(ev) {
                 "/" + $(this).attr("href"),
                 {},
                 function (data) {
-                    $("#" + elId).html(highlight_text(data))
+                    $("#" + elId).html(highlight_text(safe_tags_regex(data)))
                     .before(
                         $("<div />", {
                             class: "controls"
