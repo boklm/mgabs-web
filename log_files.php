@@ -48,7 +48,7 @@ $list = array();
 
 if ($type == 'rejected') {
 
-    $list = glob($path . '.*');
+    $list = glob($path . '*');
 
 } else {
 
