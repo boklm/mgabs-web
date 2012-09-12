@@ -121,7 +121,7 @@ if (!isset($_GET['package'])) {
         $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">update%s to validate</a>
                                     <a href="%s" class="action-btn" title="%s">%s</a>',
                 $qa_bugs,
-                'https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali',
+                'http://mageia.madb.org/tools/updates',
                 plural($qa_bugs),
                 'https://wiki.mageia.org/en/QA_process_for_validating_updates',
                 'YES you can help!', 'see how'
