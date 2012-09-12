@@ -26,524 +26,317 @@
 
 error_reporting(E_ALL);
 
-/**
- * @param array $pkg
- *
- * @return string
-*/
-function pkg_gettype($pkg) {
-    if (array_key_exists("rejected", $pkg["status"]))
-        return "rejected";
-    if (array_key_exists("upload", $pkg["status"]))
-        return "uploaded";
-    if (array_key_exists("failure", $pkg["status"]))
-        return "failure";
-    if (array_key_exists("done", $pkg["status"]))
-        return "partial";
-    if (array_key_exists("build", $pkg["status"]))
-        return "building";
-    if (array_key_exists("todo", $pkg["status"]))
-        return "todo";
-    return "unknown";
-}
+require __DIR__ . '/conf.php';
+require __DIR__ . '/lib.php';
 
-/**
- * @param integer $num
- *
- * @return string
-*/
-function plural($num) {
-    if ($num > 1)
-        return "s";
-}
-
-/**
- * Return timestamp from package key
- * @param string $key package submission key
- *
- * @return integer
-*/
-
-function key2timestamp($key) {
-    global $tz;
-
-    $date = DateTime::createFromFormat("YmdHis", $key+0, $tz);
-    if ($date <= 0)
-        return null;
-
-    return $date->getTimestamp();
-}
-
-function timediff($start, $end) {
-/**
- * Return human-readable time difference
- *
- * @param integer $start timestamp
- * @param integer $end timestamp, defaults to now
- *
- * @return string
-*/
-    if (is_null($end)) {
-        $end = time();
-    }
-    $diff = $end - $start;
-    if ($diff<60)
-       return $diff . " second" . plural($diff);
-    $diff = round($diff/60);
-    if ($diff<60)
-       return $diff . " minute" . plural($diff);
-    $diff = round($diff/60);
-    if ($diff<24)
-       return $diff . " hour" . plural($diff);
-    $diff = round($diff/24);
-
-    return $diff . " day" . plural($diff);
+// sanity checks
+if (!is_dir($upload_dir)) {
+    $msg = "$upload_dir does not exist on this system. Please check your config.";
+    error_log($msg);
+    die($msg);
 }
 
 $g_user = isset($_GET['user']) ? htmlentities(strip_tags($_GET['user'])) : null;
 
-$upload_dir = '/home/schedbot/uploads';
-$max_modified = 2;
-$title = '<a href="http://mageia.org/">Mageia</a> build system status';
-$robots = 'index,nofollow,nosnippet,noarchive';
 if ($g_user) {
     $title .= ' for ' . $g_user . "'s packages";
     $robots = 'no' . $robots;
 }
-$tz = new DateTimeZone('UTC');
+$tz       = new DateTimeZone('UTC');
 $date_gen = date('c');
 
-chdir($upload_dir);
+$matches = get_submitted_packages($upload_dir, $max_modified);
 
-$all_files = shell_exec("find \( -name '*.rpm' -o -name '*.src.rpm.info' -o -name '*.lock' -o -name '*.done' -o -name '*.upload' \) -ctime -$max_modified -printf \"%p\t%T@\\n\"");
-$re = "!^\./(\w+)/((\w+)/(\w+)/(\w+)/(\d+)\.(\w+)\.(\w+)\.(\d+))_?(.*)(\.src\.rpm(?:\.info)?|\.lock|\.done|\.upload)\s+(\d+\.\d+)$!m";
-$r = preg_match_all($re,
-    $all_files,
+list($pkgs, $hosts, $build_count, $build_dates, $buildtime_total) = get_refined_packages_list(
     $matches,
-    PREG_SET_ORDER);
-
-$pkgs = array();
-$hosts = array();
-
-$buildtime_total = array();
-$buid_dates = array();
-
-foreach ($matches as $val) {
-
-    if ($_GET['user'] && ($_GET['user'] != $val[7])) {
-        continue;
-    }
-    $key = $val[6] . $val[7];
-    if (!is_array($pkgs[$key])) {
-
-        $pkgs[$key] = array(
-            'status'  => array(),
-            'path'    => $val[2],
-            'version' => $val[3],
-            'media'   => $val[4],
-            'section' => $val[5],
-            'user'    => $val[7],
-            'host'    => $val[8],
-            'job'     => $val[9]
-        );
-    }
-    $status = $val[1];
-    $data = $val[10];
-    if (preg_match("/@(\d+):/", $data, $revision)) {
-        $pkgs[$key]['revision'] = $revision[1];
-    }
-    $pkgs[$key]['status'][$status] = 1;
-    $ext = $val[11];
-    if ($ext == '.src.rpm.info') {
-        preg_match("!^(?:@\d+:)?(.*)!", $data, $name);
-        $pkgs[$key]['package'] = $name[1];
-    } else if ($ext == '.src.rpm') {
-        $pkgs[$key]['status']['src'] = 1;
-    } else if ($ext == '.upload') {
-        $pkgs[$key]['status']['upload'] = 1;
-    } else if ($ext == '.lock') {
-	preg_match("!(.*)\.iurt\.(.*)\.\d+\.\d+!", $data, $buildhost);
-	if (!$hosts[$buildhost[2]]) {
-		$hosts[$buildhost[2]]= array();
-	}
-	$hosts[$buildhost[2]][$buildhost[1]] = $key;
-        if ($pkgs[$key]['status']['build'])
-            array_push($pkgs[$key]['status']['build'], $buildhost[2]);
-        else
-            $pkgs[$key]['status']['build'] = array($buildhost[2]);
-    } else if ($ext == '.done') {
-        // beware! this block is called twice for a given $key
-
-        $pkgs[$key]['buildtime']['start'] = key2timestamp($val[6]);
-        $pkgs[$key]['buildtime']['end'] = round($val[12]);
-        $pkgs[$key]['buildtime']['diff'] = $pkgs[$key]['buildtime']['end'] - $pkgs[$key]['buildtime']['start'];
-        
-        @$build_dates[date('H', $pkgs[$key]['buildtime']['start'])] += 1;
-        
-        // keep obviously dubious values out of there
-        // 12 hours is be an acceptable threshold given current BS global perfs
-        // as of April 2011
-        if ($pkgs[$key]['buildtime']['diff'] < 43200) {
-            $buildtime_total[$key] = $pkgs[$key]['buildtime']['diff'];
-        }
-    }
-}
-
-// filter packages if a package name was provided
-if ($_GET['package']) {
-    foreach ($pkgs as $key => $pkg) {
-        preg_match("/^(.*)-[^-]*-[^-]*$/", $pkg['package'], $name);
-        if ($_GET['package'] != $name[1]) {
-            unset($pkgs[$key]);
-        }
-    }
-}
-
-// sort by key in reverse order to have more recent pkgs first
-krsort($pkgs);
-ksort($build_dates);
-
-$build_count = count($buildtime_total);
-$buildtime_total = array_sum($buildtime_total);
-
-// count all packages statuses
-$stats = array(
-    'uploaded' => 0,
-    'failure'  => 0,
-    'todo'     => 0,
-    'building' => 0,
-    'partial'  => 0
+    isset($_GET['package']) ? $_GET['package'] : null,
+    isset($_GET['user']) ? $_GET['user'] : null
 );
-$total = count($pkgs);
 
-// count users' packages
-$users = array();
-
-if ($total > 0) {
-    foreach ($pkgs as $key => $p) {
-        $pkgs[$key]['type'] = pkg_gettype($p);
-
-        $stats[$pkgs[$key]['type']] += 1;
-
-        if (!array_key_exists($p['user'], $users))
-            $users[$p['user']] = 1;
-        else
-            $users[$p['user']] += 1;
-    }
-}
-
-// check if emi is running
-$stat = stat("/var/lib/schedbot/tmp/upload");
-if ($stat) {
-	$upload_time = $stat['mtime'];
-}
-
-// publish stats as headers
-
-foreach ($stats as $k => $v) {
-    Header("X-BS-Queue-$k: $v");
-}
-
-$w = $stats['todo'] - 10;
-if($w < 0)
-    $w = 0;
-$w = $w * 60;
-Header("X-BS-Throttle: $w");
-
-if ($_GET['last'] && $total > 0) {
-    reset($pkgs);
-    $last = current($pkgs);
-    Header("X-BS-Package-Status: ".$last['type']);
-}
+list($stats, $users, $total, $pkgs) = build_stats($pkgs);
 
 $buildtime_total = $buildtime_total / 60;
-header(sprintf('X-BS-Buildtime: %d', round($buildtime_total)));
-$buildtime_avg = round($buildtime_total / $build_count, 2);
-header(sprintf('X-BS-Buildtime-Average: %5.2f', $buildtime_avg));
+$buildtime_avg   = ($build_count == 0) ?
+    0 :
+    round($buildtime_total / $build_count, 2);
+
+publish_stats_headers(
+    $stats,
+    $buildtime_total,
+    $buildtime_avg,
+    $build_count,
+    (isset($_GET['last']) && $total > 0) ? reset($pkgs) : null
+);
+
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
     <title><?php echo strip_tags($title); ?></title>
     <meta name="robots" content="<?php echo $robots; ?>">
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <style type="text/css">
-    body, table {
-        font-family: Verdana, "Trebuchet MS", "Lucida Grande", "Lucida Sans", Verdana, Tahoma, Arial, sans-serif;
-    }
-    body { font-size: 80%; }
-    .clear { clear: both; }
-    table { 
-        border-spacing: 0;
-        border: 1px solid #ccc;
-        float: left;
-    }
-    table tr { padding: 0; margin: 0; }
-    table th { padding: 0.2em 0.5em; margin: 0; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }
-    table td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc; }
- 
-    tr { background: transparent; }
-    tr.uploaded { background: #bbffbb; }
-    tr.failure { background: #ffbbbb; }
-    tr.rejected { background: #FFFFE0; }
-    tr.todo { background: white; }
-    tr.building { background: #ffff99; }
-    tr.partial { background: #bbbbff; }
-
-    td.status-box { width: 1em; height: 1em; }
-    tr.uploaded td.status-box { background: green; }
-    tr.failure td.status-box { background: red; }
-    tr.rejected td.status-box { background: orange; }
-    tr.todo td.status-box { background: white; }
-    tr.building td.status-box { background: yellow; }
-    tr.partial td.status-box { background: blue; }
-    
-    #stats { float: right; }
-    #score { margin-bottom: 2em; font-family: Helvetica, Verdana, Arial, sans-serif; }
-    #score-box { width: 100px; height: 100px; background: #faa; }
-    #score-meter { width: 100px; background: #afa; }
-    </style>
+    <link rel="home" href="<?php echo $g_root_url; ?>">
+    <link rel="author" href="http://www.mageia.org/">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=900,initial-scale=1,user-scalable=yes">
 </head>
-<body>
-    <h1><?php echo $title ?></h1>
-
+<body class="contribute">
 <?php
 
-$bannerfile = dirname(__FILE__) . '/banner.html';
-if (file_exists($bannerfile)) {
-    echo file_get_contents($bannerfile);
-}
+$figures_list = array();
 
-if (!is_null($g_user) || $_GET['package'])
-    echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
+if (!isset($_GET['package'])) {
 
-if (!$_GET['package']) {
+    // TODO should be cached.
+    $missing_deps_count = preg_match_all("/<item>/m", file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), $matches);
+    $unmaintained_count = file_exists(__DIR__ . '/data/unmaintained.txt') ? count(file(__DIR__ . '/data/unmaintained.txt')) : 0;
 
-$missing_deps_count = preg_match_all("/<item>/m", file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), $matches);
-$unmaintained_count = count(file(__DIR__ . '/data/unmaintained.txt'));
-if ($missing_deps_count > 0 || $unmaintained_count > 0) {
-    echo "<p>";
-    if ($missing_deps_count > 0)
-        echo "<a href=\"http://check.mageia.org/cauldron/dependencies.html\">$missing_deps_count broken dependencies</a>. ";
-    if ($unmaintained_count > 0)
-	echo "<a href=\"data/unmaintained.txt\">$unmaintained_count unmaintained packages</a>. ";
-    echo '<a href="https://wiki.mageia.org/en/Importing_packages">You can help!</a></strong></p>';
-}
+    if ($missing_deps_count > 0
+        || $unmaintained_count > 0
+    ) {
+        if ($missing_deps_count > 0) {
+            $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">broken <abbr title="dependencies">deps.</abbr></a>',
+                                $missing_deps_count,
+                                'http://check.mageia.org/cauldron/dependencies.html'
+            );
+        }
 
-	
-preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
-$qa_bugs = $matches[1][0];
-if ($qa_bugs > 0) {
-    echo "<p>";
-    echo "<a href=\"https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali\">$qa_bugs package updates to validate</a>. ";
-    echo '<a href="https://wiki.mageia.org/en/QA_process_for_validating_updates">You can help!</a></strong></p>';
-}
+        if ($unmaintained_count > 0) {
+            $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">unmaintained</a>',
+                                $unmaintained_count,
+                                'data/unmaintained.txt'
+            );
+        }
 
-if ($upload_time) {
-    echo sprintf('<p>Upload in progress for %s.</p>', timediff($upload_time));
-}
+        if (count($figures_list) > 0)
+            $figures_list[count($figures_list)-1] .= sprintf(' <a href="%s" class="action-btn" title="%s">%s</a>',
+                                                        'https://wiki.mageia.org/en/Importing_packages',
+                                                        'YES you can help!', 'pick one');
+    }
 
-$buildtime_stats = array();
+    preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
+    $qa_bugs = $matches[1][0];
+    if ($qa_bugs > 0) {
+        $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">update%s to validate</a>
+                                    <a href="%s" class="action-btn" title="%s">%s</a>',
+                $qa_bugs,
+                'https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali',
+                plural($qa_bugs),
+                'https://wiki.mageia.org/en/QA_process_for_validating_updates',
+                'YES you can help!', 'see how'
+        );
+    }
 
-// Builds in progress
-$s = '';
-$tmpl = <<<TB
+    $html_figures = null;
+    if (count($figures_list) > 0) {
+        $html_figures = 'Packages: ' . implode(', ', $figures_list) . '.';
+    }
+
+?>
+    <header id="mgnavt">
+        <h1><?php echo $title ?></h1>
+        <ul>
+            <li><a href="#stats">Stats</a></li>
+            <li><?php echo $html_figures; ?></li>
+        </ul>
+    </header>
+    <article>
+<?php
+
+    $bannerfile = dirname(__FILE__) . '/banner.html';
+    if (file_exists($bannerfile)) {
+        echo file_get_contents($bannerfile);
+    }
+
+    if (!is_null($g_user) || isset($_GET['package'])) {
+        echo '<a href="/">&laquo;&nbsp;Back to full list</a>';
+    }
+
+    echo '<ul class="builds">';
+    $buildtime_stats = array();
+
+    // Builds in progress
+    if (count($hosts) > 0) {
+        echo '<li>',
+            sprintf('<p><span class="figure">%d</span> build%s in progress:</p>', count($hosts), plural(count($hosts)));
+
+        $s = '';
+        $tmpl = <<<TB
 <tr>
-    <td>%s</td>
-    <td>%s</td>
-    <td><a href="?user=%s">%s</a></td>
-    <td>%s</td>
-    <td>%s</td>
-    <td>%s/%s</td>
+    <td><span class="package">%s</span></td>
+    <td><a rel="nofollow" href="?user=%s">%s</a></td>
+    <td>%s <span class="media">%s/%s</span></td>
+    <td>%s <span class="media">%s</span></td>
 </tr>
 TB;
-foreach ($hosts as $machine => $b) {
-    foreach ($b as $arch => $key) {
-        $s .= sprintf($tmpl,
-            $machine,
-	    $arch,
-            $pkgs[$key]['user'], $pkgs[$key]['user'],
-            $pkgs[$key]['package'],
-            $pkgs[$key]['version'],
-            $pkgs[$key]['media'], $pkgs[$key]['section']);
+        foreach ($hosts as $machine => $b) {
+            foreach ($b as $arch => $key) {
+                $s .= sprintf($tmpl,
+                    $pkgs[$key]['package'],
+                    $pkgs[$key]['user'], $pkgs[$key]['user'],
+                    $pkgs[$key]['version'], $pkgs[$key]['media'], $pkgs[$key]['section'],
+                    $machine, $arch);
+            }
+        }
+        echo '<div align="center"><table><thead><tr>',
+             '<th>Package</th>
+                <th>User</th>
+                <th>Target <span class="media">media</span></th>
+                <th>Machine <span class="media">arch</span></th></tr></thead><tbody>',
+             $s,
+             '</tbody></table></div>',
+             '<div class="clear"></div>',
+             '</li>';
+    } else {
+        //echo '<li><p>No build in progress.</p></li>';
     }
 }
-echo '<div align="center"><table>',
-     '<caption>', count($hosts), ' builds in progress.</caption>',
-     '<tr><th>Machine</th><th>Arch</th><th>User</th><th>Package</th><th>Target</th><th>Media</th></tr>',
-     $s,
-     '</table></div>';
-echo '<div class="clear"></div>';
 
+$upload_time = get_upload_time();
+if (!is_null($upload_time)) {
+    echo sprintf('<li><p>Upload in progress for %s.</p></li>', timediff($upload_time));
 }
 
 // Build queue
-$s = '';
+$s    = '';
 $tmpl = <<<T
 <tr class="%s">
-    <td>%s</td>
-    <td><a href="?user=%s">%s</a></td>
-    <td><a href="http://svnweb.mageia.org/packages?view=revision&revision=%d" title="%s">%s</a></td>
-    <td>%s</td>
-    <td>%s/%s</td>
-    <td class="status-box"></td>
+    <td><a rel="nofollow" href="%s" title="%s" class="package">%s</a>
+        <span class="revision"><a href="%s">view changes @ r%d</a></span></td>
+    <td class="user"><a rel="nofollow" href="?user=%s" class="committer">%s</a>
+        <span class="timeinfo">%s</span></td>
+    <td>%s
+        <span class="media">%s/%s</span></td>
 T;
 
 if ($total > 0) {
     foreach ($pkgs as $key => $p) {
+        if (trim($p['package']) == '') {
+            continue;
+        }
+        $revision_link = sprintf('http://svnweb.mageia.org/packages?view=revision&revision=%d', $p['revision']);
+
         $s .= sprintf($tmpl,
             $p['type'],
-            timediff(key2timestamp($key)) . ' ago',
-            $p['user'], $p['user'],
-            $p['revision'],
+            $revision_link,
             addslashes($p['summary']),
             $p['package'],
+            $revision_link, $p['revision'],
+            $p['user'], $p['user'],
+            timediff(key2timestamp($key)) . ' ago',
             $p['version'],
             $p['media'], $p['section']
         );
-    
+
         $typelink = '';
         if ($p['type'] == 'failure') {
-           $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
+            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'];
         } elseif ($p['type'] == 'rejected') {
-           $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
+            $typelink = '/uploads/' . $p['type'] . '/' . $p['path'] . '.youri';
         } else {
-           $typelink = '/uploads/done/' . $p['path'];
-           if (!is_dir("..$typelink")) {
-              $typelink = '';
-           }
+            $typelink = '/uploads/done/' . $p['path'];
+            if (!is_dir(realpath($upload_dir . '/..' . $typelink))) {
+                $typelink = '';
+            }
         }
         $typestr = $p['type'];
-        if ($p['status']['build']) {
+        if (isset($p['status']['build'])) {
             $typealt = 'Building on';
-            foreach ($p['status']['build'] as $h)
+            foreach ($p['status']['build'] as $h) {
                 $typealt .= " $h";
+            }
             $typestr = "<span title='$typealt'>$typestr</a>";
         }
 
-        $s .= '<td>';
-        $s .= ($typelink != '') ?
-            sprintf('<a href="%s">%s</a>', $typelink, $typestr) :
-            $typestr;
+        $s .= '<td class="status">';
 
-        $s .= '</td><td>';
+        $show_time = '';
         if ($p['type'] == 'uploaded') {
             $tdiff = timediff($p['buildtime']['start'], $p['buildtime']['end']); // use $p['buildtime']['diff']; instead?
-            $s .= $tdiff;
+            $show_time = '<span class="timeinfo">' . $tdiff . '</span>';
+
             $tdiff = floor(($p['buildtime']['end'] - $p['buildtime']['start']) / 60)*60;
             @$buildtime_stats[timediff(0, $tdiff)] += 1;
         }
-        $s .= '</td>';
-        $s .= '</tr>';
+        $s .= ($typelink != '')
+            ? sprintf('<a rel="nofollow" href="%s" class="status-link"><span class="status-box"></span> %s %s</a>',
+                $typelink, $typestr, $show_time)
+            : sprintf('<span class="status-box"></span> %s %s',
+                $typestr, $show_time);
+
+        $s .= '</td></tr>';
     }
-    // Table
-    echo '<table>',
-        '<caption>', $total, ' packages submitted in the past ', $max_modified * 24, '&nbsp;hours.</caption>',
-        '<tr><th>Submitted</th><th>User</th>
-            <th>Package</th><th>Target</th><th>Media</th>
-            <th colspan="2">Status</th><th>Build time</th></tr>',
-        $s,
+    echo sprintf('<li><p><span class="figure">%d</span> packages submitted in the past %d&nbsp;hours:</p>', $total, $max_modified * 24);
+
+    // Last submitted packages
+    echo '<table id="submitted-packages">',
+        '<thead><tr>
+            <th>Package</th>
+            <th>Who <span class="timeinfo">when</span></th>
+            <th>Target <span class="media">media</span></th>
+            <th>Status <span class="timeinfo">process&nbsp;time</span></th>
+        </tr></thead>',
+        '<tbody>', $s, '</tbody>',
         '</table>';
 
+    echo '</li></ul>';
+
     // Stats
-    $s = '<div id="stats">';
-    $score = round($stats['uploaded']/$total * 100);
-    $s .= sprintf('<div id="score"><h3>Score: %d/100</h3>
-        <div id="score-box"><div id="score-meter" style="height: %dpx;"></div></div></div>',
-        $score, $score);
+    $s = '<ul id="stats">
+        <li><p><span class="figure">Stats</span></p></li>
+        <li id="status-chart"></li>
+        <li id="packagers-chart"></li>';
 
-    $s .= '<table style="width: 100%"><caption>Stats.</caption><tr><th colspan="2">Status</th><th>Count</th><th>%</th></tr>';
-    foreach ($stats as $k => $v) {
-        $s .= sprintf('<tr class="%s"><td class="status-box"></td><td>%s</td><td>%d</td><td>%d%%</td></tr>',
-            $k, $k, $v, round($v/$total*100));
-    }
-
-    $s .= '</table><br /><br />';
-
-    $s .= '<table style="width: 100%"><caption>Packagers</caption><tr><th>User</th><th>Packages</th></tr>';
-    arsort($users);
-    foreach ($users as $k => $v)
-        $s .= sprintf('<tr><td><a href="/?user=%s">%s</a></td><td>%d</td></tr>',
-            $k, $k, $v);
-
-    $s .= '</table><br /><br />';
-
-    /**
-    */
-    function timesort($a, $b)
-    {
-        $a = explode(' ', trim($a));
-        $b = explode(' ', trim($b));
-
-        if ($a[1] == 'hour' || $a[1] == 'hours')
-            $a[0] *= 3600;
-
-        if ($b[1] == 'hour' || $b[1] == 'hours')
-            $b[0] *= 3600;
-
-        if ($a[1] == 'minute' || $a[1] == 'minutes')
-            $a[0] *= 60;
-
-        if ($b[1] == 'minute' || $b[1] == 'minutes')
-            $b[0] *= 60;
-
-        if ($a[0] > $b[0])
-            return 1;
-        elseif ($a[0] < $b[0])
-            return -1;
-
-        return 0;
-    }
-    uksort($buildtime_stats, "timesort");
-
-    $bts = '';
-    $max = max($buildtime_stats);
-    foreach ($buildtime_stats as $time => $count) {
-        $bts .= sprintf('<tr><td>%s</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
-            $time == "0 second" ? "< 1 minute" : $time,
-            round($count/$max*100),
-            $count);
-
-        $tmp = explode(' ', $time);
-    }
-
-    $s .= '<table style="width: 100%;"><caption>Build time</caption>';
-
-    $s .= sprintf('<tr><td>Total time</td><td>%s hours</td></tr>
-        <tr><td>Average</td><td>%s minutes</td></tr>
-        <tr><td>Builds count</td><td>%s</td></tr>',
-        round($buildtime_total / 60, 2),
+    $total_buildtime = round($buildtime_total / 60, 1);
+    $avail_capacity  = 24 * $max_modified * $g_nodes_count;
+    $capacity_used   = round($total_buildtime / $avail_capacity * 100, 1);
+    $s .= sprintf(
+        '<table style="width: 70%%; margin: 2em 0 2em 80px;">
+            <tr><td>Total time</td><td>%s hours (%s%% of capacity with %d nodes)</td></tr>
+            <tr><td>Average</td><td>%s minutes</td></tr>
+            <tr><td>Builds count</td><td>%s</td></tr>
+            </table>',
+        $total_buildtime,
+        $capacity_used,
+        $g_nodes_count,
         $buildtime_avg,
-        $buildtime_cnt);
+        $build_count
+    );
 
-    $s .= '<tr><th title="Build time">Duration</th><th title="Packages number">Pack. nb.</th></tr>';
-    $s .= $bts;
-    $s .= '</table><span style="font-size: 85%;">Does not take<br />build failures<br />into account.</span>';
-
-    $s .= '<table><caption>Build times</caption>';
-    $max = max($build_dates);
-    foreach ($build_dates as $time => $count)
-        $s .= sprintf('<tr><td>%d</td><td><span style="width: %dpx; height: 10px; background: #aaa; display: block;" title="%d"></span></td></tr>',
-            $time,
-            round($count / $max * 100),
-            $count);
-    $s .= '</table>';
-
-    $s .= '</div>';
+    $s .= '<li id="buildtime-chart"></li>
+        <li id="buildschedule-chart"></li>
+    </ul>';
 
     echo $s;
+
+    uksort($buildtime_stats, "timesort");
+    echo '<script>',
+        mga_bs_charts::js_draw_status_chart($stats, 'status-chart'),
+        mga_bs_charts::js_draw_buildtime_chart($buildtime_stats, 'buildtime-chart'),
+        mga_bs_charts::js_draw_buildschedule_chart($build_dates, 'buildschedule-chart'),
+        mga_bs_charts::js_draw_packagers_chart($users, 'packagers-chart'),
+        mga_bs_charts::js_draw_charts(),
+        '</script>';
+        echo mga_bs_charts::js_init();
 }
 else
 {
-    echo sprintf('<p>No package has been submitted in the past %d&nbsp;hours.</p>',
+    echo sprintf('<li><p>No package has been submitted in the past %d&nbsp;hours.</p></li></ul>',
         $max_modified * 24);
 }
 
 ?>
+    </ul>
+    <script src="js/jquery.js"></script>
+    <script src="js/pkgsubmit.js"></script>
+    <script src="//nav.mageia.org/js/"></script>
     <div class="clear"></div>
     <hr />
-    <p>Generated at <?php echo $date_gen; ?>.
-        Code for this page is in <a href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
+    <footer>
+        <p>Generated at <?php echo $date_gen; ?>.
+            Code for this page is in <a rel="nofollow" href="http://svnweb.mageia.org/soft/build_system/web/">http://svnweb.mageia.org/soft/build_system/web/</a>.</p>
+    </footer>
+    </article>
 </body>
 </html>
