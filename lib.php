@@ -492,9 +492,9 @@ S;
         foreach ($newdata as $duration => $count) {
 
             if     ($duration == '0 second')   { $duration = '<1'; }
-            elseif ($duration == '10 minutes') { $duration = '>10'; }
-            elseif ($duration == '20 minutes') { $duration = '>20'; }
-            elseif ($duration == '60 minutes') { $duration = '>60'; }
+            elseif ($duration == '10 minutes') { $duration = '≥10'; }
+            elseif ($duration == '20 minutes') { $duration = '≥20'; }
+            elseif ($duration == '60 minutes') { $duration = '≥60'; }
             else {
                 $duration = explode(' ', $duration);
                 $duration = $duration[0];
