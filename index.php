@@ -202,8 +202,7 @@ if (!is_null($upload_time)) {
 $s    = '';
 $tmpl = <<<T
 <tr class="%s">
-    <td><a rel="nofollow" href="%s" title="%s" class="package">%s</a>
-        <span class="revision"><a href="%s">view changes @ r%d</a></span></td>
+    <td><a rel="nofollow" href="%s" title="%s" class="package">%s</a></td>
     <td class="user"><a rel="nofollow" href="?user=%s" class="committer">%s</a>
         <span class="timeinfo">%s</span></td>
     <td>%s
@@ -222,7 +221,6 @@ if ($total > 0) {
             $revision_link,
             addslashes($p['summary']),
             $p['package'],
-            $revision_link, $p['revision'],
             $p['user'], $p['user'],
             timediff(key2timestamp($key)) . ' ago',
             $p['version'],
