@@ -5,7 +5,7 @@ html, body {
 }
 html, body, table {
     font-family: Verdana, "Trebuchet MS", "Lucida Grande", "Lucida Sans", Tahoma, Arial, sans-serif;
-    color: #202020;
+    color: #101010;
 }
 body { font-size: 80%; }
 
@@ -28,7 +28,7 @@ td { padding: 0; margin: 0; padding: 0.2em 0.5em; border-bottom: 1px solid #ccc;
 th, td { vertical-align: top; }
 
 tr { background: transparent; }
-tr.uploaded { background: #ddffdd; }
+tr.uploaded { background: #ddffdd; background: #91ff91; }
 tr.failure { background: #ffdddd; }
 tr.rejected { background: #FFFFE0; }
 tr.todo { background: white; }
@@ -54,9 +54,7 @@ tr .revision { display: block; font-size: 85%; text-align: left; }
 
 td .media,
 td .timeinfo,
-td .revision a { color: #777777; text-decoration: none; }
-
-a.package { color: #202020; text-decoration: none; }
+td .revision a { color: #606060; text-decoration: none; }
 
 .number, .percent { text-align: right; }
 
