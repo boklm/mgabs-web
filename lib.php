@@ -469,13 +469,13 @@ S;
                 $newdata['60 minutes'] += $count;
             } else {
                 $d = explode(' ', $duration);
-                if ($d[0] >= 20) {
+                if ($d[0] >= 20 && $d[1] == "minutes") {
                     if (!array_key_exists('20 minutes', $newdata)) {
                         $newdata['20 minutes'] = $count;
                     } else {
                         $newdata['20 minutes'] += $count;
                     }
-                } elseif ($d[0] >= 10) {
+                } elseif ($d[0] >= 10 && $d[1] == "minutes") {
                     if (!array_key_exists('10 minutes', $newdata)) {
                         $newdata['10 minutes'] = $count;
                     } else {
