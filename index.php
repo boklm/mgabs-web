@@ -68,7 +68,7 @@ publish_stats_headers(
     (isset($_GET['last']) && $total > 0) ? reset($pkgs) : null
 );
 
-require __DIR__ . "/themes/$theme_name/page_header.php";
+require "$themes_dir/$theme_name/page_header.php";
 
 if (!isset($_GET['package'])) {
     $bannerfile = dirname(__FILE__) . '/banner.html';
@@ -256,5 +256,5 @@ else
     <script src="js/jquery.js"></script>
     <script src="js/pkgsubmit.js"></script>
 <?php
-require __DIR__ . "/themes/$theme_name/page_footer.php";
+require "$themes_dir/$theme_name/page_footer.php";
 ?>

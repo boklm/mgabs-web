@@ -44,3 +44,6 @@ $package_commit_url = 'http://svnweb.mageia.org/packages?view=revision&revision=
 
 /** name of the theme */
 $theme_name = 'mageia';
+
+/** themes directory */
+$themes_dir = $g_webapp_dir . '/themes/';
