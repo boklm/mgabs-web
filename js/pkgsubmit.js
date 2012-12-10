@@ -14,6 +14,33 @@
 */
 
 /**
+*/
+var events_log = {
+
+    events: {},
+
+    count: function (type, count) {
+        if (type in this.events) {
+            this.events[type] += count;
+        } else {
+            this.events[type] = 1;
+        }
+    },
+
+    reset: function () {
+        this.events = {};
+    },
+
+    report: function () {
+        s = [];
+        for (i in this.events) {
+            s.push(this.events[i] + ' ' + i);
+        }
+        return s.join(", ");
+    }
+};
+
+/**
  * Is the file in path expected to be in text/plain or not?
  * We just know what .log, .done and .youri files are.
  *
@@ -91,6 +118,9 @@ function highlight_text(text) {
             cl = 'error';
             break;
         }
+
+        events_log.count(cl, 1);
+
         return '<span class="hl hl-' + cl + '">' + match + '</span>';
     });
 }
@@ -165,6 +195,7 @@ function show_log_file(ev) {
                 "/" + $(this).attr("href"),
                 {},
                 function (data) {
+                    events_log.reset();
                     $("#" + elId).html(highlight_text(safe_tags_regex(data)))
                     .before(
                         $("<div />", {
@@ -192,6 +223,12 @@ function show_log_file(ev) {
                                 $("#" + cId).toggle();
                             })
                         )
+                    )
+                    .after(
+                        $("<p />", {
+                            class: "stats",
+                            html: events_log.report()
+                        })
                     )
                     .animate({ scrollTop: $("#" + elId).prop("scrollHeight") }, 1000);
                 }
