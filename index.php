@@ -141,7 +141,7 @@ if ($total > 0) {
         if (trim($p['package']) == '') {
             continue;
         }
-        $revision_link = sprintf('http://svnweb.mageia.org/packages?view=revision&revision=%d', $p['revision']);
+        $revision_link = sprintf($package_commit_url, $p['revision']);
 
         $s .= sprintf($tmpl,
             $p['type'],
