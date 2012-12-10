@@ -41,3 +41,6 @@ $g_root_url = 'http://pkgsubmit.mageia.org/';
 
 /** URL to view a package svn revision. %d is replaced by the revision  */
 $package_commit_url = 'http://svnweb.mageia.org/packages?view=revision&revision=%d';
+
+/** name of the theme */
+$theme_name = 'mageia';
