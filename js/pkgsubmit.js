@@ -125,7 +125,10 @@ function highlight_text(text) {
     });
 }
 
+
 /**
+ * Load files list returned for current build (see href),
+ * build it under the build status line and show it.
 */
 function build_log_files_list(ev) {
     if (!ev.metaKey) {
@@ -164,6 +167,8 @@ function safe_tags_regex(str) {
 }
 
 /**
+ * If href is a log file, load it and display it in a decorated box
+ * plus controls to close/navigate it.
 */
 function show_log_file(ev) {
 
@@ -240,7 +245,6 @@ function show_log_file(ev) {
 }
 
 $(function () {
-
     $('.status-link').on("click", build_log_files_list);
 
     $("table#submitted-packages tbody").on("click", "tr td li a.view-inline", show_log_file);
