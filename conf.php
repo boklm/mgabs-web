@@ -47,3 +47,8 @@ $theme_name = 'mageia';
 
 /** themes directory */
 $themes_dir = $g_webapp_dir . '/themes/';
+
+$etc_conf = '/etc/bs-webstatus.conf';
+if (is_file($etc_conf)) {
+    require $etc_conf;
+}
