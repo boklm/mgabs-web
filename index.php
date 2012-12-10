@@ -77,7 +77,7 @@ publish_stats_headers(
     <meta name="robots" content="<?php echo $robots; ?>">
     <link rel="home" href="<?php echo $g_root_url; ?>">
     <link rel="author" href="http://www.mageia.org/">
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="themes/mageia/favicon.png">
     <link rel="stylesheet" href="themes/mageia/style.css">
     <meta name="viewport" content="width=900,initial-scale=1,user-scalable=yes">
 </head>
