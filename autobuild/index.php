@@ -46,6 +46,9 @@ while (!feof($status_file)) {
 }
 fclose($status_file);
 
+sort($success);
+sort($failure);
+
 $nb_failed = count($failure);
 $nb_success = count($success);
 $nb_fixed = count($fixed);
