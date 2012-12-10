@@ -228,12 +228,11 @@ function show_log_file(ev) {
                                 $("#" + cId).toggle();
                             })
                         )
-                    )
-                    .after(
-                        $("<p />", {
-                            class: "stats",
-                            html: events_log.report()
-                        })
+                        .append($("<p />", {
+                                class: "stats",
+                                html: events_log.report()
+                            })
+                        )
                     )
                     .animate({ scrollTop: $("#" + elId).prop("scrollHeight") }, 1000);
                 }
