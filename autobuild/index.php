@@ -2,21 +2,28 @@
 <head>
 <?php
 
-$success = Array();
-$failure = Array();
-$fixed = Array();
-$removed = Array();
-$packages = Array();
+$runs = Array();
+$handle = opendir('cauldron/x86_64/core/');
+while (false !== ($entry = readdir($handle))) {
+	if (preg_match("/^....-..-..$/", $entry, $matches)) {
+		array_push($runs, $matches[0]);
+	}
+}
+closedir($handle);
+sort($runs);
 
 $run = $_GET['run'];
 if (!$run) {
-	$run = "latest";
+	$run = readlink("cauldron/x86_64/core/latest");
 }
-$base_dir = "cauldron/x86_64/core/$run";
 
-$status_name = "$base_dir/status.core.log";
-$status_file = fopen($status_name, "r");
-
+foreach ($runs as $r) {
+	if ($r==$run) {
+		break;
+	}
+	$prev = $r;
+}
+$packages = Array();
 if ($handle = opendir('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/')) {
 	while (false !== ($entry = readdir($handle))) {
 		if (preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $entry, $matches)) {
@@ -25,6 +32,39 @@ if ($handle = opendir('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/')
 	}
 	closedir($handle);
 }
+
+$prev_failure = Array();
+if ($prev) {
+	$base_dir = "cauldron/x86_64/core/$prev";
+	$status_name = "$base_dir/status.core.log";
+	$status_file = fopen($status_name, "r");
+	while (!feof($status_file)) {
+		$line = fgets($status_file);
+		if (preg_match("/^(.*): (.*)$/", $line, $matches)) {
+			$rpm = $matches[1];
+			$status = $matches[2];
+			if ($status != "ok" && $status != "unknown" && $status != "not_on_this_arch") {
+				$prev_failure[$rpm] = 1;
+			}
+		}
+	}
+	fclose($status_file);
+}
+
+$success = Array();
+$failure = Array();
+$fixed = Array();
+$removed = Array();
+
+$base_dir = "cauldron/x86_64/core/$run";
+
+
+$status_name = "$base_dir/status.core.log";
+if (!file_exists($status_name)) {
+	echo "Invalid run";
+	exit;
+}
+$status_file = fopen($status_name, "r");
 
 while (!feof($status_file)) {
 	$line = fgets($status_file);
@@ -70,6 +110,8 @@ foreach ($failure as $rpm) {
 		$status = " <span style='color:green;'><b>Fixed!</b></span>";
 	} elseif ($removed[$rpm]) {
 		$status = " <span style='color:yellow;'><b>Removed</b></span>";
+	} elseif ($prev && !$prev_failure[$rpm]) {
+		$status = " <span style='color:red;'><b>New!</b></span>";
 	}
 	echo "<li><a href='$base_dir/$rpm/'>$rpm</a>$status</li>\n";
 }
