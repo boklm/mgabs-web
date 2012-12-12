@@ -122,6 +122,7 @@ ul > li > ul > li > ul > li .file-view { left: -66px; }
     margin: 0.6em 1em 0.6em 0;
     font-size: 90%;
 }
+.controls .p { display: inline; }
 
 .hl-none { font-weight: bold; }
 .hl { font-weight: bold; }

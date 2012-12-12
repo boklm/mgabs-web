@@ -34,7 +34,7 @@ var events_log = {
     report: function () {
         s = [];
         for (i in this.events) {
-            s.push(this.events[i] + ' ' + i);
+            s.push('<span class="hl hl-' + i + '">' + this.events[i] + ' ' + i + '</span>');
         }
         return s.join(", ");
     }
