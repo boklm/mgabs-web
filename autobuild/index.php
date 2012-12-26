@@ -127,7 +127,11 @@ foreach ($failure as $rpm) {
 	} elseif ($prev && !$prev_failure[$rpm]) {
 		$status = " <span style='color:red;'><b>New!</b></span>";
 	}
-	echo "<li><a href='$base_dir/$rpm/'>$rpm</a>$status</li>\n";
+	if (file_exists("$base_dir/$rpm/")) {
+		echo "<li><a href='$base_dir/$rpm/'>$rpm</a>$status</li>\n";
+	} else {
+		echo "<li>$rpm $status</li>\n";
+	}
 }
 
 echo "</ul></div><div style='float:right'><h1>Successful builds ($nb_success/$nb_tried):</h1><ul>";
