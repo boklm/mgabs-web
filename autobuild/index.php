@@ -119,18 +119,22 @@ echo "$nb_fixed packages have been fixed since this run and $nb_removed have bee
 echo "<div style='float:left'><h1>Failed builds ($nb_failed/$nb_tried):</h1><ul>";
 
 foreach ($failure as $rpm => $error) {
-	$status = "";
+	$status_html = "";
 	if ($fixed[$rpm]) {
-		$status = " <span style='color:green;'><b>Fixed!</b></span>";
+		$status_html = " <img src='icons/state-fixed.png' title='Fixed!' />";
 	} elseif ($removed[$rpm]) {
-		$status = " <span style='color:yellow;'><b>Removed</b></span>";
+		$status_html = " <img src='icons/state-removed.png' title='Removed' />";
 	} elseif ($prev && !$prev_failure[$rpm]) {
-		$status = " <span style='color:red;'><b>New!</b></span>";
+		$status_html = " <img src='icons/state-new.png' title='New!' />";
+	}
+	$error_html = $error;
+	if (file_exists("icons/error-$error.png")) {
+		$error_html = "<img src='icons/error-$error.png' title='$error'/>";
 	}
 	if (file_exists("$base_dir/$rpm/")) {
-		echo "<li><a href='$base_dir/$rpm/'>$rpm</a> $error $status</li>\n";
+		echo "<li>$error_html <a href='$base_dir/$rpm/'>$rpm</a> $status_html</li>\n";
 	} else {
-		echo "<li>$rpm $error $status</li>\n";
+		echo "<li>$error_html $rpm $status_html</li>\n";
 	}
 }
 
