@@ -116,7 +116,7 @@ foreach ($runs as $r) {
 echo "</div>\n";
 echo "<h1>$succes_percent% Success</h1>\n";
 echo "$nb_fixed packages have been fixed since this run and $nb_removed have been removed.<br/> If no new package was broken, success rate next time should be $estimated_percent%.<br/>\n";
-echo "<div style='float:left'><h1>Failed builds ($nb_failed/$nb_tried):</h1><ul>";
+echo "<div style='float:left'><h1>Failed builds ($nb_failed/$nb_tried):</h1><ul style='list-style:none;'>";
 
 foreach ($failure as $rpm => $error) {
 	$status_html = "";
