@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript' src='data.js'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['table', 'corechart']});
+      google.setOnLoadCallback(drawTable);
+      function drawTable() {
+        var d = new google.visualization.DataTable(window.data);
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+	table.draw(d, {showRowNumber: false, allowHtml: true});
+
+	var successView = new google.visualization.DataView(d);
+	successView.setColumns([0,9]);
+	var sg = new google.visualization.AreaChart(document.getElementById('success_graph_div'));
+	sg.draw(successView, {
+            title : 'Success Rate',
+            isStacked: true,
+            width: 900,
+            height: 200,
+            legend: {position: 'none'},
+            chartArea: {width: '87.5%'},
+	    pointSize: 4,
+	});
+	
+	var resultsView = new google.visualization.DataView(d);
+	resultsView.hideColumns([8,9]);
+	var rg = new google.visualization.AreaChart(document.getElementById('results_graph_div'));
+	rg.draw(resultsView, {
+            title : 'Build results',
+            width: 900,
+            height: 200,
+            legend: {position: 'bottom'},
+            chartArea: {width: '87.5%'},
+	    pointSize: 4,
+	});
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>Automatic rebuild of Cauldron on x86_64</h1>
+    <div id='table_div'></div>
+    <div id='success_graph_div'></div>
+    <div id='results_graph_div'></div>
+  </body>
+</html>
