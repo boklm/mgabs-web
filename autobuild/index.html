@@ -24,10 +24,22 @@
 	});
 	
 	var resultsView = new google.visualization.DataView(d);
-	resultsView.hideColumns([8,9]);
+	resultsView.setColumns([0,1,2,3,4,5,6,7]);
 	var rg = new google.visualization.AreaChart(document.getElementById('results_graph_div'));
 	rg.draw(resultsView, {
             title : 'Build results',
+            width: 900,
+            height: 200,
+            legend: {position: 'bottom'},
+            chartArea: {width: '87.5%'},
+	    pointSize: 4,
+	});
+
+	var evolutionView = new google.visualization.DataView(d);
+	evolutionView.setColumns([0,10,11,12]);
+	var eg = new google.visualization.AreaChart(document.getElementById('evolution_graph_div'));
+	eg.draw(evolutionView, {
+            title : 'Evolution',
             width: 900,
             height: 200,
             legend: {position: 'bottom'},
@@ -43,5 +55,6 @@
     <div id='table_div'></div>
     <div id='success_graph_div'></div>
     <div id='results_graph_div'></div>
+    <div id='evolution_graph_div'></div>
   </body>
 </html>
