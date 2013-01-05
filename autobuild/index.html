@@ -8,7 +8,7 @@
       function drawTable() {
         var d = new google.visualization.DataTable(window.data);
         var table = new google.visualization.Table(document.getElementById('table_div'));
-	table.draw(d, {showRowNumber: false, allowHtml: true});
+	table.draw(d, {showRowNumber: false, allowHtml: true, page: 'enable'});
 
 	var successView = new google.visualization.DataView(d);
 	successView.setColumns([0,9]);
