@@ -171,7 +171,7 @@ function pkg_gettype($pkg)
         'failure'  => 'failure',
         'done'     => 'partial',
         'build'    => 'building',
-        'todo'     => 'todo'
+        'src'      => 'todo'
     );
 
     foreach ($labels as $k => $v) {
