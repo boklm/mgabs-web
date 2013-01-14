@@ -79,7 +79,7 @@ while (!feof($status_file)) {
 			preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $rpm, $matches);
 			if(!$packages[$matches[1]]) {
 				$removed[$rpm] = 1;
-			} elseif ($packages[$matches[1]] != $matches[2]) {
+			} elseif ($packages[$matches[1]] > $matches[2]) {
 				$fixed[$rpm] = 1;
 			}
 		}
