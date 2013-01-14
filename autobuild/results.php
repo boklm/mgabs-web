@@ -41,7 +41,7 @@ if ($prev) {
 	$status_file = fopen($status_name, "r");
 	while (!feof($status_file)) {
 		$line = fgets($status_file);
-		if (preg_match("/^(.*): (.*)$/", $line, $matches)) {
+		if (preg_match("/^(.*)-[^-]*-[^-]*mga[1-9].src.rpm: (.*)$/", $line, $matches)) {
 			$rpm = $matches[1];
 			$status = $matches[2];
 			if ($status != "ok" && $status != "unknown" && $status != "not_on_this_arch") {
@@ -56,6 +56,7 @@ $success = Array();
 $failure = Array();
 $fixed = Array();
 $removed = Array();
+$broken = Array();
 
 $base_dir = "cauldron/x86_64/core/$run";
 
@@ -81,6 +82,8 @@ while (!feof($status_file)) {
 				$removed[$rpm] = 1;
 			} elseif ($packages[$matches[1]] > $matches[2]) {
 				$fixed[$rpm] = 1;
+			} elseif ($prev_failure[$matches[1]] != 1) {
+				$broken[$rpm]  = 1;
 			}
 		}
 	}
@@ -124,7 +127,7 @@ foreach ($failure as $rpm => $error) {
 		$status_html = " <img src='icons/state-fixed.png' title='Fixed!' />";
 	} elseif ($removed[$rpm]) {
 		$status_html = " <img src='icons/state-removed.png' title='Removed' />";
-	} elseif ($prev && !$prev_failure[$rpm]) {
+	} elseif ($broken[$rpm]) {
 		$status_html = " <img src='icons/state-new.png' title='New!' />";
 	}
 	$error_html = $error;
