@@ -141,7 +141,11 @@ foreach ($failure as $rpm => $error) {
 echo "</ul></div><div style='float:right'><h1>Successful builds ($nb_success/$nb_tried):</h1><ul>";
 
 foreach ($success as $rpm) {
-	echo "<li><a href='$base_dir/$rpm/'>$rpm</a></li>\n";
+	if (file_exists("$base_dir/$rpm/")) {
+		echo "<li><a href='$base_dir/$rpm/'>$rpm</a></li>\n";
+	} else {
+		echo "<li>$rpm</li>\n";
+	}
 }
 
 ?>
