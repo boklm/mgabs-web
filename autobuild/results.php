@@ -24,11 +24,12 @@ foreach ($runs as $r) {
 	}
 	$prev = $r;
 }
+
 $packages = Array();
 if ($handle = opendir('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/')) {
 	while (false !== ($entry = readdir($handle))) {
 		if (preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $entry, $matches)) {
-			$packages[$matches[1]] = $matches[2];
+			$packages[$matches[1]] = $entry;
 		}
 	}
 	closedir($handle);
@@ -41,7 +42,7 @@ if ($prev) {
 	$status_file = fopen($status_name, "r");
 	while (!feof($status_file)) {
 		$line = fgets($status_file);
-		if (preg_match("/^(.*)-[^-]*-[^-]*mga[1-9].src.rpm: (.*)$/", $line, $matches)) {
+		if (preg_match("/^(.*): (.*)$/", $line, $matches)) {
 			$rpm = $matches[1];
 			$status = $matches[2];
 			if ($status != "ok" && $status != "unknown" && $status != "not_on_this_arch") {
@@ -66,8 +67,11 @@ if (!file_exists($status_name)) {
 	echo "Invalid run";
 	exit;
 }
-$status_file = fopen($status_name, "r");
 
+$stat = stat($status_name);
+$end_time = $stat['mtime'];
+
+$status_file = fopen($status_name, "r");
 while (!feof($status_file)) {
 	$line = fgets($status_file);
 	if (preg_match("/^(.*): (.*)$/", $line, $matches)) {
@@ -78,12 +82,15 @@ while (!feof($status_file)) {
 		} elseif ($status != "unknown" && $status != "not_on_this_arch"){
 			$failure[$rpm] = $status;
 			preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $rpm, $matches);
-			if(!$packages[$matches[1]]) {
+			$package = $matches[1];
+			$version = $matches[2];
+			if(!$packages[$package]) {
 				$removed[$rpm] = 1;
-			} elseif ($packages[$matches[1]] > $matches[2]) {
-				$fixed[$rpm] = 1;
-			} elseif ($prev_failure[$matches[1]] != 1) {
-				$broken[$rpm]  = 1;
+			} else {
+				$stat = stat('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/'.$packages[$package]);
+				if ($stat['mtime'] > $end_time) {
+					$fixed[$rpm] = 1;
+				}
 			}
 		}
 	}
