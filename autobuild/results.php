@@ -68,9 +68,6 @@ if (!file_exists($status_name)) {
 	exit;
 }
 
-$stat = stat($status_name);
-$end_time = $stat['mtime'];
-
 $status_file = fopen($status_name, "r");
 while (!feof($status_file)) {
 	$line = fgets($status_file);
@@ -87,8 +84,9 @@ while (!feof($status_file)) {
 			if(!$packages[$package]) {
 				$removed[$rpm] = 1;
 			} else {
-				$stat = stat('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/'.$packages[$package]);
-				if ($stat['mtime'] > $end_time) {
+				$build_stat = stat("$base_dir/$rpm");
+				$pkg_stat = stat('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/'.$packages[$package]);
+				if ($pkg_stat['mtime'] > $build_stat['mtime']) {
 					$fixed[$rpm] = 1;
 				}
 			}
