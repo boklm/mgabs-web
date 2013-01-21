@@ -42,7 +42,7 @@ if ($prev) {
 	$status_file = fopen($status_name, "r");
 	while (!feof($status_file)) {
 		$line = fgets($status_file);
-		if (preg_match("/^(.*): (.*)$/", $line, $matches)) {
+		if (preg_match("/^(.*)-[^-]*-[^-]*mga[1-9].src.rpm: (.*)$/", $line, $matches)) {
 			$rpm = $matches[1];
 			$status = $matches[2];
 			if ($status != "ok" && $status != "unknown" && $status != "not_on_this_arch") {
@@ -81,6 +81,9 @@ while (!feof($status_file)) {
 			preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $rpm, $matches);
 			$package = $matches[1];
 			$version = $matches[2];
+			if(!$prev_failure[$package]) {
+				$broken[$rpm] = 1;
+			}
 			if(!$packages[$package]) {
 				$removed[$rpm] = 1;
 			} else {
