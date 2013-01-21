@@ -110,18 +110,13 @@ echo "<title>$succes_percent% Success</title>\n";
 echo "</head><body>\n";
 
 echo "<div style='position:absolute;right:0;top:0;'>";
+echo "<form><select name='run' onChange='document.location.href=\"".$_SERVER["PHP_SELF"]."?run=\"+this.form.run.value'>";
 foreach ($runs as $r) {
-	$text = $r . (($r > $latest) ? ' (in progress)' : '');
-	
-	if ($r==$run) {
-		echo $text;
-	} else {
-		echo '<a href="'.$_SERVER["PHP_SELF"].'?run='.$r.'">'.$text.'</a>';
-	}
-	echo ' ';
+	$in_progress = ($r > $latest) ? ' (in progress)' : '';
+	$selected = ($r == $run) ? ' selected' : '';
+	echo "<option value='$r'$selected>$r$in_progress</option>";
 }
-
-echo "</div>\n";
+echo "</select></form></div>\n";
 echo "<h1>$succes_percent% Success</h1>\n";
 echo "$nb_fixed packages have been fixed since this run and $nb_removed have been removed.<br/> If no new package was broken, success rate next time should be $estimated_percent%.<br/>\n";
 echo "<div style='float:left'><h1>Failed builds ($nb_failed/$nb_tried):</h1><ul style='list-style:none;'>";
