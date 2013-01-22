@@ -2,6 +2,14 @@
 <head>
 <?php
 
+function parse_package($rpm) {
+	if (preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $rpm, $matches)) {
+	    return Array('package' => $matches[1], 'version' => $matches[2]);
+	} else {
+	    return false;
+	}
+}
+
 $runs = Array();
 $handle = opendir('cauldron/x86_64/core/');
 while (false !== ($entry = readdir($handle))) {
@@ -28,8 +36,8 @@ foreach ($runs as $r) {
 $packages = Array();
 if ($handle = opendir('/distrib/bootstrap/distrib/cauldron/SRPMS/core/release/')) {
 	while (false !== ($entry = readdir($handle))) {
-		if (preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $entry, $matches)) {
-			$packages[$matches[1]] = $entry;
+		if ($parsed = parse_package($entry)) {
+			$packages[$parsed['package']] = $entry;
 		}
 	}
 	closedir($handle);
@@ -42,11 +50,11 @@ if ($prev) {
 	$status_file = fopen($status_name, "r");
 	while (!feof($status_file)) {
 		$line = fgets($status_file);
-		if (preg_match("/^(.*)-[^-]*-[^-]*mga[1-9].src.rpm: (.*)$/", $line, $matches)) {
-			$rpm = $matches[1];
+		if (preg_match("/^(.*): (.*)$/", $line, $matches)) {
+			$rpm = parse_package($matches[1]);
 			$status = $matches[2];
 			if ($status != "ok" && $status != "unknown" && $status != "not_on_this_arch") {
-				$prev_failure[$rpm] = 1;
+				$prev_failure[$rpm['package']] = 1;
 			}
 		}
 	}
@@ -78,9 +86,8 @@ while (!feof($status_file)) {
 			array_push($success, $rpm);
 		} elseif ($status != "unknown" && $status != "not_on_this_arch"){
 			$failure[$rpm] = $status;
-			preg_match("/(.*)-([^-]*-[^-]*mga)[1-9].src.rpm/", $rpm, $matches);
-			$package = $matches[1];
-			$version = $matches[2];
+			$parsed = parse_package($rpm);
+			$package = $parsed['package'];
 			if(!$prev_failure[$package]) {
 				$broken[$rpm] = 1;
 			}
@@ -125,6 +132,8 @@ echo "$nb_fixed packages have been fixed since this run and $nb_removed have bee
 echo "<div style='float:left'><h1>Failed builds ($nb_failed/$nb_tried):</h1><ul style='list-style:none;'>";
 
 foreach ($failure as $rpm => $error) {
+	$parsed = parse_package($rpm);
+	$history_link = '<a href="history.php?package='.$parsed['package'].'">[h]</a>';
 	$status_html = "";
 	if ($fixed[$rpm]) {
 		$status_html = " <img src='icons/state-fixed.png' title='Fixed!' />";
@@ -138,19 +147,21 @@ foreach ($failure as $rpm => $error) {
 		$error_html = "<img src='icons/error-$error.png' title='$error'/>";
 	}
 	if (file_exists("$base_dir/$rpm/")) {
-		echo "<li>$error_html <a href='$base_dir/$rpm/'>$rpm</a> $status_html</li>\n";
+		echo "<li>$error_html <a href='$base_dir/$rpm/'>$rpm</a> $status_html $history_link</li>\n";
 	} else {
-		echo "<li>$error_html $rpm $status_html</li>\n";
+		echo "<li>$error_html $rpm $status_html $history_link</li>\n";
 	}
 }
 
 echo "</ul></div><div style='float:right'><h1>Successful builds ($nb_success/$nb_tried):</h1><ul>";
 
 foreach ($success as $rpm) {
+	$parsed = parse_package($rpm);
+	$history_link = '<a href="history.php?package='.$parsed['package'].'">[h]</a>';
 	if (file_exists("$base_dir/$rpm/")) {
-		echo "<li><a href='$base_dir/$rpm/'>$rpm</a></li>\n";
+		echo "<li><a href='$base_dir/$rpm/'>$rpm</a> $history_link</li>\n";
 	} else {
-		echo "<li>$rpm</li>\n";
+		echo "<li>$rpm $history_link</li>\n";
 	}
 }
 
