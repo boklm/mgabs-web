@@ -22,28 +22,24 @@ if (!isset($_GET['package'])) {
     $unmaintained_file = $g_webapp_dir . '/data/unmaintained.txt';
     $unmaintained_count = file_exists($unmaintained_file) ? count(file($unmaintained_file)) : 0;
 
-    if ($missing_deps_count > 0
-        || $unmaintained_count > 0
-    ) {
-        if ($missing_deps_count > 0) {
-            $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">broken <abbr title="dependencies">deps.</abbr></a>',
-                                $missing_deps_count,
-                                'http://check.mageia.org/cauldron/dependencies.html'
-            );
-        }
-
-        if ($unmaintained_count > 0) {
-            $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">unmaintained</a>',
-                                $unmaintained_count,
-                                'data/unmaintained.txt'
-            );
-        }
-
-        if (count($figures_list) > 0)
-            $figures_list[count($figures_list)-1] .= sprintf(' <a href="%s" class="action-btn" title="%s">%s</a>',
-                                                        'https://wiki.mageia.org/en/Importing_packages',
-                                                        'YES you can help!', 'pick one');
+    if ($missing_deps_count > 0) {
+        $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">broken <abbr title="dependencies">deps.</abbr></a>',
+                            $missing_deps_count,
+                            'http://check.mageia.org/cauldron/dependencies.html'
+        );
     }
+
+    if ($unmaintained_count > 0) {
+        $figures_list[] = sprintf('<strong>%d</strong> <a rel="nofollow" href="%s">unmaintained</a>',
+                            $unmaintained_count,
+                            'data/unmaintained.txt'
+        );
+    }
+
+    if (count($figures_list) > 0)
+        $figures_list[count($figures_list)-1] .= sprintf(' <a href="%s" class="action-btn" title="%s">%s</a>',
+                                                    'https://wiki.mageia.org/en/Importing_packages',
+                                                    'YES you can help!', 'pick one');
 
     preg_match_all('/<span class="bz_result_count">(\d+)/', file_get_contents("https://bugs.mageia.org/buglist.cgi?quicksearch=%40qa-bugs+-kw%3Avali"), $matches);
     $qa_bugs = $matches[1][0];
