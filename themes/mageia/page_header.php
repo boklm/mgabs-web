@@ -19,7 +19,8 @@ if (!isset($_GET['package'])) {
 
     // TODO should be cached.
     $missing_deps_count = preg_match_all("/<item>/m", file_get_contents("http://check.mageia.org/cauldron/dependencies.rss"), $matches);
-    $unmaintained_count = file_exists(__DIR__ . '/data/unmaintained.txt') ? count(file(__DIR__ . '/data/unmaintained.txt')) : 0;
+    $unmaintained_file = $g_webapp_dir . '/data/unmaintained.txt';
+    $unmaintained_count = file_exists($unmaintained_file) ? count(file($unmaintained_file)) : 0;
 
     if ($missing_deps_count > 0
         || $unmaintained_count > 0
